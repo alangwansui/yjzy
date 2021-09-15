@@ -10,8 +10,8 @@ Invoice_Selection = [('draft', u'草稿'),
                      ('submit', u'已提交'),
                      ('approved', u'待总经理审批'),
                      ('done', u'执行中'),
-                     ('invoice_pending',u'待处理账单'),
-                     ('paid',u'付款完成'),
+                     ('invoice_pending', u'待处理账单'),
+                     ('paid', u'付款完成'),
                      ('refuse', u'拒绝'),
                      ('cancel', u'取消'),
                      ('invoice_origin', u'原始账单')]
@@ -260,7 +260,7 @@ class account_invoice(models.Model):
             one.reconcile_order_line_advance_usd = yjzy_reconcile_order_line_advance_usd
             one.reconcile_order_line_count = dlrs_count
 
-    @api.depends('bill_id.ref', 'amount_total', 'bill_id.ref','date_finish')
+    @api.depends('bill_id.ref', 'amount_total', 'bill_id.ref', 'date_finish')
     def compute_display_name(self):
         for one in self:
             show_date_finish = self.env.context.get('show_date_finish')
@@ -274,34 +274,34 @@ class account_invoice(models.Model):
                         '无交单日', one.partner_id.name or '',)
             else:
                 if one.bill_id:
-                # else:
-                # if one.invoice_attribute_all_in_one == '220':
-                #     name = '%s:%s' % ('增加采购应付', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '110':
-                #     name = '%s:%s' % ('主账单应付', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '120':
-                #     name = '%s:%s' % ('主账单应收', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '130':
-                #     name = '%s:%s' % ('主账单退税', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '210':
-                #     name = '%s:%s' % ('增加采购应收', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '230':
-                #     name = '%s:%s' % ('增加采购退税', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '310':
-                #     name = '%s:%s' % ('费用转货款应收', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '320':
-                #     name = '%s:%s' % ('费用转货款应付', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '330':
-                #     name = '%s:%s' % ('费用转货款退税', one.tb_contract_code)
-                # elif one.invoice_attribute_all_in_one == '410':
-                #     name = '%s:%s' % ('其他应收', one.number)
-                # elif one.invoice_attribute_all_in_one == '510':
-                #     name = '%s:%s' % ('其他应付', one.number)
+                    # else:
+                    # if one.invoice_attribute_all_in_one == '220':
+                    #     name = '%s:%s' % ('增加采购应付', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '110':
+                    #     name = '%s:%s' % ('主账单应付', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '120':
+                    #     name = '%s:%s' % ('主账单应收', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '130':
+                    #     name = '%s:%s' % ('主账单退税', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '210':
+                    #     name = '%s:%s' % ('增加采购应收', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '230':
+                    #     name = '%s:%s' % ('增加采购退税', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '310':
+                    #     name = '%s:%s' % ('费用转货款应收', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '320':
+                    #     name = '%s:%s' % ('费用转货款应付', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '330':
+                    #     name = '%s:%s' % ('费用转货款退税', one.tb_contract_code)
+                    # elif one.invoice_attribute_all_in_one == '410':
+                    #     name = '%s:%s' % ('其他应收', one.number)
+                    # elif one.invoice_attribute_all_in_one == '510':
+                    #     name = '%s:%s' % ('其他应付', one.number)
 
                     name = '%s' % (one.bill_id.ref)
 
                 else:
-                    name =  '%s' % (one.number)
+                    name = '%s' % (one.number)
 
             one.display_name = name
             print('display_name', one.display_name)
@@ -467,13 +467,16 @@ class account_invoice(models.Model):
                  'yjzy_invoice_reconcile_order_line_no_ids.order_id.state')
     def compute_amount_payment_can_approve_all(self):
         for one in self:
-            payment_approved_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'approved') #完成审批
+            payment_approved_all = one.reconcile_order_line_ids.filtered(
+                lambda x: x.order_id.state == 'approved')  # 完成审批
             payment_approved_no_all = one.reconcile_order_line_no_ids.filtered(lambda x: x.order_id.state == 'approved')
 
-            payment_done_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'done') #完成付款和认领
-            payment_no_done_all = one.reconcile_order_line_no_ids.filtered(lambda x: x.order_id.state == 'done')  # 完成付款和认领
+            payment_done_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'done')  # 完成付款和认领
+            payment_no_done_all = one.reconcile_order_line_no_ids.filtered(
+                lambda x: x.order_id.state == 'done')  # 完成付款和认领
 
-            payment_approval_all = one.reconcile_order_line_ids.filtered(lambda x: x.order_id.state == 'posted')  # 完成付款和认领
+            payment_approval_all = one.reconcile_order_line_ids.filtered(
+                lambda x: x.order_id.state == 'posted')  # 完成付款和认领
             payment_no_approval_all = one.reconcile_order_line_no_ids.filtered(
                 lambda x: x.order_id.state == 'posted')  # 完成付款和认领
 
@@ -497,7 +500,7 @@ class account_invoice(models.Model):
             amount_payment_org_approval_new = sum(x.amount_payment_org for x in payment_no_approval_all)
             amount_payment_org_approval = amount_payment_org_approval_new > 0 and amount_payment_org_approval_new or amount_payment_org_approval_new + amount_payment_org_approval_old
 
-                # sum(x.amount_payment_org for x in payment_no_approval_all)
+            # sum(x.amount_payment_org for x in payment_no_approval_all)
 
             amount_advance_org_draft = sum(x.amount_advance_org for x in payment_draft_all)
             amount_payment_org_draft = sum(x.amount_payment_org for x in payment_no_draft_all)
@@ -509,12 +512,8 @@ class account_invoice(models.Model):
             amount_payment_org_approved_new = sum(x.amount_payment_org for x in payment_approved_no_all)
             amount_payment_org_approved = amount_payment_org_approved_new > 0 and amount_payment_org_approved_new or amount_payment_org_approved_new + amount_payment_org_approved_old
 
-
-
             amount_payment_approve_all = sum(x.amount_total_org_new for x in payment_approved_all) + sum(
                 x.amount_payment_org for x in payment_approved_no_all)
-
-
 
             yjzy_amount_payment_approve_all = sum(x.amount_total_org_new for x in yjzy_payment_approve_all) + sum(
                 x.amount_payment_org for x in yjzy_payment_approved_no_all)
@@ -541,7 +540,8 @@ class account_invoice(models.Model):
             one.yjzy_amount_payment_can_approve_all = yjzy_amount_payment_can_approve_all
 
     @api.depends('reconcile_order_line_no_ids', 'reconcile_order_line_no_ids.amount_payment_org',
-                 'reconcile_order_line_ids', 'reconcile_order_line_ids.amount_advance_org','reconcile_order_line_ids.order_id.state',
+                 'reconcile_order_line_ids', 'reconcile_order_line_ids.amount_advance_org',
+                 'reconcile_order_line_ids.order_id.state',
                  'reconcile_order_line_ids.amount_payment_org', )
     def compute_amount_payment_approval_all(self):
         for one in self:
@@ -617,6 +617,7 @@ class account_invoice(models.Model):
         for one in self:
             one.declaration_amount = sum(x.declaration_amount for x in one.btd_line_ids)
             one.declaration_amount_latest = one.btd_line_ids and one.btd_line_ids[0].declaration_amount or 0
+
     # D
     @api.depends('yjzy_type_1', 'yjzy_type', 'invoice_attribute')
     def compute_all_in_one(self):
@@ -676,23 +677,23 @@ class account_invoice(models.Model):
             one.move_line_com_yszk_ids_count = len(one.move_line_com_yszk_ids)
             one.reconcile_order_line_no_ids_count = len(one.reconcile_order_line_no_ids)
 
-    @api.depends('reconcile_order_id_advance_draft_ids','reconcile_order_id_payment_draft_ids')
+    @api.depends('reconcile_order_id_advance_draft_ids', 'reconcile_order_id_payment_draft_ids')
     def compute_reconcile_order_id_draft_ids_count(self):
         for one in self:
             one.reconcile_order_id_advance_draft_ids_count = len(one.reconcile_order_id_advance_draft_ids)
             one.reconcile_order_id_payment_draft_ids_count = len(one.reconcile_order_id_payment_draft_ids)
             print('reconcile_order_id_advance_draft_ids_akiny')
 
-    @api.depends('payment_log_hexiao_ids','reconcile_order_line_bank','reconcile_order_line_amount_diff',
-                 'payment_log_hexiao_ids.state','payment_log_hexiao_ids.amount','reconcile_order_line_ids','reconcile_order_line_ids.order_id.state')
+    @api.depends('payment_log_hexiao_ids', 'reconcile_order_line_bank', 'reconcile_order_line_amount_diff',
+                 'payment_log_hexiao_ids.state', 'payment_log_hexiao_ids.amount', 'reconcile_order_line_ids',
+                 'reconcile_order_line_ids.order_id.state')
     def compute_payment_log_hexiao_amount(self):
         for one in self:
-            payment_log_hexiao_ids = one.payment_log_hexiao_ids.filtered(lambda x: x.state in ['posted','reconciled'])
+            payment_log_hexiao_ids = one.payment_log_hexiao_ids.filtered(lambda x: x.state in ['posted', 'reconciled'])
             payment_log_hexiao_amount = sum(x.amount for x in payment_log_hexiao_ids)
 
             reconcile_order_line_amount_diff = one.reconcile_order_line_amount_diff
             reconcile_order_line_bank = one.reconcile_order_line_bank
-
 
             one.payment_log_hexiao_amount = payment_log_hexiao_amount + reconcile_order_line_amount_diff + reconcile_order_line_bank
 
@@ -704,9 +705,9 @@ class account_invoice(models.Model):
                     days_term = x.days
             one.days_term = days_term
 
-
-    @api.depends('invoice_line_ids','invoice_line_ids.advice_advance_amount','invoice_line_ids.advice_advance_amount_1','amount_advance_org_done','amount_payment_can_approve_all'
-                 ,'invoice_line_ids.rest_advance_so_po_balance')
+    @api.depends('invoice_line_ids', 'invoice_line_ids.advice_advance_amount',
+                 'invoice_line_ids.advice_advance_amount_1', 'amount_advance_org_done', 'amount_payment_can_approve_all'
+        , 'invoice_line_ids.rest_advance_so_po_balance')
     def compute_advance_pre_rest(self):
         for one in self:
             advance_pre = sum(x.advice_advance_amount for x in one.invoice_line_ids)
@@ -728,7 +729,7 @@ class account_invoice(models.Model):
     def compute_in_invoice_amount(self):
         for one in self:
             in_invoice_id = one.tb_po_invoice_all_ids.filtered(lambda x: x.yjzy_type_1 == 'purchase')
-            print('in_invoice_id_akiny',in_invoice_id)
+            print('in_invoice_id_akiny', in_invoice_id)
             if in_invoice_id:
                 in_invoice_amount = in_invoice_id[0].amount_total
                 in_invoice_residual = in_invoice_id[0].residual
@@ -753,23 +754,23 @@ class account_invoice(models.Model):
                 one.df_new_id = False
 
     is_editable = fields.Boolean(u'可编辑')
-    purchase_invoice_hsname_ids = fields.One2many('purchase.invoice.hsname','invoice_id','采购发票明细')
+    purchase_invoice_hsname_ids = fields.One2many('purchase.invoice.hsname', 'invoice_id', '采购发票明细')
     tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
-    is_manual = fields.Boolean('是否手动创建',default=False)
+    is_manual = fields.Boolean('是否手动创建', default=False)
 
-    advance_pre = fields.Monetary('建议认领预收付总金额',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)
-    wait_advance = fields.Monetary('待认领预付',currency_field='currency_id', compute=compute_advance_pre_rest,store=True)#相关剩余预收付金额
+    advance_pre = fields.Monetary('建议认领预收付总金额', currency_field='currency_id', compute=compute_advance_pre_rest,
+                                  store=True)
+    wait_advance = fields.Monetary('待认领预付', currency_field='currency_id', compute=compute_advance_pre_rest,
+                                   store=True)  # 相关剩余预收付金额
     amount_payment_can_approve_all_1 = fields.Monetary(u'减去建议待认领预付金额后可申请应收付款', currency_field='currency_id',
                                                        compute=compute_advance_pre_rest, store=True)
-    rest_advance_so_po_balance = fields.Monetary('相关剩余预收预付款',currency_field='currency_id',
-                                                       compute=compute_advance_pre_rest, store=True)
-    jianyi_advance = fields.Monetary('建议预收预付',currency_field='currency_id',
-                                                       compute=compute_advance_pre_rest, store=True)#按照比例计算的预收付建议认领金额
+    rest_advance_so_po_balance = fields.Monetary('相关剩余预收预付款', currency_field='currency_id',
+                                                 compute=compute_advance_pre_rest, store=True)
+    jianyi_advance = fields.Monetary('建议预收预付', currency_field='currency_id',
+                                     compute=compute_advance_pre_rest, store=True)  # 按照比例计算的预收付建议认领金额
 
-
-
-    days_term = fields.Integer('账期',compute=compute_days_term)
-    invoice_date_deadline = fields.Selection('账期计算方式',related='payment_term_id.invoice_date_deadline_field')
+    days_term = fields.Integer('账期', compute=compute_days_term)
+    invoice_date_deadline = fields.Selection('账期计算方式', related='payment_term_id.invoice_date_deadline_field')
 
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
                                                     compute=compute_all_in_one, store=True)
@@ -784,37 +785,42 @@ class account_invoice(models.Model):
     payment_log_hexiao_ids = fields.One2many('account.payment', 'invoice_log_id', '核销单',
                                              domain=[('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu'])])
     payment_log_hexiao_ids_count = fields.Integer('未完成认领以及收付明细数量', compute=compute_payment_log_ids_count)
-    payment_log_hexiao_amount = fields.Monetary('核销金额',currency_field='currency_id', compute=compute_payment_log_hexiao_amount,store=True)
+    payment_log_hexiao_amount = fields.Monetary('核销金额', currency_field='currency_id',
+                                                compute=compute_payment_log_hexiao_amount, store=True)
 
     other_payment_invoice_id = fields.Many2one('account.invoice', '关联的其他应收付下级账单')  # 目前 只对其他应收做了计算  #C
-    other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')#C
+    other_payment_invoice_parent_id = fields.Many2one('account.invoice', '关联的其他应收付上级账单')  # C
 
     # 1029#通过他们是否同属于一张申请单来汇总所有相关账单,其他应收付和相关的应收付申请，这里还没有直接的联系，待处理
-    back_tax_declaration_state = fields.Selection([('10', '未申报'), ('15','部分申报'),('20', '已申报')], '退税申报状态', default='10')
+    back_tax_declaration_state = fields.Selection([('10', '未申报'), ('15', '部分申报'), ('20', '已申报')], '退税申报状态',
+                                                  default='10')
     declaration_amount = fields.Monetary('申报总金额', currency_field='currency_id', compute=compute_declaration_amount,
                                          store=True)
-    declaration_amount_latest = fields.Monetary('最新一次申报金额', currency_field='currency_id', compute=compute_declaration_amount,
-                                         store=True)
+    declaration_amount_latest = fields.Monetary('最新一次申报金额', currency_field='currency_id',
+                                                compute=compute_declaration_amount,
+                                                store=True)
     btd_line_ids = fields.One2many('back.tax.declaration.line', 'invoice_id', u'申报明细')
 
-
-    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice', '相关退税账单', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)#C
-    tb_po_invoice_back_tax_ids_residual = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount, store=True)#C
+    tb_po_invoice_back_tax_ids = fields.Many2many('account.invoice', '相关退税账单', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_back_tax_ids_count = fields.Integer('相关退税账单数量', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_back_tax_ids_amount_total = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount,
+                                                              store=True)  # C
+    tb_po_invoice_back_tax_ids_residual = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount,
+                                                          store=True)  # C
     tb_po_invoice_back_tax_ids_can_approve_all = fields.Monetary('相关退税账单金额', compute=compute_tb_invoice_amount,
-                                                                 store=True)#C
+                                                                 store=True)  # C
 
-    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice', '相关冲减账单', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_p_s_ids_count = fields.Integer('相关冲减账单数量', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_s_ids = fields.Many2many('account.invoice', '相关应收账单', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_s_ids_count = fields.Integer('相关应收账单数量', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_s_ids_amount_total = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)#C
-    tb_po_invoice_s_ids_residual = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)#C
-    tb_po_invoice_s_ids_can_approve_all = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)#C
+    tb_po_invoice_p_s_ids = fields.Many2many('account.invoice', '相关冲减账单', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_p_s_ids_count = fields.Integer('相关冲减账单数量', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_s_ids = fields.Many2many('account.invoice', '相关应收账单', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_s_ids_count = fields.Integer('相关应收账单数量', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_s_ids_amount_total = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)  # C
+    tb_po_invoice_s_ids_residual = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount, store=True)  # C
+    tb_po_invoice_s_ids_can_approve_all = fields.Monetary('相关应收账单金额', compute=compute_tb_invoice_amount,
+                                                          store=True)  # C
 
-    tb_po_invoice_all_ids = fields.Many2many('account.invoice', '相关账单', compute=compute_tb_po_invoice)#C
-    tb_po_invoice_all_ids_count = fields.Integer('相关账单数量', compute=compute_tb_po_invoice)#C
+    tb_po_invoice_all_ids = fields.Many2many('account.invoice', '相关账单', compute=compute_tb_po_invoice)  # C
+    tb_po_invoice_all_ids_count = fields.Integer('相关账单数量', compute=compute_tb_po_invoice)  # C
 
     name_title = fields.Char(u'账单描述')
     invoice_partner = fields.Char(u'账单对象')
@@ -827,23 +833,24 @@ class account_invoice(models.Model):
     tb_po_invoice_ids_count = fields.Integer(u'额外账单申请单数量', compute=compute_tb_po_invoice_ids)
     # 0911
 
-    yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收付单') #C 未定
+    yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收付单')  # C 未定
     # 831增加对应报关申报表
     df_id = fields.Many2one('back.tax.declaration', u'报关申报表')
 
-
-
-    df_new_id = fields.Many2one('back.tax.declaration', u'报关申报表',compute='compute_df_new_id' ,store=True)
+    df_new_id = fields.Many2one('back.tax.declaration', u'报关申报表', compute='compute_df_new_id', store=True)
     # 820增加一个和新增采购关联的字段，把退税等一起关联起来
-    tb_po_invoice_id = fields.Many2one('tb.po.invoice', u'综合增加采购单', ondelete='cascade') #C
+    tb_po_invoice_id = fields.Many2one('tb.po.invoice', u'综合增加采购单', ondelete='cascade')  # C
 
-    in_invoice_amount = fields.Monetary('增加采购应付金额',currency_field='currency_id',compute=compute_in_invoice_amount ,store=True)
-    in_invoice_residual = fields.Monetary('增加采购剩余应付', currency_field='currency_id', compute=compute_in_invoice_amount, store=True)
+    in_invoice_amount = fields.Monetary('增加采购应付金额', currency_field='currency_id', compute=compute_in_invoice_amount,
+                                        store=True)
+    in_invoice_residual = fields.Monetary('增加采购剩余应付', currency_field='currency_id', compute=compute_in_invoice_amount,
+                                          store=True)
 
-    tb_po_invoice_child_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice')#C
-    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', compute=compute_yjzy_tb_po_child_patent, store=True)#C
-    tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')#C
-    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', compute=compute_yjzy_tb_po_child_patent, store=True)#C
+    tb_po_invoice_child_id = fields.Many2one('tb.po.invoice', related='tb_po_invoice_id.yjzy_tb_po_invoice')  # C
+    is_yjzy_tb_po_invoice = fields.Boolean('是否有对应下级账单', compute=compute_yjzy_tb_po_child_patent, store=True)  # C
+    tb_po_invoice_parent_id = fields.Many2one('tb.po.invoice',
+                                              related='tb_po_invoice_id.yjzy_tb_po_invoice_parent')  # C
+    is_yjzy_tb_po_invoice_parent = fields.Boolean('是否有对应上级账单', compute=compute_yjzy_tb_po_child_patent, store=True)  # C
     # 819费用转应付发票
     expense_sheet_id = fields.Many2one('hr.expense.sheet', u'费用报告')
     # 增加常规转直接的状态，明细那边增加是否已经转换的状态
@@ -869,25 +876,26 @@ class account_invoice(models.Model):
                                           ('20_extra', u'额外账单'),
                                           ('30_reconcile', u'核销账单')], u'账单类型')
     back_tax_type = fields.Selection([('normal', u'正常退税'),
-                                    ('adjustment', u'调节退税'),
-                                    ], string=u'退税类型',default='normal')
+                                      ('adjustment', u'调节退税'),
+                                      ], string=u'退税类型', default='normal')
 
     # from_type = fields.Selection([('manual_create',u'手动创建'),('auto_crate',u'自动创建')],u'创建方式')
 
-    need_refund = fields.Boolean(u'是否需要退款')  #C
-    refund_state = fields.Selection([('10_no', '未退款'), ('20_part', '部分退款'), ('30_all', '完成退款')], u'退款状态') #C
+    need_refund = fields.Boolean(u'是否需要退款')  # C
+    refund_state = fields.Selection([('10_no', '未退款'), ('20_part', '部分退款'), ('30_all', '完成退款')], u'退款状态')  # C
 
-    hsname_all_ids = fields.One2many('invoice.hs_name.all', 'invoice_id', u'报关明细') #这个字段要增加，要和出运的tbl.hsmane.all保持一致，也就是申请单的一组
+    hsname_all_ids = fields.One2many('invoice.hs_name.all', 'invoice_id',
+                                     u'报关明细')  # 这个字段要增加，要和出运的tbl.hsmane.all保持一致，也就是申请单的一组
     # 显示开票资料对应出运单的报关资料汇总
     # tb_hsname_all_ids = fields.One2many('tbl.hsname.all', u'报关明细',related="bill_id.hsname_all_ids")
-    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票(报关)明细', related="tb_po_invoice_id.hsname_all_ids") #C
-    tb_po_hsname_all_ids_count = fields.Integer('开票(报关)明细数量', compute=compute_tb_po_hsname_all_ids_count) #C
+    tb_po_hsname_all_ids = fields.One2many('tb.po.invoice.line', u'开票(报关)明细',
+                                           related="tb_po_invoice_id.hsname_all_ids")  # C
+    tb_po_hsname_all_ids_count = fields.Integer('开票(报关)明细数量', compute=compute_tb_po_hsname_all_ids_count)  # C
 
     # tb_hsname_all_ids_count = fields.Integer('报关明细数量',compute=compute_tb_po_invoice_ids)
     external_invoice_done = fields.Selection([('10_no', u'否'),
                                               ('20_yes', u'是'),
                                               ('30_not', u'非')], '外账是否确认销售', default='10_no')
-
 
     external_usd_pool = fields.Float('外账美金池', compute=compute_yjzy_invoice_amount_total, store=True)
     usd_pool_id = fields.Many2one('usd.pool', u'美金池状态', compute=compute_yjzy_invoice_amount_total, store=True)
@@ -911,8 +919,8 @@ class account_invoice(models.Model):
         'account.invoice.stage',
         default=_default_invoice_stage, copy=False)
 
-
-    state_1 = fields.Selection(Invoice_Selection, '账单审批',default='draft', index=True, related='stage_id.state',track_visibility='onchange')
+    state_1 = fields.Selection(Invoice_Selection, '账单审批', default='draft', index=True, related='stage_id.state',
+                               track_visibility='onchange')
     # 新建一个账单的状态，可以用来筛选还没有开始付款申请的账单
     state_2 = fields.Selection([
         ('10_draft', u'未确认'),
@@ -958,14 +966,16 @@ class account_invoice(models.Model):
 
     reconcile_order_id_ids = fields.One2many('account.reconcile.order', 'back_tax_invoice_id', '额外退税对应核销单')
 
-
-
     reconcile_order_id_advance_draft_ids = fields.One2many('account.reconcile.order', 'invoice_id', '草稿核销单预付',
-                                                   domain=[('state', 'in', ['draft']),('hxd_type_new','=','30')])
-    reconcile_order_id_advance_draft_ids_count = fields.Integer('草稿核销单预付数量',compute=compute_reconcile_order_id_draft_ids_count)
+                                                           domain=[('state', 'in', ['draft']),
+                                                                   ('hxd_type_new', '=', '30')])
+    reconcile_order_id_advance_draft_ids_count = fields.Integer('草稿核销单预付数量',
+                                                                compute=compute_reconcile_order_id_draft_ids_count)
     reconcile_order_id_payment_draft_ids = fields.One2many('account.reconcile.order', 'invoice_id', '草稿核销单付款',
-                                                   domain=[('state', 'in', ['draft']), ('hxd_type_new', '=', '40')])
-    reconcile_order_id_payment_draft_ids_count = fields.Integer('草稿核销单付款数量',compute=compute_reconcile_order_id_draft_ids_count)
+                                                           domain=[('state', 'in', ['draft']),
+                                                                   ('hxd_type_new', '=', '40')])
+    reconcile_order_id_payment_draft_ids_count = fields.Integer('草稿核销单付款数量',
+                                                                compute=compute_reconcile_order_id_draft_ids_count)
     reconcile_order_line_id = fields.One2many('account.reconcile.order.line', 'invoice_id', u'核销明细行',
                                               domain=[('order_id.state', '=', 'done'), ('amount_total_org', '!=', 0)])
 
@@ -987,16 +997,14 @@ class account_invoice(models.Model):
     yjzy_invoice_reconcile_order_line_ids = fields.One2many('account.reconcile.order.line', 'yjzy_invoice_id',
                                                             u'所有核销明细行',
                                                             domain=[('order_id', '!=', False), (
-                                                            'order_id.sfk_type', '=',
-                                                            'yfhxd')])  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
+                                                                'order_id.sfk_type', '=',
+                                                                'yfhxd')])  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账单以及自己）的所有认领明细
     yjzy_invoice_reconcile_order_line_no_ids = fields.One2many('account.reconcile.order.line.no', 'yjzy_invoice_id',
                                                                u'所有核销细行no', domain=[('order_id', '!=', False),
                                                                                     ('order_id.sfk_type', '=', 'yfhxd')]
                                                                )  # domain=[('order_id.state', 'in', ['approved']), ('amount_total_org', '!=', 0)]关联账单（额外账
     amount_payment_can_approve_all = fields.Monetary(u'可申请应收付款', currency_field='currency_id',
                                                      compute=compute_amount_payment_can_approve_all, store=True)
-
-
 
     amount_advance_org_done = fields.Monetary(u'预收付认领金额', currency_field='currency_id',
                                               compute=compute_amount_payment_can_approve_all, store=True)
@@ -1005,23 +1013,22 @@ class account_invoice(models.Model):
                                               compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_advance_org_approval = fields.Monetary(u'预收付未审批认领金额', currency_field='currency_id',
-                                              compute=compute_amount_payment_can_approve_all, store=True)
+                                                  compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_payment_org_approval = fields.Monetary(u'收付款未审批金额', currency_field='currency_id',
-                                              compute=compute_amount_payment_can_approve_all, store=True)
+                                                  compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_advance_org_draft_approval = fields.Monetary(u'预收付审批中_草稿认领金额', currency_field='currency_id',
-                                                  compute=compute_amount_payment_can_approve_all, store=True)
+                                                        compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_payment_org_draft_approval = fields.Monetary(u'收付款审批中_草稿金额', currency_field='currency_id',
-                                                  compute=compute_amount_payment_can_approve_all, store=True)
+                                                        compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_advance_org_draft = fields.Monetary(u'预收付草稿认领金额', currency_field='currency_id',
-                                                        compute=compute_amount_payment_can_approve_all, store=True)
+                                               compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_payment_org_draft = fields.Monetary(u'收付款审草稿金额', currency_field='currency_id',
-                                                        compute=compute_amount_payment_can_approve_all, store=True)
-
+                                               compute=compute_amount_payment_can_approve_all, store=True)
 
     amount_payment_org_approved = fields.Monetary(u'已完成审批收付款金额', currency_field='currency_id',
                                                   compute=compute_amount_payment_can_approve_all, store=True)
@@ -1092,7 +1099,8 @@ class account_invoice(models.Model):
                                            copy=True)
     invoice_line_ids_origin = fields.One2many('account.invoice.line', 'invoice_id',
                                               domain=[('quantity', '!=', 0)],
-                                              readonly=True, states={'draft': [('readonly', False)]}, copy=True)#本来是除去手动的 ，现在把手动的也加回去('is_manual', '=', False),
+                                              readonly=True, states={'draft': [('readonly', False)]},
+                                              copy=True)  # 本来是除去手动的 ，现在把手动的也加回去('is_manual', '=', False),
     amount_automatic = fields.Monetary('原始合计金额', currency_field='currency_id', compute=compute_amount)
     amount_manual = fields.Monetary('手动合计金额', currency_field='currency_id', compute=compute_amount)
     residual_date_group = fields.Selection(
@@ -1100,10 +1108,10 @@ class account_invoice(models.Model):
          ('before_30', u'未来30天'), ('before_30_60', u'未来30-60天'),
          ('before_60_90', u'未来60-90天'), ('before_90', u'未来超过90天'), ('un_begin', u'未开始')], '到期时间组', store=True,
         compute=compute_residual_date_group)
-    residual_times = fields.Integer('逾期天数2', compute=compute_times) #发票日期计算
+    residual_times = fields.Integer('逾期天数2', compute=compute_times)  # 发票日期计算
     residual_times_new = fields.Integer('逾期天数2', compute=compute_times, group_operator=False, store=True)
-    residual_times_out_in = fields.Integer('逾期天数1', compute=compute_times) #进仓日计算
-    residual_times_out_in_new = fields.Integer('逾期天数1', compute=compute_times,group_operator=False, store=True)
+    residual_times_out_in = fields.Integer('逾期天数1', compute=compute_times)  # 进仓日计算
+    residual_times_out_in_new = fields.Integer('逾期天数1', compute=compute_times, group_operator=False, store=True)
     state = fields.Selection([
         ('draft', u'未确认'),
         ('open', u'执行中'),
@@ -1146,19 +1154,27 @@ class account_invoice(models.Model):
                                             domain=[('quantity', '!=', 0),
                                                     ('invoice_attribute', 'in', ['normal', 'extra'])])
 
-    plan_invoice_auto_id = fields.Many2one('plan.invoice.auto','应收发票')
-    #方案二0809
+    plan_invoice_auto_id = fields.Many2one('plan.invoice.auto', '应收发票')
+    plan_invoice_auto_state_1 = fields.Selection(
+        [('10', '报关数据待锁定'), ('20', '报关数据已锁定-应收发票待锁定'), ('30', '应收发票锁定-发票未收齐'), ('40', '发票已收齐-未开销项'),
+         ('50', '已开销项-未申报退税'), ('60', '已申报退税未收退税'), ('70', '已收退税')], related='plan_invoice_auto_id.state_1',
+        string='state_1', store=True)
+    plan_invoice_auto_state_2 = fields.Selection(
+        [('10', '正常待锁定.'), ('20', '异常待锁定.'), ('30', '正常待锁定'), ('40', '异常待锁定'), ('50', '正常未收齐'),
+         ('60', '异常未收齐'), ('70', '正常未开'), ('75', '异常未开'), ('80', '正常未申报'), ('90', '异常未申报'), ('100', '正常未收'),
+         ('110', '异常未收'), ('120', '已收退税')], related='plan_invoice_auto_id.state_2', string='State', store=True)
+
+    # 方案二0809
 
     # real_invoice_auto_ids = fields.Many2many('real.invoice.auto','实际发票')
-
 
     def _make_plan_invoice_auto(self):
         if self.type == 'in_invoice':
             pia_obj = self.env['plan.invoice.auto']
             # real_invoice_auto_id = self.env['real.invoice.auto'].search([('partner_id','=',self.partner_id.id),('bill_id','=',self.bill_id.id)],limit=1)
             plan_invoice_auto = pia_obj.create({
-                'invoice_id':self.id,
-                'bill_id':self.bill_id.id,
+                'invoice_id': self.id,
+                'bill_id': self.bill_id.id,
                 # 'real_invoice_auto_id':real_invoice_auto_id.id
             })
             self.plan_invoice_auto_id = plan_invoice_auto
@@ -1167,12 +1183,12 @@ class account_invoice(models.Model):
     def make_plan_invoice_auto(self):
         if self.type == 'in_invoice':
             pia_obj = self.env['plan.invoice.auto']
-            plan_invoice_auto_id = pia_obj.search([('bill_id','=',self.bill_id.id)])
+            plan_invoice_auto_id = pia_obj.search([('bill_id', '=', self.bill_id.id)])
             if self.include_tax:
                 if not plan_invoice_auto_id:
                     plan_invoice_auto = pia_obj.create({
 
-                        'bill_id':self.bill_id.id,
+                        'bill_id': self.bill_id.id,
                         # 'real_invoice_auto_id':real_invoice_auto_id.id
                     })
                     self.plan_invoice_auto_id = plan_invoice_auto
@@ -1180,6 +1196,7 @@ class account_invoice(models.Model):
                 else:
                     self.plan_invoice_auto_id = plan_invoice_auto_id
                     self.plan_invoice_auto_id.compute_hs_name_all_ids()
+
     def create_tenyale_name(self):
         for one in self:
             if one.invoice_attribute_all_in_one == '230':
@@ -2094,7 +2111,6 @@ class account_invoice(models.Model):
         for todo in todo_lines:
             self.assign_outstanding_credit(todo.id)
 
-
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)
         return self.env['account.invoice.stage'].search(search_domain, order=order, limit=1)
@@ -2125,7 +2141,6 @@ class account_invoice(models.Model):
             inv_1.stage_id = stage_id
         return res
 
-
     @api.multi
     def action_invoice_paid(self):
         # lots of duplicate calls to action_invoice_paid, so we remove those already paid
@@ -2133,14 +2148,13 @@ class account_invoice(models.Model):
         if to_pay_invoices.filtered(lambda inv: inv.state != 'open'):
             raise UserError(_('Invoice must be validated in order to set it to register payment.'))
         if to_pay_invoices.filtered(lambda inv: not inv.reconciled):
-            raise UserError(_('You cannot pay an invoice which is partially paid. You need to reconcile payment entries first.'))
+            raise UserError(
+                _('You cannot pay an invoice which is partially paid. You need to reconcile payment entries first.'))
 
         stage_id = self._stage_find(domain=[('code', '=', '008')])
 
         return to_pay_invoices.write({'state': 'paid',
                                       'stage_id': stage_id.id})
-
-
 
     def manual_stage_id(self):
         if self.state == 'open':
@@ -2152,11 +2166,6 @@ class account_invoice(models.Model):
         else:
             self.stage_id = self._stage_find(domain=[('code', '=', '008')])
 
-
-
-
-
-
     def stage_action_pending(self):
         stage_id = self._stage_find(domain=[('code', '=', '007')])
         self.stage_id = stage_id
@@ -2164,7 +2173,6 @@ class account_invoice(models.Model):
     def stage_action_back_pending(self):
         stage_id = self._stage_find(domain=[('code', '=', '004')])
         self.stage_id = stage_id
-
 
     def stage_action_refuse(self, reason):
         stage_id = self._stage_find(domain=[('code', '=', '005')])
@@ -2228,12 +2236,12 @@ class account_invoice(models.Model):
     def open_reconcile_order_no_line(self):
         self.ensure_one()
         advance = self.env.context.get('advance') or 0
-        ctx = {'advance':advance}
+        ctx = {'advance': advance}
         if advance:
             test = 'amount_advance_org_compute'
         else:
             test = 'amount_payment_org'
-        print('pay_type_akiny',advance)
+        print('pay_type_akiny', advance)
         # form_view = self.env.ref('yjzy_extend.view_account_invoice_new_form')
         state = self.env.context.get('state') or 'done'
         for one in self:
@@ -2251,12 +2259,11 @@ class account_invoice(models.Model):
                 'res_model': 'account.reconcile.order.line.no',
                 'type': 'ir.actions.act_window',
                 'views': [(tree_view.id, 'tree')],
-                'domain': [('invoice_id', 'in', [one.id]), ('order_id.state', '=', state),(test,'!=',0)],
+                'domain': [('invoice_id', 'in', [one.id]), ('order_id.state', '=', state), (test, '!=', 0)],
                 'target': 'new',
                 'context': ctx
 
             }
-
 
     def open_reconcile_order(self):
         self.ensure_one()
@@ -2267,17 +2274,18 @@ class account_invoice(models.Model):
         if advance:
             test = 'amount_advance_org_new'
             reconcile_order_id = self.env['account.reconcile.order'].search(
-                [('invoice_id', '=', self.id), ('state', 'in', ['posted', 'draft']),('hxd_type_new','=','30')], limit=1)
+                [('invoice_id', '=', self.id), ('state', 'in', ['posted', 'draft']), ('hxd_type_new', '=', '30')],
+                limit=1)
         else:
             test = 'amount_payment_org_new'
             reconcile_order_id = self.env['account.reconcile.order'].search(
-                [('invoice_id', '=', self.id), ('state', 'in', ['posted', 'draft']),('hxd_type_new','=','40')], limit=1)
-        print('pay_type_akiny', advance,test)
+                [('invoice_id', '=', self.id), ('state', 'in', ['posted', 'draft']), ('hxd_type_new', '=', '40')],
+                limit=1)
+        print('pay_type_akiny', advance, test)
         if self.type == 'out_invoice':
             tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
             form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
             name = '客户应收'
-
 
         if self.type == 'in_invoice':
             tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new')
@@ -2292,18 +2300,18 @@ class account_invoice(models.Model):
             'res_model': 'account.reconcile.order',
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
-            'res_id':reconcile_order_id.id,
+            'res_id': reconcile_order_id.id,
             'target': 'new',
             # 'context': ctx
 
         }
 
-
     def open_account_payment_hexiao(self):
         self.ensure_one()
 
         hexiao_id = self.env['account.payment'].search(
-            [('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu']),('invoice_log_id', '=', self.id), ('state', 'in', ['posted', 'reconciled'])], limit=1)
+            [('sfk_type', 'in', ['reconcile_yingshou', 'reconcile_yingfu']), ('invoice_log_id', '=', self.id),
+             ('state', 'in', ['posted', 'reconciled'])], limit=1)
 
         if self.type == 'out_invoice':
             form_view = self.env.ref('yjzy_extend.view_ysrld_reconcile_form')
@@ -2321,7 +2329,7 @@ class account_invoice(models.Model):
             'res_model': 'account.payment',
             'type': 'ir.actions.act_window',
             'views': [(form_view.id, 'form')],
-            'res_id':hexiao_id.id,
+            'res_id': hexiao_id.id,
             'target': 'new',
             # 'context': ctx
 
@@ -2360,7 +2368,7 @@ class account_invoice(models.Model):
             if show_date_finish:
                 if one.date_finish:
                     name = '%s %s' % (
-                    one.date_finish or '', one.partner_id.name or '',)
+                        one.date_finish or '', one.partner_id.name or '',)
                 else:
                     name = '%s %s' % (
                         '无交单日', one.partner_id.name or '',)
@@ -2541,7 +2549,6 @@ class account_invoice(models.Model):
                 x.compute_original_so_po_amount()
 
 
-
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'
 
@@ -2596,15 +2603,16 @@ class account_invoice_line(models.Model):
     # 0911
     # back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
 
-    @api.depends('purchase_id','purchase_id.amount_total','purchase_id.real_advance','purchase_id.balance_new','so_id',
-                 'so_id.amount_total','so_id.real_advance','so_id.balance_new','invoice_id','invoice_id.type')
+    @api.depends('purchase_id', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
+                 'so_id',
+                 'so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
     def compute_original_so_po_amount(self):
         for one in self:
             if one.invoice_id.type == 'in_invoice':
                 original_so_po_amount = one.purchase_id.amount_total
                 real_advance = one.purchase_id.real_advance
                 rest_advance_so_po_balance = one.purchase_id.balance_new
-                proportion_tb = original_so_po_amount != 0 and one.price_total/original_so_po_amount or 0
+                proportion_tb = original_so_po_amount != 0 and one.price_total / original_so_po_amount or 0
                 advice_advance_amount = proportion_tb * real_advance
                 advice_advance_amount_1 = proportion_tb * rest_advance_so_po_balance
                 one.original_so_po_amount = original_so_po_amount
@@ -2617,7 +2625,7 @@ class account_invoice_line(models.Model):
                 original_so_po_amount = one.so_id.amount_total
                 real_advance = one.so_id.real_advance
                 rest_advance_so_po_balance = one.so_id.balance_new
-                proportion_tb = original_so_po_amount != 0 and one.price_total/original_so_po_amount or 0
+                proportion_tb = original_so_po_amount != 0 and one.price_total / original_so_po_amount or 0
                 advice_advance_amount = proportion_tb * real_advance
                 advice_advance_amount_1 = proportion_tb * rest_advance_so_po_balance
 
@@ -2627,13 +2635,13 @@ class account_invoice_line(models.Model):
                 one.advice_advance_amount = advice_advance_amount
                 one.advice_advance_amount_1 = advice_advance_amount_1
 
-
-    original_so_po_amount = fields.Monetary('原始订单金额',currency_field='currency_id',compute=compute_original_so_po_amount)
-    rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额',currency_field='currency_id',compute=compute_original_so_po_amount,store=True)
-    proportion_tb = fields.Float('本次出运金额占订单比例',compute=compute_original_so_po_amount)
-    advice_advance_amount = fields.Monetary('应认领预付',compute=compute_original_so_po_amount,store=True)
+    original_so_po_amount = fields.Monetary('原始订单金额', currency_field='currency_id',
+                                            compute=compute_original_so_po_amount)
+    rest_advance_so_po_balance = fields.Monetary('原始订单预收预付剩余未认领金额', currency_field='currency_id',
+                                                 compute=compute_original_so_po_amount, store=True)
+    proportion_tb = fields.Float('本次出运金额占订单比例', compute=compute_original_so_po_amount)
+    advice_advance_amount = fields.Monetary('应认领预付', compute=compute_original_so_po_amount, store=True)
     advice_advance_amount_1 = fields.Monetary('建议认领预付', compute=compute_original_so_po_amount, store=True)
-
 
     invoice_yjzy_type_1 = fields.Selection(string=u'发票类型', related='invoice_id.yjzy_type_1')
     item_id = fields.Many2one('invoice.hs_name.item', 'Item')
@@ -2695,15 +2703,14 @@ class invoice_hs_name_all(models.Model):
     invoice_id = fields.Many2one('account.invoice', u'发票')
     tbl_hsname_all_id = fields.Many2one('tbl.hsname.all', '报关汇总明细')
 
+
 class purchse_invoice_hsname(models.Model):
     _name = 'purchase.invoice.hsname'
 
     hs_id = fields.Many2one('hs.hs', u'品名')
     invoice_id = fields.Many2one('account.invoice', u'发票')
-    partner_id = fields.Many2one('res.partner','供应商')
+    partner_id = fields.Many2one('res.partner', '供应商')
     qty2 = fields.Float(u'报关数量')
     price2 = fields.Float(u'报关单价')
     amount2 = fields.Float(u'实际采购金额', digits=dp.get_precision('Money'))
     back_tax_amount2 = fields.Float(u'报关退税金额', digits=dp.get_precision('Money'))
-
-

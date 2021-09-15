@@ -137,7 +137,7 @@
                 <form string="出运单">
                     <header groups="base.group_system">
 
-
+                        <button string="计算合同号" name="compute_tb_ref_1" type="object"/>
                         <button string="添加销售合同" states="draft" type="object" name="open_wizard_transport4so"
                                 class="oe_highlight"/>
                         <button string="添加销售明细" states="draft" type="object" name="open_wizard_transport4sol"
