@@ -246,7 +246,7 @@ class sale_order_line(models.Model):
             'res_model': 'transport.bill',
             'type': 'ir.actions.act_window',
             'views': [(tree_view_id, 'tree')],
-            'domain': [('bill_id', 'in', self.bill_id.id)],
+            'domain': [('line_ids', 'in', self.tbl_ids)],
             'target': 'new',
             'context': {
                         }

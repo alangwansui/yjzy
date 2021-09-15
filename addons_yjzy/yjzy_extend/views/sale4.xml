@@ -871,7 +871,7 @@
                                         <field name="tb_line_count" string="发货次数"/>
                                         <button type="object" name="open_bill_ids" icon="fa-archive"
                                                 />
-                                        <button name="company_currency_id" invisible="1"/>
+                                        <field name="company_currency_id" invisible="1"/>
 
                                         <field name="qty_undelivered"/>
                                         <field name="qty_delivered" string="已发货"
