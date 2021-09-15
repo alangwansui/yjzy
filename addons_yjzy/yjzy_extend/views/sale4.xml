@@ -696,10 +696,16 @@
                         </group>
                         <notebook>
                             <page string="订单行" name="sale_order_line_new">
-                                <button name="open_elect_multi_product_wizard" type="object" class="btn-primary"
+                                <button name="open_elect_multi_product_wizard" type="object" invisible="1" class="btn-primary"
                                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
-                                <label string="显示更多字段"/>
+                                <label string="显示更多字段" invisible="1"/>
                                 <field name="display_detail" widget="boolean_toggle" invisible="1"/>
+                                <button name="open_excel_text_parser" type="object" string="从excel复制订单"/>
+                                <button name="open_multi_select_product" string="Multi select product" type="object"
+                                        class="oe_highlight" invisible="1"/>
+                                <button name="818" type="action" string="Select Products"
+                                        context="{'default_flag_order': 'so'}" invisible="1"
+                                        attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_highlight"/>
                                 <field name="order_line" mode="tree,kanban"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}">
                                     <form string="销售订单明细">
@@ -819,12 +825,7 @@
                                         </div>
                                         <field name="state" invisible="1"/>
                                     </form>
-                                    <button name="open_excel_text_parser" type="object" string="从excel复制订单"/>
-                                    <button name="open_multi_select_product" string="Multi select product" type="object"
-                                            class="oe_highlight"/>
-                                    <button name="818" type="action" string="Select Products"
-                                            context="{'default_flag_order': 'so'}" invisible="1"
-                                            attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_highlight"/>
+
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'"
                                           editable="bottom" class="o_list_view_scroll" limit="80"
                                           decoration-danger="product_uom_qty != dlr_qty">
