@@ -535,6 +535,7 @@
                             <field name="supplier" invisible="1"/>
                             <field name="type" invisible="1" attrs="{'invisible': [('parent_id','=', False)]}"
                                    groups="base.group_no_one,sale.group_delivery_invoice_address"/>
+                            <field name="contract_suffix"/>
                             <field name="full_name" string="供应商全称"
                                    attrs="{
                                        'invisible':[('is_company','=',False)],'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>

@@ -44,8 +44,15 @@ class Product_Product(models.Model):
         for one in self:
             one.so_line_count = len(one.so_line_ids)
 
+    # @api.depends('so_line_ids')
+    # def compute_tb_line_count(self):
+    #     for one in self:
+    #         one.so_line_count = len(one.so_line_ids)
+
+    # tb_line_ids = fields.One2many('transport.bill_line','product_id', u'销售明细', domain=[('state','in',['approve','sale','done','abnormal','verifying','verification'])],)
     so_line_ids = fields.One2many('sale.order.line','product_id', u'销售明细', domain=[('state','in',['approve','sale','done','abnormal','verifying','verification'])],)
     so_line_count = fields.Integer('销售明细数量', compute=compute_so_line_count)
+    # tb_line_count = fields.Integer('发货明细数量', compute=compute_tb_line_count)
 
     for_extra = fields.Boolean('可用于额外账单')
     for_other_po = fields.Boolean('可用于增加采购')
@@ -151,8 +158,9 @@ class Product_Product(models.Model):
         only_code = self.env.context.get('only_code')
         def _get_name(one):
             ref = one.customer_ref and one.customer_ref or '无'
-            variant_seller_ids = len(one.variant_seller_ids) >1 and one.variant_seller_ids[-1] or  one.variant_seller_ids
+            variant_seller_ids = len(one.variant_seller_ids) >1 and one.variant_seller_ids[0] or  one.variant_seller_ids
             default_code = one.default_code
+            can_be_expensed = one.can_be_expensed
             if variant_seller_ids:
                 product_supplier_ref = variant_seller_ids.product_name
             else:
@@ -161,6 +169,8 @@ class Product_Product(models.Model):
                 name = one.name
             elif only_code:
                 name = one.default_code
+            elif can_be_expensed:
+                name = one.name
             elif ref and product_supplier_ref:
                 name = '%s/%s/%s' % (ref,product_supplier_ref,default_code)
             else:

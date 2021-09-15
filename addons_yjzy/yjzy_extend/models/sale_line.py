@@ -40,9 +40,7 @@ class sale_order_line(models.Model):
                 fd = purchase_cost * po.purchase_fandian_ratio  / 100
                 if self.include_tax:
                     fd =  fd /1.12
-
             fandian_amoun += fd
-
         return purchase_cost, fandian_amoun
 
     def compute_info(self):
@@ -153,6 +151,7 @@ class sale_order_line(models.Model):
     purchase_qty = fields.Float(u'采购数', compute=compute_info, store=False)
 
     purchase_cost = fields.Monetary(u'采购成本', currency_field='company_currency_id', compute=compute_info)
+
     fandian_amoun = fields.Monetary(u'返点金额', currency_field='company_currency_id', compute=compute_info)
     stock_cost = fields.Monetary(u'库存成本', currency_field='company_currency_id', compute=compute_info)
 
@@ -197,6 +196,11 @@ class sale_order_line(models.Model):
             can_project_tb_qty = one.product_uom_qty - project_tb_qty
             one.project_tb_qty = project_tb_qty
             one.can_project_tb_qty = can_project_tb_qty
+    @api.depends('purchase_price','product_uom_qty')
+    def compute_purchase_cost_new(self):
+        for one in self:
+            purchase_cost_new = one.purchase_price * one.product_uom_qty
+            one.purchase_cost_new = purchase_cost_new
 
     # def compute_product_supplier_ref(self):
     #     for one in self:
@@ -214,6 +218,11 @@ class sale_order_line(models.Model):
     # product_default_code = fields.Char('公司型号',related='product_id.default_code',store=True)
     # product_customer_ref = fields.Char('供应商型号',related='product_id.customer_ref',store=True)
     # product_supplier_ref = fields.Char('供应商信号',compute='compute_product_supplier_ref',store=True)
+
+    purchase_price = fields.Float('采购价格', copy=False, digits=dp.get_precision('Product Price'), default = 0.0)
+    purchase_cost_new = fields.Monetary(u'采购总价', currency_field='company_currency_id',
+                                        compute='compute_purchase_cost_new', store=True)
+
 
 
     #m2m不可以随便加入depends

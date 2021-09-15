@@ -827,7 +827,8 @@
                                     <tree string="销售订单明细" decoration-info="invoice_status=='to invoice'"
                                           editable="bottom" class="o_list_view_scroll" limit="80"
                                           decoration-danger="product_uom_qty != dlr_qty">
-                                        <button icon="fa-pencil-square-o" type="object" name="open_soline_form" groups="base.group_system"
+                                        <button icon="fa-pencil-square-o" type="object" name="open_soline_form"
+                                                groups="base.group_system"
                                                 attrs="{'invisible':[('parent.state','not in',['draft','refused']),('parent.is_editable','=',False)]}"/>
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_updatable" invisible="1"/>
@@ -836,37 +837,40 @@
                                                attrs="{'readonly': [('product_updatable', '=', False)]}"
                                                orce_save="1" options="{'no_open':True}" context="{'show_last_sale':1,'partner_id':parent.partner_id, 'quantity':product_uom_qty,
                                            'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
+                                        <field name="is_gold_sample" string="金样状态"/>
+                                        <field name="is_ps" string="PS状态"/>
                                         <field name="product_uom_qty" string="数量" sum="小计"
                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
                                         <button type="object" name="get_in_stock_quant" icon="fa-archive"
                                                 groups="base.group_system"/>
-                                        <field name="s_uom_id" string="单位" options="{'no_open':True}"/>
-                                        <field name="product_so_line_count" string="下单次数"/>
-                                        <field name="is_gold_sample" string="金样状态"/>
-                                        <field name="is_ps" string="PS状态"/>
 
+                                        <field name="s_uom_id" string="销售单位" options="{'no_open':True}"/>
+                                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"
+                                               string="销售单价"/>
+                                        <field name="price_total" widget="monetary" string="销售总价"
+                                               groups="sale.group_show_price_total"/>
+                                        <field name="supplier_id" options="{'no_open':True}"
+                                               domain="[('parent_id','=',False),('state','=','done'),('supplier','=',True),('is_ok','=',True)]"
+                                               attrs="{'readonly':[('pol_id','!=',False)]}"/>
+                                        <field name="purchase_contract_code"
+                                               attrs="{'readonly':[('pol_id','=',False)]}"/>
+                                        <field name="p_uom_id" string="采购单位" options="{'no_open':True}"/>
+                                        <field name="purchase_price" string="采购单价"/>
+                                        <field name="purchase_cost_new"/>
+                                        <field name="product_so_line_count" string="下单次数"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
                                         <field name="name" invisible="1"/>
                                         <field name="hs_id"
                                                attrs="{'column_invisible':[('parent.display_detail','=',False)]}"
                                                options="{'no_open':True}"/>
-                                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
-                                        <field name="amount_discount"/>
-                                        <field name="price_total" widget="monetary"
-                                               groups="sale.group_show_price_total"/>
+                                        <field name="amount_discount" invisible="1"/>
 
-                                        <field name="supplier_id" options="{'no_open':True}"
-                                               domain="[('parent_id','=',False),('state','=','done'),('supplier','=',True)]"
-                                               attrs="{'readonly':[('pol_id','!=',False)]}"/>
-                                        <field name="purchase_price"/>
-                                        <field name="p_uom_id" string="单位" options="{'no_open':True}"/>
-                                        <field name="purchase_cost"/>
+
                                         <field name="back_tax"
                                                attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
                                         <field name="back_tax_amount"
                                                attrs="{'column_invisible':[('parent.display_detail','=',False)]}"/>
-                                        <field name="purchase_contract_code"
-                                               attrs="{'readonly':[('pol_id','=',False)]}"/>
+
                                         <field name="second_unit_price"
                                                attrs="{'column_invisible': [('parent.contract_type', '!=', 'b')]}"/>
                                         <field name="second_price_total"

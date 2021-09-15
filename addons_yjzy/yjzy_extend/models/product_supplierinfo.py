@@ -7,6 +7,7 @@ from odoo.exceptions import Warning
 class product_supplierinfo(models.Model):
     _inherit = 'product.supplierinfo'
     _rec_name = 'full_name'
+    _order = 'id desc,sequence, min_qty desc, price'
 
     @api.depends('name', 'product_name', 'product_code')
     def compute_full_name(self):

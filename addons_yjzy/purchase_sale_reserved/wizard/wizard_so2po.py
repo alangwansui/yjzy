@@ -23,18 +23,25 @@ class wizard_so2po(models.TransientModel):
     def make_purchase_orders(self):
         self.ensure_one()
         self.check()
-
         po_obj = self.env['purchase.order']
         pol_obj = self.env['purchase.order.line']
 
         dic_partner_lines = self._prepare_po_datas()
         purchase_orders = po_obj.browse()
         for partner, lines in dic_partner_lines.items():
+
+            source_so_id = self.so_id
+            if partner.contract_suffix:
+                contract_code = '%s-%s' % (
+                    source_so_id.contract_code, partner.contract_suffix)
+            else:
+                raise Warning('供应商合同后缀未填写！')
             po = po_obj.create({
                 'partner_id': partner.id,
                 'source_so_id': self.so_id.id,
                 'date_planned': self.so_id.requested_date,
                 'gongsi_id': self.so_id.purchase_gongsi_id.id,
+                'contract_code': contract_code,
             })
             for line in lines:
                 pol = pol_obj.create({

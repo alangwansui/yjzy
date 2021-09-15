@@ -486,6 +486,27 @@ class res_partner(models.Model):
                                               compute=compute_amount_purchase_advance)
     is_ok = fields.Boolean('是否有效',default=True)
 
+    #14.0————————————
+    contract_suffix = fields.Char('合同后缀')
+
+    # def write(self, vals):
+    #     res = super(res_partner, self).write(vals)
+    #
+    #     if ('contract_suffix' in vals):
+    #         contract_suffix_1 = self.contract_suffix.replace(' ','')
+    #         self.write({'contract_suffix':contract_suffix_1,})
+    #     return res
+
+
+    @api.constrains('contract_suffix')
+    def check_name(self):
+        for one in self:
+            if one.contract_suffix == False:
+                break
+            else:
+                if self.search_count([('contract_suffix', '=', one.contract_suffix)]) > 1:
+                    raise Warning('合同后缀重复')
+
     #审批完成的时候添加客户和供应商编号
     def approve_create_code(self):
         seq_obj = self.env['ir.sequence']
@@ -801,7 +822,7 @@ class res_partner(models.Model):
     def action_submit(self):
         war = ''
         if self.customer :
-            if self.full_name and self.country_id and self.jituan_id and self.sale_currency_id and self.property_payment_term_id and \
+            if self.full_name and self.contract_suffix and self.country_id and self.jituan_id and self.sale_currency_id and self.property_payment_term_id and \
                     self.phone and self.fax and self.website and self.address_text and self.contract_type and \
                     self.gongsi_id and self.purchase_gongsi_id and self.partner_source_id and self.customer_info_from_uid and self.devloper_id and \
                     self.customer_purchase_in_china and self.customer_sale_total and \
@@ -838,7 +859,8 @@ class res_partner(models.Model):
                     war += '客户获取人不为空\n'
                 if not self.devloper_id:
                     war += '开发者不为空\n'
-
+                if not self.contract_suffix:
+                    war += '合同后缀不为空\n'
 
                 if not self.customer_purchase_in_china:
                     war += '客户在中国采购规模不为空\n'
