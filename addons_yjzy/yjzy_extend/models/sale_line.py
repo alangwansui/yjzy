@@ -190,12 +190,12 @@ class sale_order_line(models.Model):
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币', related='order_id.export_insurance_currency_id')
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
     #14.0--------------------------
-    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty')
+    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty','qty_delivered','product_uom_qty')
     def compute_project_tb_qty(self):
         for one in self:
             tbl_ids_undone = one.tbl_ids.filtered(lambda x: x.state in ['draft','submit','sale_approve','manager_approve','approve','refused'])
             project_tb_qty = sum(x.qty for x in tbl_ids_undone)
-            can_project_tb_qty = one.product_uom_qty - project_tb_qty
+            can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
             one.project_tb_qty = project_tb_qty
             one.can_project_tb_qty = can_project_tb_qty
     @api.depends('purchase_price','product_uom_qty')
