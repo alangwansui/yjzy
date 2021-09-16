@@ -537,7 +537,7 @@
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
 
                                 <field name="partner_id" string="贸易客户" required="0" options="{'no_open':1}"
-                                       attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"
+                                       attrs="{'readonly':[('state','!=','draft'),('is_editable','=',False)]}"
                                        domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|','|',('x_studio_field_U7OvH','in',uid),
                                        ('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),
                                        ('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
@@ -614,7 +614,7 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
                                 <field name="purchase_gongsi_id" options="{'no_open':1}" string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
-                                <field name="locked"/>
+                                <field name="locked" invisible="1"/>
                             </group>
                             <group attrs="{'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}">
 
@@ -694,7 +694,7 @@
                                 <field name="user_id" readonly="1" no_create="True" string="责任人"
                                        options="{'no_open':1}"/>
                                 <field name="sale_assistant_id" readonly="1" invisible="0" options="{'no_open':1}"/>
-                                <field name="is_discount"/>
+                                <field name="is_discount" invisible="1"/>
 
                             </group>
 
@@ -1166,8 +1166,8 @@
                                 <field name="tb_vendor_ids"/>
                             </page>
                             <page string="费用明细" invisible="0">
-                                <field name="expense_ids" readony="1">
-                                    <tree>
+                                <field name="expense_ids" readonly="1">
+                                    <tree >
                                         <field name="date"/>
                                         <field name="create_uid"/>
                                         <field name="employee_id" string="责任人"/>

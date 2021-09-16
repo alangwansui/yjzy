@@ -207,17 +207,17 @@ class sale_order_line(models.Model):
 
     def open_bill_ids(self):
         tree_view_id = self.env.ref('yjzy_extend.view_transport_bill_tenyale_sales_tree').id
+        form_view_id = self.env.ref('yjzy_extend.view_transport_bill_tenyale_sales_form').id
         return {
             'name': u'查看出运列表',
-            'view_type': 'tree',
-            'view_mode': 'tree',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
             'res_model': 'transport.bill',
             'type': 'ir.actions.act_window',
-            'views': [(tree_view_id, 'tree')],
-            'domain': [('line_ids', 'in', self.tbl_ids)],
+            'views': [(tree_view_id, 'tree'),(form_view_id,'form')],
+            'domain': [('line_ids', 'in', self.tbl_ids.ids)],
             'target': 'new',
-            'context': {
-                        }
+            'context': { }
         }
 
 
