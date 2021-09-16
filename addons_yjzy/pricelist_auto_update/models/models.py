@@ -55,6 +55,12 @@ class purchase_order(models.Model):
             one.update_supplier_price()
         return res
 
+    def button_approve(self):
+        res = super(purchase_order, self).button_approve()
+        for one in self:
+            one.update_supplier_price()
+        return res
+
     def update_supplier_price(self):
         self.ensure_one()
         seller_obj = self.env['product.supplierinfo']
