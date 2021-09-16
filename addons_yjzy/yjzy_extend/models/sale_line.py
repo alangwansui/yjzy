@@ -161,7 +161,7 @@ class sale_order_line(models.Model):
     def compute_project_tb_qty(self):
         for one in self:
             tbl_ids_undone = one.tbl_ids.filtered(lambda x: x.state in ['draft','submit','sale_approve','manager_approve','approve','refused'])
-            project_tb_qty = sum(x.qty for x in tbl_ids_undone)
+            project_tb_qty = sum(x.plan_qty for x in tbl_ids_undone)
             can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
             one.project_tb_qty = project_tb_qty
             one.can_project_tb_qty = can_project_tb_qty
