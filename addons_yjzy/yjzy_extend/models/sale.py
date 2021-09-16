@@ -56,6 +56,7 @@ class sale_order(models.Model):
             product_code = row[0]
             qty = row[1]
             price = row[2]
+            purchase_price = row[3]
 
             product = self.env['product.product'].search([('customer_ref', '=',product_code ),('customer_id','=',self.partner_id.id)])
             if not product:
@@ -66,6 +67,7 @@ class sale_order(models.Model):
                 'product_id': product.id,
                 'product_uom_qty': qty,
                 'price_unit': price,
+                'purchase_price':purchase_price,
                 'order_id': self.id,
             })
             sale_line.product_id_change()
@@ -73,6 +75,7 @@ class sale_order(models.Model):
             sale_line.update({
                 'product_uom_qty': qty,
                 'price_unit': price,
+                'purchase_price':purchase_price,
             })
 
 
