@@ -43,7 +43,7 @@ class sale_order_line(models.Model):
             fandian_amoun += fd
         return purchase_cost, fandian_amoun
 
-    @api.depends('purchase_price','product_uom_qty','order_id','order_id.cip_type','back_tax','order_id.current_date_rate')
+    # @api.depends('purchase_price','product_uom_qty','order_id','order_id.cip_type','back_tax','order_id.current_date_rate','tbl_ids')
     def compute_info(self):
         for one in self:
             # if one.order_state == 'draft':
@@ -60,6 +60,7 @@ class sale_order_line(models.Model):
                 price_total2 = one.currency_id.compute(one.price_total, one.company_currency_id)
             gross_profit_line = price_total2 - purchase_cost + back_tax_amount
             gross_profit_ratio_line = price_total2 != 0 and gross_profit_line / price_total2 * 100 / 5
+            one.rest_tb_qty = one.product_qty - sum(one.tbl_ids.mapped('qty2stage_new'))
             one.price_total2 = price_total2
             one.gross_profit_ratio_line = round(gross_profit_ratio_line,2)
             one.gross_profit_line = gross_profit_ratio_line
@@ -100,7 +101,7 @@ class sale_order_line(models.Model):
 
 
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')  # 13已
-    rest_tb_qty = fields.Float('出运剩余数', )  # 13已 参与测试后期删除compute=compute_info
+    rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)  # 13已 参与测试后期删除
     new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
     price_total2 = fields.Monetary(u'销售金额', currency_field='company_currency_id', )  # 'sale_amount': sol.price_total,compute=compute_info
