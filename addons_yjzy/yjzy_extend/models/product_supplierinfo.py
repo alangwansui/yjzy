@@ -16,6 +16,7 @@ class product_supplierinfo(models.Model):
 
     #13已经添加
     full_name = fields.Char(u'全称', compute=compute_full_name, store=True)
+    product_customer_id = fields.Many2one('res.partner',related='product_id.customer_id',store=True)
 
     # def  name_get(self):
     #     res = super(product_supplierinfo, self).name_get
