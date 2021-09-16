@@ -43,7 +43,7 @@ class sale_order_line(models.Model):
             fandian_amoun += fd
         return purchase_cost, fandian_amoun
 
-    @api.depends('purchase_price','product_uom_qty','order_id','order_id.cip_type','back_tax','order_id.current_date_rate')
+
     def compute_info(self):
         for one in self:
             if one.order_state == 'draft':
