@@ -105,7 +105,7 @@
                             context="{'group_by':['date_po_planned_is_out_time']}"
                             />
                     <filter string="销售合同工厂交期组合分组" name="group_date_po_planned_is_out_time_so" domain="[]"
-                            context="{'group_by':['so_id','date_po_planned_is_out_time']}"
+                            context="{'group_by':['date_po_planned_is_out_time','so_id']}"
                             />
 
 
@@ -1580,8 +1580,7 @@
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_plan_check_search"/>
         <field name="domain">
-            [('type','=','order_track'),('order_track_id_state','=','10_doing'),('so_po_return_state','=','returned'),
-            ('date_po_planned_is_out_time','=','40_in_out_time')]
+            [('type','=','order_track'),('order_track_id_state','=','10_doing'),('so_po_return_state','=','returned')]
         </field>
         <field name="context">{'search_default_group_date_po_planned_is_out_time_so':1}</field>
         <field name="view_ids" eval="[(5, 0, 0),
