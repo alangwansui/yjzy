@@ -735,8 +735,9 @@ class sale_order(models.Model):
         for one in self:
             if one.contract_code == False:
                 break
-            if self.sudo().search_count([('contract_code', '=', one.contract_code)]) > 1:
-                raise Warning('合同编码重复')
+            else:
+                if self.sudo().search_count([('contract_code', '=', one.contract_code)]) > 1:
+                    raise Warning('合同编码重复')
 
     # akiny 加入对是否使用今日手填汇率的判断
     def _get_sale_amount(self):

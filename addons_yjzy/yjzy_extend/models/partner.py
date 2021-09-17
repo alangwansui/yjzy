@@ -527,8 +527,9 @@ class res_partner(models.Model):
         for one in self:
             if one.name == False:
                 break
-            if self.search_count([('name', '=', one.name)]) > 1:
-                raise Warning('客户简称重复')
+            else:
+                if self.search_count([('name', '=', one.name)]) > 1:
+                    raise Warning('客户简称重复')
 
 
     @api.constrains('full_name')
@@ -536,8 +537,9 @@ class res_partner(models.Model):
         for one in self:
             if one.full_name == False:
                 break
-            if self.search_count([('full_name', '=', one.full_name)]) > 1:
-                raise Warning('客户全称重复')
+            else:
+                if self.search_count([('full_name', '=', one.full_name)]) > 1:
+                    raise Warning('客户全称重复')
 
     @api.multi
     def toggle_active_partner(self):
