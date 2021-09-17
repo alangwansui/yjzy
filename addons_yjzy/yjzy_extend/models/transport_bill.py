@@ -2914,6 +2914,22 @@ class transport_bill(models.Model):
                 ('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])],
             'target': 'new'
         }
+    # #打开填写供应商发货日期
+    # def open_purchase_invoice_fill_date_from_supplier(self):
+    #     form_view = self.env.ref('yjzy_extend.view_account_supplier_invoice_new_form')
+    #     tree_view = self.env.ref('yjzy_extend.view_account_invoice_new_tree')
+    #     self.ensure_one()
+    #     return {
+    #         'name': u'供应商日期填制',
+    #         'view_type': 'form',
+    #         'view_mode': 'tree,form',
+    #         'res_model': 'account.invoice',
+    #         'type': 'ir.actions.act_window',
+    #         'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+    #         'domain': [
+    #             ('id', 'in', [x.id for x in self.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase')])],
+    #         'target': 'new'
+    #     }
 
     def open_transport_self(self):
         xml_id = self.env.context.get('form_xml_id')

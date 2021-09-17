@@ -178,10 +178,6 @@ class MailActivity(models.Model):
     date_deadline = fields.Date('Due Date', index=True, required=False, )
     plan_check_line_id = fields.Many2one('plan.check.line', '检查点', ondelete='cascade', )
     po_id = fields.Many2one('purchase.order', '采购合同', related='plan_check_line_id.po_id', store=True)
-
-
-
-
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
     time_supplier_requested = fields.Integer('供应商交期时限', compute=time_supplier_requested, store=True)#交期-合规日期
     finish_percent_deadline = fields.Float('本计划在整个交期中的位置', compute=compute_date_deadline_hegui)  # 本计划所造总区间的位置，以及本计划在整个进度中的位置

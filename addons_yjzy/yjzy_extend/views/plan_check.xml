@@ -16,7 +16,8 @@
                 <filter name="new_order_state_done" string="已完成"
                         domain="[('order_track_new_order_state','=', '20_done')]"
                         invisible="context.get('type')!='new_order_track'"/>
-                <filter name="hegui_date" string="合规审批未完成" domain="[('hegui_date','=', False)]"  invisible="context.get('type')!='new_order_track'"/>
+                <filter name="hegui_date" string="合规审批未完成" domain="[('hegui_date','=', False)]"
+                        invisible="context.get('type')!='new_order_track'"/>
 
                 <filter string="Late Activities" name="activities_overdue" invisible="1"
                         domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
@@ -37,7 +38,7 @@
                     <filter string="合规审批月" name="group_hegui_date" domain="[]"
                             context="{'group_by':['hegui_date:month']}"
                             invisible="context.get('type')=='transport_track'"/>
-                      <filter string="客户交期月" name="group_date_so_requested" domain="[]"
+                    <filter string="客户交期月" name="group_date_so_requested" domain="[]"
                             context="{'group_by':['date_so_requested:month']}"
                             invisible="context.get('type')=='transport_track'"/>
                     <filter string="客户交期期限状态" name="group_ddate_so_requested_is_out_time" domain="[]"
@@ -85,13 +86,42 @@
             </search>
         </field>
     </record>
+    <!--    14.0-->
+    <record id="view_plan_check_search" model="ir.ui.view">
+        <field name="name">plan.check.select</field>
+        <field name="model">plan.check</field>
+        <field name="arch" type="xml">
+            <search string="Plan Check">
+                <field name="so_contract_code" string="模糊搜索"
+                       filter_domain="['|',('so_id','ilike',self),('po_id','ilike',self),
+                       ('so_contract_code','ilike',self),('po_contract_code','ilike',self)]"/>
+                <separator/>
+
+                <group expand="1" string="Group By">
+                    <filter string="销售合同分组" name="group_so" domain="[]"
+                            context="{'group_by':['so_id']}"
+                            />
+                    <filter string="工厂交期分组" name="group_date_po_planned_is_out_time" domain="[]"
+                            context="{'group_by':['date_po_planned_is_out_time']}"
+                            />
+                    <filter string="销售合同工厂交期组合分组" name="group_date_po_planned_is_out_time_so" domain="[]"
+                            context="{'group_by':['so_id','date_po_planned_is_out_time']}"
+                            />
+
+
+
+                </group>
+            </search>
+        </field>
+    </record>
 
 
     <record id="order_track_tree_view" model="ir.ui.view">
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll" decoration-danger="error_state == True">
+            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll"
+                  decoration-danger="error_state == True">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
@@ -118,7 +148,7 @@
                        invisible="context.get('type')!='new_order_track'"/>
                 <field name="plan_check_ids" widget="many2many_tags" groups="base.group_system"/>
                 <field name="comments_new_order_track" invisible="context.get('type')!='new_order_track'"/>
-                <field name="comments_new_order_track_date"  invisible="context.get('type')!='new_order_track'"/>
+                <field name="comments_new_order_track_date" invisible="context.get('type')!='new_order_track'"/>
                 <button name="open_plan_check_line" type="object" string="工厂检查点登记" class="oe_highlight" invisible="1"/>
                 <button name="open_plan_check_line_new" type="object" string="工厂检查点登记" class="oe_highlight"
                         invisible="1"/>
@@ -143,6 +173,9 @@
 
                 <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date"
                        string="客户交期"/>
+                <field name="date_so_requested_new" invisible="context.get('type_out')!='out_date'" widget="date"/>
+                <field name="date_so_requested_change_date" invisible="context.get('type_out')!='out_date'"
+                       widget="date"/>
                 <field name="time_contract_requested" invisible="1"/>
                 <field name="time_supplier_requested" invisible="1"/>
                 <field name="check_all_number" invisible="1"/>
@@ -160,7 +193,7 @@
                        invisible="context.get('type')!='order_track'"/>
                 <field name="so_no_sent_amount_new" invisible="context.get('type')!='order_track'"/>
                 <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
-                <field name="comments_order_track_date"  invisible="context.get('type')!='order_track'"/>
+                <field name="comments_order_track_date" invisible="context.get('type')!='order_track'"/>
 
                 <button name="open_tb_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='transport_track'"/>
@@ -180,16 +213,21 @@
                        invisible="context.get('type')!='transport_track'"/>
                 <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
                         invisible="context.get('type')!='transport_track'"/>
-                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"  groups="account.group_account_invoice"/>
-                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" groups="account.group_account_invoice"/>
-                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'"  groups="account.group_account_invoice"/>
-                <field name="zc_invoice_profile_residual_total_new" invisible="context.get('type')!='transport_track'" groups="account.group_account_invoice"/>
-                <field name="fzzc_back_tax_invoice_residual_total_new" invisible="context.get('type')!='transport_track'"  groups="account.group_account_invoice"/>
+                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"
+                       groups="account.group_account_invoice"/>
+                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'"
+                       groups="account.group_account_invoice"/>
+                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'"
+                       groups="account.group_account_invoice"/>
+                <field name="zc_invoice_profile_residual_total_new" invisible="context.get('type')!='transport_track'"
+                       groups="account.group_account_invoice"/>
+                <field name="fzzc_back_tax_invoice_residual_total_new"
+                       invisible="context.get('type')!='transport_track'" groups="account.group_account_invoice"/>
 
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
                 <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
-                <field name="comments_transport_track_date"  invisible="context.get('type')!='transport_track'"/>
+                <field name="comments_transport_track_date" invisible="context.get('type')!='transport_track'"/>
                 <field name="error_state" groups="base.group_system"/>
 
 
@@ -201,7 +239,8 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll" decoration-danger="error_state == True">
+            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll"
+                  decoration-danger="error_state == True">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
@@ -290,9 +329,12 @@
                        invisible="context.get('type')!='transport_track'"/>
                 <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
                         invisible="context.get('type')!='transport_track'"/>
-                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应收款" groups="account.group_account_invoice"/>
-                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应付款" groups="account.group_account_invoice"/>
-                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余退税" groups="account.group_account_invoice"/>
+                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应收款"
+                       groups="account.group_account_invoice"/>
+                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余应付款"
+                       groups="account.group_account_invoice"/>
+                <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'" string="剩余退税"
+                       groups="account.group_account_invoice"/>
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
                 <field name="comments_transport_track" invisible="context.get('type')!='transport_track'"/>
@@ -300,6 +342,94 @@
 
 
             </tree>
+        </field>
+    </record>
+    <!--    14.0-->
+    <record id="plan_check_tree_view_purchase_order" model="ir.ui.view">
+        <field name="name">plan.check.tree</field>
+        <field name="model">plan.check</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" delete="false" create="false"
+                  decoration-danger="check_on_time == '20_out_time_un_finish'">
+                <field name="order_track_id" groups="base.group_system"/>
+                <field name="so_id"/>
+                <field name="po_id" readonly="1"/>
+                <field name="plan_check_line" widget="many2many_tags"/>
+                <field name="check_on_time" invisible="1"/>
+                <field name="tb_id" invisible="1"/>
+                <field name="order_track_plan_number" readonly="1"/>
+                <field name="order_track_finish_number" readonly="1"/>
+                <field name="order_track_due_number" readonly="1"/>
+                <field name="order_track_due_finish_number" readonly="1"/>
+                <field name="order_track_time_out_finish_number" class="akiny_text_left" readonly="1"/>
+                <field name="plan_check_att_count" invisible="1"/>
+                <button name="open_self" type="object" invisible="1" icon="fa-paperclip"/>
+                <field name="comments" readonly="1"/>
+                <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                <button name="open_planning_integrity" type="object" string="检查点计划登记"
+                        invisible="context.get('type')!='order_track'" groups="base.group_system"/>
+
+
+            </tree>
+        </field>
+    </record>
+    <record id="plan_check_form_purchase_order" model="ir.ui.view">
+        <field name="name">plan.check.form</field>
+        <field name="model">plan.check</field>
+        <field name="arch" type="xml">
+            <form string="检查点">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="order_track_plan_number" readonly="1"/>
+                            <field name="order_track_finish_number" readonly="1"/>
+                            <field name="order_track_due_number" readonly="1"/>
+                            <field name="order_track_due_finish_number" readonly="1"/>
+                            <field name="order_track_time_out_finish_number" class="akiny_text_left" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="so_id"/>
+                            <field name="po_id" readonly="1"/>
+                            <field name="check_on_time" invisible="1"/>
+                            <field name="tb_id" invisible="1"/>
+                            <field name="comments" readonly="1"/>
+                            <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                            <button name="open_planning_integrity" type="object" string="检查点计划登记"
+                                    invisible="context.get('type')!='order_track'" groups="base.group_system"/>
+                        </group>
+                    </group>
+                    <notebook colspan="1">
+                        <page string="General Information" attrs="{'invisible':[('type','!=','order_track')]}">
+                            <field name="plan_check_line">
+                                <tree>
+                                    <field name="activity_type_1_id" readonly="1"/>
+                                    <button name="open_activity_id_plan" class="akiny_text_right" type="object"
+                                            icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
+
+                                    <field name="date_deadline"/>
+                                    <button name="open_activity_id_finish" class="akiny_text_right" type="object"
+                                            icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>
+
+                                    <field name="date_finish"/>
+                                    <field name="plan_check_id"/>
+
+                                    <button name="open_activity_id" type="object" string="登记该项检查点"
+                                            groups="base.group_system"
+                                            attrs="{'invisible':[('plan_check_id','=',False)]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="manager" groups="base.system">
+                            <field name="type"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
         </field>
     </record>
 
@@ -1140,14 +1270,15 @@
         <field name="model">plan.check.line</field>
         <field name="arch" type="xml">
             <tree string="检查点" default_order="date_deadline,activity_type_1_id_sequence" create="false"
-                  decoration-danger="remaining_time &lt;= 0 and remaining_time != -999" >
+                  decoration-danger="remaining_time &lt;= 0 and remaining_time != -999">
                 <field name="po_id"/>
                 <field name="supplier_id"/>
                 <field name="activity_type_1_id"/>
-                <button name="open_activity_id_plan" class="akiny_text_right" attrs="{'invisible':[('activity_id','=',False)],}" type="object" icon="fa-clock-o"/>
+                <button name="open_activity_id_plan" class="akiny_text_right"
+                        attrs="{'invisible':[('activity_id','=',False)],}" type="object" icon="fa-clock-o"/>
                 <field name="date_deadline"/>
-                  <field name="remaining_time" readonly="1"
-                         attrs="{'invisible':['|',('state','in',['40_finish','50_time_out_finish']),('remaining_time','=',-999)]}"/>
+                <field name="remaining_time" readonly="1"
+                       attrs="{'invisible':['|',('state','in',['40_finish','50_time_out_finish']),('remaining_time','=',-999)]}"/>
                 <button name="open_activity_id_finish" class="akiny_text_right" type="object"
                         attrs="{'invisible':['|',('activity_id','=',False),('date_deadline','=',False)]}"
                         icon="fa-check-circle"/>
@@ -1328,7 +1459,7 @@
                                 </td>
                                 <td>
                                     <button name="open_activity_id_plan" class="akiny_text_right" type="object"
-                                             icon="fa-clock-o" attrs="{'invisible':[('date_deadline','!=',False)]}"/>
+                                            icon="fa-clock-o" attrs="{'invisible':[('date_deadline','!=',False)]}"/>
                                     <field name="date_deadline"
                                            attrs="{'readonly':[('activity_id','=',False)]}"/>
                                 </td>
@@ -1419,13 +1550,61 @@
         <field name="domain">
             [('type','=','order_track'),('order_track_new_order_state','=','10_doing'),('so_po_return_state','=','returned'),]
         </field>
-        <field name="context">{'type': 'order_track'}</field>
+        <field name="context">{'search_default_group_ddate_so_requested_is_out_time':1,'type': 'order_track'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
 
     </record>
 
+    <record id="action_order_track_out_date" model="ir.actions.act_window">
+        <field name="name">逾期订单跟踪</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">order.track</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">
+            [('type','=','order_track'),('order_track_new_order_state','=','10_doing'),('so_po_return_state','=','returned'),
+            ('date_so_requested_is_out_time','=','40_in_out_time')]
+        </field>
+        <field name="context">{'type': 'order_track','type_out':'out_date'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
+
+    </record>
+
+    <record id="action_plan_check_po" model="ir.actions.act_window">
+        <field name="name">采购合同跟踪</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">plan.check</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_plan_check_search"/>
+        <field name="domain">
+            [('type','=','order_track'),('order_track_id_state','=','10_doing'),('so_po_return_state','=','returned'),
+            ('date_po_planned_is_out_time','=','40_in_out_time')]
+        </field>
+        <field name="context">{'search_default_group_date_po_planned_is_out_time_so':1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('plan_check_tree_view_purchase_order')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('plan_check_form_purchase_order')})]"/>
+
+    </record>
+    <record id="action_plan_check_po_out_date" model="ir.actions.act_window">
+        <field name="name">逾期采购合同跟踪</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">plan.check</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_plan_check_search"/>
+        <field name="domain">
+            [('type','=','order_track'),('order_track_id_state','=','10_doing'),('so_po_return_state','=','returned'),
+            ('date_po_planned_is_out_time','=','40_in_out_time')]
+        </field>
+        <field name="context">{}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('plan_check_tree_view_purchase_order')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('plan_check_form_purchase_order')})]"/>
+
+    </record>
     <record id="action_order_track_done" model="ir.actions.act_window">
         <field name="name">已完成订单跟踪</field>
         <field name="type">ir.actions.act_window</field>
@@ -1448,7 +1627,7 @@
         <field name="domain">
             [('type','=','transport_track'),('date_all_state','!=','50_payable_done')]
         </field>
-<!--        ('order_track_new_order_state','in',['10_doing','15_receivable_payment']),-->
+        <!--        ('order_track_new_order_state','in',['10_doing','15_receivable_payment']),-->
         <field name="search_view_id" ref="view_order_track_search"/>
         <field name="context">{'search_default_group_date_all_state':1,'type':'transport_track','show_date_finish':1}
         </field>
@@ -1464,7 +1643,7 @@
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('type','=','transport_track'),('date_all_state','=','50_payable_done')]</field>
-<!--        ('order_track_new_order_state','=','20_done')-->
+        <!--        ('order_track_new_order_state','=','20_done')-->
         <field name="search_view_id" ref="view_order_track_search"/>
         <field name="context">{'type': 'transport_track','show_date_finish':1}
         </field>
@@ -1487,7 +1666,7 @@
 
     </record>
     <menuitem id="menu_order_track_done_root" name="已完成" parent="menu_order_track_root"
-              sequence="7"/>
+              sequence="9"/>
     <menuitem id="menu_order_track_root" name="合同跟踪" sequence="99" groups="sales_team.group_manager"/>
     <menuitem id="menu_new_order_track" name="新订单下单前跟踪" parent="menu_order_track_root" action="action_new_order_track"
               sequence="1"/>
@@ -1496,24 +1675,36 @@
               sequence="1"/>
     <menuitem id="menu_order_track" name="订单跟踪" parent="menu_order_track_root" action="action_order_track"
               sequence="2"/>
+    <menuitem id="menu_order_track_out_date" name="逾期订单跟踪" parent="menu_order_track_root"
+              action="action_order_track_out_date"
+              sequence="3"/>
+    <menuitem id="menu_plan_check_po" name="采购合同跟踪" parent="menu_order_track_root" action="action_plan_check_po"
+              sequence="4"/>
+    <menuitem id="menu_plan_check_po_out_date" name="逾期采购合同跟踪" parent="menu_order_track_root" action="action_plan_check_po_out_date"
+              sequence="5"/>
+
+
+
     <menuitem id="menu_order_track_done" name="订单跟踪" parent="menu_order_track_done_root"
               action="action_order_track_done"
               sequence="2"/>
+
+
     <menuitem id="menu_order_track_tb" name="出运跟踪" parent="menu_order_track_root" action="action_order_track_tb"
-              sequence="5"/>
+              sequence="7"/>
     <menuitem id="menu_order_track_tb_done" name="出运跟踪" parent="menu_order_track_done_root"
               action="action_order_track_tb_done"
               sequence="3"/>
 
     <menuitem id="menu_plan_check" name="所有检查点" parent="menu_order_track_root" action="action_plan_check_line"
-              sequence="3"/>
-    <menuitem id="menu_customer_invoice_for_sales" name="客户应收" parent="menu_order_track_root" action="action_customer_invoice_all_for_sales"
               sequence="6"/>
+    <menuitem id="menu_customer_invoice_for_sales" name="客户应收" parent="menu_order_track_root"
+              action="action_customer_invoice_all_for_sales"
+              sequence="8"/>
 
-    <menuitem id="menu_action_order_track_all" name="所有跟踪" parent="menu_order_track_root" groups="base.group_system" action="action_order_track_all"
+    <menuitem id="menu_action_order_track_all" name="所有跟踪" parent="menu_order_track_root" groups="base.group_system"
+              action="action_order_track_all"
               sequence="99"/>
-
-
 
 
 </odoo>

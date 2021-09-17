@@ -449,9 +449,9 @@ class sale_order(models.Model):
     approve_date = fields.Date('审批完成日期')
     approve_uid = fields.Many2one('res.users', u'完成审批人')
     gold_sample_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无金样')], '样金管理',
-                                         compute=compute_info)
+                                         compute=compute_ps_gold)
     ps_state = fields.Selection([('all', '全部有'), ('part', '部分有'), ('none', '无PS')], 'PS管理',
-                                compute=compute_info)
+                                compute=compute_ps_gold)
     customer_pi = fields.Char(u'客户订单号')
     fee_inner = fields.Monetary(u'国内运杂费', currency_field='company_currency_id')
     fee_rmb1 = fields.Monetary(u'人民币费用1', currency_field='company_currency_id')
@@ -730,11 +730,13 @@ class sale_order(models.Model):
     #     if self.current_date_rate <= 0:
     #         raise Warning(u'汇率必须大于0')
 
-    # @api.constrains('contract_code')
-    # def check_contract_code(self):
-    #     for one in self:
-    #         if self.sudo().search_count([('contract_code', '=', one.contract_code)]) > 1:
-    #             raise Warning('合同编码重复')
+    @api.constrains('contract_code')
+    def check_contract_code(self):
+        for one in self:
+            if one.contract_code == False:
+                break
+            if self.sudo().search_count([('contract_code', '=', one.contract_code)]) > 1:
+                raise Warning('合同编码重复')
 
     # akiny 加入对是否使用今日手填汇率的判断
     def _get_sale_amount(self):

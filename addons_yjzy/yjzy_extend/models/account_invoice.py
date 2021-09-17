@@ -944,6 +944,7 @@ class account_invoice(models.Model):
     bill_id = fields.Many2one('transport.bill', u'发运单')
     tb_contract_code = fields.Char(u'出运合同号', related='bill_id.ref', readonly=True, store=True)
     include_tax = fields.Boolean(u'含税')
+    supplier_delivery_date = fields.Date(u'供应商发货日期')
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
     date_out_in = fields.Date('进仓日')
@@ -951,6 +952,7 @@ class account_invoice(models.Model):
     purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量', compute=compute_info)
     purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态',
                                                   default='draft')
+    is_purchase_invoice_finish = fields.Boolean('供应商是否交单')
     date_deadline = fields.Date(u'到期日期', compute=compute_date_deadline)
     date_deadline_new = fields.Date(u'到期日期', compute=compute_date_deadline, store=True)  # 0723
     gongsi_id = fields.Many2one('gongsi', '内部公司')
