@@ -132,7 +132,7 @@ class PlanInvoiceAuto(models.Model):
     hsname_all_ids = fields.Many2many('tbl.hsname.all', 'pia_id', 'hs_id', 'tbl_id', string='报关明细',
                                       compute='compute_hs_name_all_ids', store=True)
     back_tax_invoice_ids = fields.Many2many('account.invoice', 'pia1_id', 'inv_id', 'tb_id', string='退税账单',
-                                            compute=compute_back_tax_invoice_ids)
+                                            compute=compute_back_tax_invoice_ids,store=True)
     state = fields.Selection(
         [('10', '正常待锁定'), ('20', '异常待锁定'), ('30', '已锁定发票未收齐'), ('40', '已锁定异常发票未收齐(锁定一月后)'), ('50', '发票收齐未开票'),
          ('60', '发票收齐已开票'), ('70', '退税未申报'), ('75', '退税部分申报'), ('80', '退税已申报'), ('90', '退税未收齐'), ('100', '退税已收齐')],
