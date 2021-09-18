@@ -191,7 +191,7 @@ class PlanInvoiceAuto(models.Model):
             lock_date_residual_time = lock_date and (today - strptime(lock_date, DF)).days or 0
             plan_invoice_auto_amount = one.plan_invoice_auto_amount
             real_invoice_auto_amount = one.real_invoice_auto_amount
-            print('real_invoice_auto_amount',real_invoice_auto_amount,back_tax_invoice_declare_ids,back_tax_invoice_ids)
+            print('real_invoice_auto_amount',real_invoice_auto_amount,date_ship,back_tax_invoice_declare_ids,back_tax_invoice_ids)
 
             if not date_ship:
                 one.state_1 = '10'
