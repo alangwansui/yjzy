@@ -349,12 +349,12 @@
         <field name="name">plan.check.tree</field>
         <field name="model">plan.check</field>
         <field name="arch" type="xml">
-            <tree editable="bottom" delete="false" create="false"
+            <tree delete="false" create="false"
                   decoration-danger="check_on_time == '20_out_time_un_finish'">
                 <field name="order_track_id" groups="base.group_system"/>
-                <field name="so_id"/>
+                <field name="so_id" string="销售合同" readonly="1"/>
                 <field name="po_id" readonly="1"/>
-                <field name="plan_check_line" widget="many2many_tags"/>
+                <field name="plan_check_line"  readonly="1" string="检查点"/>
                 <field name="check_on_time" invisible="1"/>
                 <field name="tb_id" invisible="1"/>
                 <field name="order_track_plan_number" readonly="1"/>

@@ -158,7 +158,8 @@ class MailActivity(models.Model):
             else:
                 partner_id = False
             one.partner_id = partner_id
-            one.assistant_id = partner_id.assistant_id
+
+            one.assistant_id = partner_id.assistant_id and partner_id.assistant_id or False
             one.sale_user_id = partner_id.user_id
 
     @api.depends('partner_id')

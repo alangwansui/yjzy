@@ -183,15 +183,15 @@ class PlanInvoiceAuto(models.Model):
             strptime = datetime.strptime
             lock_date = one.lock_date
             back_tax_invoice_ids = one.back_tax_invoice_ids
-            back_tax_invoice_declare_ids = back_tax_invoice_ids.filtered(lambda x: x.back_tax_declaration_state == '20')
-            back_tax_invoice_residual_0_ids = back_tax_invoice_ids.filtered(lambda x: x.residual != 0)
+            back_tax_invoice_declare_ids = one.back_tax_invoice_ids.filtered(lambda x: x.back_tax_declaration_state == '20')
+            back_tax_invoice_residual_0_ids = one.back_tax_invoice_ids.filtered(lambda x: x.residual != 0)
 
             date_ship_residual_time = date_ship and (today - strptime(date_ship, DF)).days or 0
             date_out_in_residual_time = date_out_in and (today - strptime(date_out_in, DF)).days or 0
             lock_date_residual_time = lock_date and (today - strptime(lock_date, DF)).days or 0
             plan_invoice_auto_amount = one.plan_invoice_auto_amount
             real_invoice_auto_amount = one.real_invoice_auto_amount
-            print('real_invoice_auto_amount',real_invoice_auto_amount)
+            print('real_invoice_auto_amount',real_invoice_auto_amount,back_tax_invoice_declare_ids,back_tax_invoice_ids)
 
             if not date_ship:
                 one.state_1 = '10'
@@ -227,7 +227,6 @@ class PlanInvoiceAuto(models.Model):
                 elif one.state_1 == '50':
                     print('invoice_akiny', len(back_tax_invoice_declare_ids), len(back_tax_invoice_ids))
                     if back_tax_invoice_declare_ids and back_tax_invoice_ids:
-
                         if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
                             if date_ship_residual_time >= 30:
                                 one.state_2 = '90'
