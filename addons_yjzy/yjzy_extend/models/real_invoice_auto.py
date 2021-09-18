@@ -250,7 +250,7 @@ class PlanInvoiceAuto(models.Model):
                         one.state_1 = '70'
                         one.state_2 = '120'
                 else:
-                    return True
+                    continue
 
 
 
