@@ -174,7 +174,7 @@ class PlanInvoiceAuto(models.Model):
 
     def compute_state_1_2(self):
         for one in self:
-            date_ship = one.bill_id.date_ship
+            date_ship = one.bill_date_ship
             date_out_in = one.bill_id.date_out_in
 
             state_1 = one.state_1
@@ -225,7 +225,7 @@ class PlanInvoiceAuto(models.Model):
                             one.state_2 = '75'
                             one.state_1 = '40'
                 elif one.state_1 == '50':
-                    print('invoice_akiny', len(back_tax_invoice_declare_ids), len(back_tax_invoice_ids))
+                    print('invoice_akiny', len(back_tax_invoice_declare_ids), len(back_tax_invoice_ids),back_tax_invoice_declare_ids,back_tax_invoice_ids)
                     if back_tax_invoice_declare_ids and back_tax_invoice_ids:
                         if len(back_tax_invoice_declare_ids) != len(back_tax_invoice_ids):
                             if date_ship_residual_time >= 30:
