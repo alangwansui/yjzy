@@ -2357,6 +2357,7 @@ class account_invoice(models.Model):
     @api.multi
     def name_get(self):
         show_date_finish = self.env.context.get('show_date_finish')
+        supplier_delivery_date = self.env.context.get('supplier_delivery_date')
         print('=112====', show_date_finish)
         res = []
         for one in self:
@@ -2374,6 +2375,13 @@ class account_invoice(models.Model):
                 else:
                     name = '%s %s' % (
                         '无交单日', one.partner_id.name or '',)
+            if supplier_delivery_date:
+                if one.supplier_delivery_date:
+                    name = '%s %s' % (
+                        one.supplier_delivery_date or '', one.partner_id.name or '',)
+                else:
+                    name = '%s %s' % (
+                        '无发货日', one.partner_id.name or '',)
 
             else:
                 name = '%s[%s]' % (one.tb_contract_code, str(one.residual))

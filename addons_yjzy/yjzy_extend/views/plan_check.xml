@@ -209,9 +209,9 @@
                         invisible="context.get('type')!='transport_track'"/>
                 <field name="date_ship" invisible="context.get('type')!='transport_track'"/>
                 <field name="date_customer_finish" invisible="context.get('type')!='transport_track'"/>
-                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="供应商交单日期"
+                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="工厂发货日期"
                        invisible="context.get('type')!='transport_track'"/>
-                <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="供应商交单"
+                <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="工厂发货明细"
                         invisible="context.get('type')!='transport_track'"/>
                 <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"
                        groups="account.group_account_invoice"/>
@@ -842,9 +842,9 @@
                             <tr>
                                 <th width="18%">出运合同</th>
                                 <th width="8%">审批日期</th>
-                                <th width="8%">剩余应收款</th>
-                                <th width="8%">剩余应付款</th>
-                                <th width="8%">剩余应收退税</th>
+<!--                                <th width="8%">剩余应收款</th>-->
+<!--                                <th width="8%">剩余应付款</th>-->
+<!--                                <th width="8%">剩余应收退税</th>-->
 
                                 <th width="14%">
                                     <span style="color:red"
@@ -877,15 +877,15 @@
                                 <td>
                                     <field name="approve_date" readonly="1"/>
                                 </td>
-                                <td>
-                                    <field name="sale_invoice_balance"/>
-                                </td>
-                                <td>
-                                    <field name="purchase_invoice_balance"/>
-                                </td>
-                                <td>
-                                    <field name="back_tax_invoice_balance"/>
-                                </td>
+<!--                                <td>-->
+<!--                                    <field name="sale_invoice_balance"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <field name="purchase_invoice_balance"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <field name="back_tax_invoice_balance"/>-->
+<!--                                </td>-->
 
                                 <td style="color:red" attrs="{'invisible':[('is_date_out_in','=',True)]}">
 
@@ -968,8 +968,8 @@
                                            options='{"fg_color": "red:is_supplier_delivery_date_earlier_approve_date == True"}'
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
                                     <field name="is_supplier_delivery_date_earlier_approve_date" invisible="1"/>
-                                    <field name="purchase_invoice_date_finish"
-                                           attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
+                                    <field name="purchase_invoice_date_finish" invisible="1"
+                                           attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]]}"/>
 
                                     <field name="order_track_plan_number" readonly="1"
                                            attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
@@ -1628,7 +1628,7 @@
         </field>
         <!--        ('order_track_new_order_state','in',['10_doing','15_receivable_payment']),-->
         <field name="search_view_id" ref="view_order_track_search"/>
-        <field name="context">{'search_default_group_date_all_state':1,'type':'transport_track','show_date_finish':1}
+        <field name="context">{'search_default_group_date_all_state':1,'type':'transport_track','supplier_delivery_date':1}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
@@ -1644,7 +1644,7 @@
         <field name="domain">[('type','=','transport_track'),('date_all_state','=','50_payable_done')]</field>
         <!--        ('order_track_new_order_state','=','20_done')-->
         <field name="search_view_id" ref="view_order_track_search"/>
-        <field name="context">{'type': 'transport_track','show_date_finish':1}
+        <field name="context">{'type': 'transport_track','supplier_delivery_date':1}
         </field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view')}),
