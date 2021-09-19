@@ -2356,9 +2356,9 @@ class account_invoice(models.Model):
 
     @api.multi
     def name_get(self):
-        show_date_finish = self.env.context.get('show_date_finish')
+        # show_date_finish = self.env.context.get('show_date_finish')
         supplier_delivery_date = self.env.context.get('supplier_delivery_date')
-        print('=112====', show_date_finish)
+        # print('=112====', show_date_finish)
         res = []
         for one in self:
             purchase_date_finish_state = one.purchase_date_finish_state
@@ -2368,13 +2368,13 @@ class account_invoice(models.Model):
                 purchase_date_finish_state = '待审批'
             if one.purchase_date_finish_state == 'done':
                 purchase_date_finish_state = '完成'
-            if show_date_finish:
-                if one.date_finish:
-                    name = '%s %s' % (
-                        one.date_finish or '', one.partner_id.name or '',)
-                else:
-                    name = '%s %s' % (
-                        '无交单日', one.partner_id.name or '',)
+            # if show_date_finish:
+            #     if one.date_finish:
+            #         name = '%s %s' % (
+            #             one.date_finish or '', one.partner_id.name or '',)
+            #     else:
+            #         name = '%s %s' % (
+            #             '无交单日', one.partner_id.name or '',)
             if supplier_delivery_date:
                 if one.supplier_delivery_date:
                     name = '%s %s' % (

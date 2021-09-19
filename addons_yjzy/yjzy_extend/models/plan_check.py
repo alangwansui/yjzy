@@ -1380,6 +1380,16 @@ class PlanCheck(models.Model):
         [('10_doing', '跟踪进行时候'), ('15_receivable_payment', '等待应收付完成'), ('20_done', '已完成')], '下单前状态',
         related='order_track_id.order_track_new_order_state', store=True)
 
+    is_supplier_delivery_date_done = fields.Boolean('工厂发货日期是否已填写',default=False)
+
+
+
+    def confirm_supplier_delivered_date(self):
+        for one in self:
+            one.purchase_invoice_id.supplier_delivery_date = one.supplier_delivery_date
+            one.purchase_invoice_id.date = one.supplier_delivery_date
+            one.purchase_invoice_id.date_invoice = one.supplier_delivery_date
+            one.is_supplier_delivery_date_done = True
     # @api.multi
     # def write(self, vals):
     #     res = super(PlanCheck, self).write(vals)

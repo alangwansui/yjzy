@@ -214,15 +214,15 @@
                 <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="工厂发货明细"
                         invisible="context.get('type')!='transport_track'"/>
                 <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"
-                       groups="account.group_account_invoice"/>
+                       groups="base.group_system"/>
                 <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'"
-                       groups="account.group_account_invoice"/>
+                       groups="base.group_system"/>
                 <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'"
-                       groups="account.group_account_invoice"/>
+                       groups="base.group_system"/>
                 <field name="zc_invoice_profile_residual_total_new" invisible="context.get('type')!='transport_track'"
-                       groups="account.group_account_invoice"/>
+                       groups="base.group_system"/>
                 <field name="fzzc_back_tax_invoice_residual_total_new"
-                       invisible="context.get('type')!='transport_track'" groups="account.group_account_invoice"/>
+                       invisible="context.get('type')!='transport_track'" groups="base.group_system"/>
 
                 <field name="tb_sale_invoice_id" invisible="1"/>
                 <field name="is_date_out_in" invisible="1"/>
@@ -925,9 +925,9 @@
                             <tr groups="base.group_system,sale.hegui_all,sales_team.group_manager">
                                 <td>日期计划</td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+<!--                                <td></td>-->
+<!--                                <td></td>-->
+<!--                                <td></td>-->
                                 <td>
                                     <field name="plan_date_out_in" readonly="1"/>
                                 </td>
