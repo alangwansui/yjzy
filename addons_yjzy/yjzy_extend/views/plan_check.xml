@@ -767,20 +767,20 @@
                            attrs="{'invisible':[('type','!=','order_track')]}">
                         <tbody>
                             <tr>
-                                <th width="10%">销售合同</th>
-                                <th width="5%">计划数</th>
-                                <th width="5%">计划完成数</th>
-                                <th width="5%">计划到期数</th>
-                                <th width="5%">到期计划完成数</th>
-                                <th width="8%">超时完成计划数</th>
+                                <th width="15%">销售合同</th>
+<!--                                <th width="5%">计划数</th>-->
+<!--                                <th width="5%">计划完成数</th>-->
+<!--                                <th width="5%">计划到期数</th>-->
+<!--                                <th width="5%">到期计划完成数</th>-->
+<!--                                <th width="8%">超时完成计划数</th>-->
                                 <th width="8%">客户确认日期</th>
                                 <th width="8%">合规审批日期</th>
                                 <th width="8%">最迟供应商交期</th>
                                 <th width="8%">客户交期</th>
-                                <th width="8%">客户交期进度</th>
-                                <th width="8%">供应商交期进度</th>
-                                <th width="8%">出运进度</th>
-                                <th width="8%">最后一次备注</th>
+                                <th width="12%">客户交期进度</th>
+                                <th width="12%">供应商交期进度</th>
+                                <th width="13%">出运进度</th>
+                                <th width="18%">最后一次备注</th>
                                 <th width="2%"></th>
 
                             </tr>
@@ -788,21 +788,21 @@
                                 <td>
                                     <field name="so_id" readonly="1"/>
                                 </td>
-                                <td>
-                                    <field name="order_track_plan_number" readonly="1"/>
-                                </td>
-                                <td>
-                                    <field name="order_track_finish_number" readonly="1"/>
-                                </td>
-                                <td>
-                                    <field name="order_track_due_number" readonly="1"/>
-                                </td>
-                                <td>
-                                    <field name="order_track_due_finish_number" readonly="1"/>
-                                </td>
-                                <td>
-                                    <field name="order_track_time_out_finish_number" readonly="1"/>
-                                </td>
+<!--                                <td>-->
+<!--                                    <field name="order_track_plan_number" readonly="1"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <field name="order_track_finish_number" readonly="1"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <field name="order_track_due_number" readonly="1"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <field name="order_track_due_finish_number" readonly="1"/>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <field name="order_track_time_out_finish_number" readonly="1"/>-->
+<!--                                </td>-->
                                 <td>
                                     <field name="date_so_contract" readonly="1"/>
                                 </td>
