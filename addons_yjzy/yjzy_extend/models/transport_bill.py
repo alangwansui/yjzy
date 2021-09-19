@@ -604,7 +604,7 @@ class transport_bill(models.Model):
                 elif one.date_ship == False and one.date_out_in != False and one.date_delivered_id_done != False:
                     date_all_state = '25_no_date_ship'
                 elif one.date_customer_finish == False and  one.date_ship != False and one.date_out_in != False and one.date_delivered_id_done != False:
-                    date_all_state = '25_no_date_ship'
+                    date_all_state = '27_no_date_finish'
                 else:
                     # if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_delivered_id_done == True:
                     #     date_all_state = '40_done'
