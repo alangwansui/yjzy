@@ -1386,10 +1386,11 @@ class PlanCheck(models.Model):
 
     def confirm_supplier_delivered_date(self):
         for one in self:
-            one.purchase_invoice_id.supplier_delivery_date = one.supplier_delivery_date
-            one.purchase_invoice_id.date = one.supplier_delivery_date
-            one.purchase_invoice_id.date_invoice = one.supplier_delivery_date
-            one.is_supplier_delivery_date_done = True
+            if one.purchase_invoice_id:
+                one.purchase_invoice_id.supplier_delivery_date = one.supplier_delivery_date
+                one.purchase_invoice_id.date = one.supplier_delivery_date
+                one.purchase_invoice_id.date_invoice = one.supplier_delivery_date
+                one.is_supplier_delivery_date_done = True
     # @api.multi
     # def write(self, vals):
     #     res = super(PlanCheck, self).write(vals)
