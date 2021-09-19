@@ -496,11 +496,12 @@ class OrderTrack(models.Model):
 
     date_all_state = fields.Selection([('10_date_approving', u'日期审批中'),
                                        ('20_no_date_out_in', u'发货日期待填'),
+                                       ('23_no_date_delivered', u'工厂发货日期待填'),
                                        ('25_no_date_ship',u'船期待填'),
                                        ('30_un_done', u'其他日期待填'),
                                        ('40_done', u'时间都已填未完成应收付款'),
                                        ('50_payable_done', u'应收付完成')
-                                       ], '所有日期状态', related='tb_id.date_all_state', store=True, )
+                                       ], '所有日期状态', related='tb_id.date_all_state', store=True)
     second_state = fields.Selection([('09',u'...'),
                                      ('10',u'正常待确认'),
                                      ('20',u'异常待确认'),

@@ -656,6 +656,7 @@ class sale_order(models.Model):
             if line.product_uom_qty != line.dlr_qty:
                 raise Warning('采购和销售的数量不匹配，请检查！')
         self.action_submit()
+        self.create_pre_advance()
         stage_id = self._stage_find(domain=[('code', '=', '020')])
         return self.write({'stage_id': stage_id.id,
                            # 'state': 'submit',

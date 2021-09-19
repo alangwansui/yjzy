@@ -333,7 +333,7 @@
 
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="pre_advance" invisible="0" string="建议预付金额"/>
-                                 <field name="pre_advance_line">
+                                <field name="pre_advance_line" string="预付明细">
                                 <!--                                    <tree>-->
                                 <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
                                 <!--                                        <field name="real_advance" string="Real Collect Advance"/>-->

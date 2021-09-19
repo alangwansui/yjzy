@@ -393,6 +393,7 @@ class purchase_order(models.Model):
             if line.dlr_str == '':
                 raise Warning('采购和销售没有完全对应！')
         stage_id = self._stage_find(domain=[('code', '=', '020')])
+        self.create_pre_advance()
         return self.write({'stage_id': stage_id.id,
                            'state': 'submit',
                            'submit_uid': self.env.user.id,

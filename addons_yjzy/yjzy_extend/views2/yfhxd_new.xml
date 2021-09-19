@@ -1226,7 +1226,6 @@
 
                                         <t t-name="kanban-box" style="width:100%">
                                             <div style="width:100%">
-
                                                 <table style="width:100%">
                                                     <tbody>
                                                         <tr>

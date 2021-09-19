@@ -590,7 +590,7 @@ class transport_bill(models.Model):
     #         one.date_all_state = date_all_state
 
     @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'date_out_in', 'date_in', 'date_ship',
-                 'date_customer_finish', 'date_purchase_finish_is_done')
+                 'date_customer_finish','date_delivered_id_done')
     def compute_date_all_state(self):
         for one in self:
             all_invoice_ids = one.all_invoice_ids
@@ -599,13 +599,15 @@ class transport_bill(models.Model):
             else:
                 if one.date_out_in == False:
                     date_all_state = '20_no_date_out_in'
-                elif one.date_ship == False and one.date_out_in != False:
+                elif one.date_delivered_id_done == False and one.date_out_in != False:
+                    date_all_state = '23_no_date_delivered'
+                elif one.date_ship == False and one.date_out_in != False and one.date_delivered_id_done != False:
                     date_all_state = '25_no_date_ship'
                 else:
-                    if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_purchase_finish_is_done == True:
-                        date_all_state = '40_done'
-                    else:
-                        date_all_state = '30_un_done'
+                    # if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_delivered_id_done == True:
+                    #     date_all_state = '40_done'
+                    # else:
+                    date_all_state = '30_un_done'
             one.date_all_state = date_all_state
 
     # @api.depends('date_out_in', 'date_in', 'date_ship', 'date_customer_finish', 'all_purchase_invoice_fill','purchase_invoice_ids','purchase_invoice_ids.date_finish',
@@ -956,6 +958,17 @@ class transport_bill(models.Model):
 
             one.date_purchase_finish_is_done = date_purchase_finish_is_done
 
+    @api.depends('purchase_invoice_ids', 'purchase_invoice_ids.supplier_delivery_date')
+    def compute_date_delivered_id_done(self):
+        for one in self:
+            print('-采购发票-', one.purchase_invoice_ids)
+            if all([x.supplier_delivery_date != False for x in one.purchase_invoice_ids]):
+                supplier_delivery_date = True
+            else:
+                supplier_delivery_date = False
+
+            one.supplier_delivery_date = supplier_delivery_date
+
     # 货币设置
 
     is_discount = fields.Boolean('是否折扣', default=False)
@@ -1025,10 +1038,15 @@ class transport_bill(models.Model):
                                                    ('done', u'已审核')], '供应商交单日审批状态', default='draft',
                                                   compute=compute_date_purchase_finish_state)
 
-    date_purchase_finish_is_done = fields.Boolean('供应商交单是否完成', compute=compute_date_purchase_finish_is_done)
+    date_purchase_finish_is_done = fields.Boolean('供应商交单是否完成', compute=compute_date_purchase_finish_is_done,store = True)
+
+
+
+    date_delivered_id_done = fields.Boolean('工厂发货日期日否完成', compute=compute_date_delivered_id_done,store=True)
 
     date_all_state = fields.Selection([('10_date_approving', u'日期审批中'),
                                        ('20_no_date_out_in', u'发货日期待填'),
+                                       ('23_no_date_delivered', u'工厂发货日期待填'),
                                        ('25_no_date_ship', u'船期待填'),
                                        ('30_un_done', u'其他日期待填'),
                                        ('40_done', u'时间都已填未完成应收付款'),
