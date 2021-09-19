@@ -502,7 +502,6 @@
             <form string="计划">
                 <sheet>
                     <header>
-
                         <field name="order_track_new_order_state" widget="statusbar" nolabel="1"/>
                     </header>
                     <group attrs="{'invisible':[('type','!=','order_track')]}">
@@ -969,7 +968,7 @@
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
                                     <field name="is_supplier_delivery_date_earlier_approve_date" invisible="1"/>
                                     <field name="purchase_invoice_date_finish" invisible="1"
-                                           attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]]}"/>
+                                           attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>
 
                                     <field name="order_track_plan_number" readonly="1"
                                            attrs="{'column_invisible':[('parent.type','!=','order_track')]}"/>
