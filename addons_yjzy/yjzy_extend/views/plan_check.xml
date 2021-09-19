@@ -944,7 +944,7 @@
                     </table>
 
 
-                    <notebook colspan="4">
+                    <notebook colspan="4" attrs="{'invisible':[('type','=','order_track')]}">
                         <page string="明细">
 
                             <field name="plan_check_ids"
@@ -966,7 +966,9 @@
                                     <field name="supplier_delivery_date" string='工厂实际发货日'
                                            options='{"fg_color": "red:is_supplier_delivery_date_earlier_approve_date == True"}'
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')],'column_invisible':[('parent.type','!=','transport_track')]}"/>
-                                    <button name="confirm_supplier_delivered_date" string="确认" type="object" />
+                                    <button name="confirm_supplier_delivered_date" string="确认" type="object"
+                                            attrs="{'invisible':[('is_supplier_delivery_date_done','=',True)]}"/>
+                                    <field name="is_supplier_delivery_date_done" invisible="1"/>
                                     <field name="is_supplier_delivery_date_earlier_approve_date" invisible="1"/>
                                     <field name="purchase_invoice_date_finish" invisible="1"
                                            attrs="{'readonly':[('parent.order_track_new_order_state','=','20_done')]}"/>
