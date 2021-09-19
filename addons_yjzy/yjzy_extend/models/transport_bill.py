@@ -947,11 +947,11 @@ class transport_bill(models.Model):
             one.qingguan_amount_total = qingguan_amount_total
             one.qingguan_amount_total_origin = qingguan_amount_total_origin
 
-    @api.depends('purchase_invoice_ids', 'purchase_invoice_ids.date_finish')
+    @api.depends('purchase_invoice_ids', 'purchase_invoice_ids_new.date_finish')
     def compute_date_purchase_finish_is_done(self):
         for one in self:
             print('-采购发票-', one.purchase_invoice_ids)
-            if all([x.date_finish != False for x in one.purchase_invoice_ids]):
+            if all([x.date_finish != False for x in one.purchase_invoice_ids_new]):
                 date_purchase_finish_is_done = True
             else:
                 date_purchase_finish_is_done = False
@@ -1278,6 +1278,9 @@ class transport_bill(models.Model):
     sale_invoice_id = fields.Many2one('account.invoice', '销售发票')
     purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',
                                            domain=[('yjzy_type', '=', 'purchase')])
+    purchase_invoice_ids_new = fields.One2many('account.invoice', 'bill_id', '采购发票_new',
+                                           domain=[('invoice_attribute_all_in_one', '=', '120')])
+
     purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2',
                                             compute=compute_info)  # 顯示供應商的交單日期,这个以后再斟酌一下
 
