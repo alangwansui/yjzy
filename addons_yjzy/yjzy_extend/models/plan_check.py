@@ -499,7 +499,7 @@ class OrderTrack(models.Model):
                                        ('23_no_date_delivered', u'工厂发货日期待填'),
                                        ('25_no_date_ship',u'船期待填'),
                                        ('27_no_date_finish', u'客户交单未填写'),
-                                       ('30_un_done', u'其他日期待填'),
+                                       ('30_un_done', u'所有日期都已填未完成应收付款'),
                                        ('40_done', u'时间都已填未完成应收付款'),
                                        ('50_payable_done', u'应收付完成')
                                        ], '所有日期状态', related='tb_id.date_all_state', store=True)
