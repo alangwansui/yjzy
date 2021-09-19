@@ -963,11 +963,11 @@ class transport_bill(models.Model):
         for one in self:
             print('-采购发票-', one.purchase_invoice_ids)
             if all([x.supplier_delivery_date != False for x in one.purchase_invoice_ids]):
-                supplier_delivery_date = True
+                date_delivered_id_done = True
             else:
-                supplier_delivery_date = False
+                date_delivered_id_done = False
 
-            one.supplier_delivery_date = supplier_delivery_date
+            one.date_delivered_id_done = date_delivered_id_done
 
     # 货币设置
 
