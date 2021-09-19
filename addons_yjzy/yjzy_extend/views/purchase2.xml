@@ -181,6 +181,7 @@
                                 attrs="{'invisible':[('need_change_partner','=',False)]}"/>
                         <button string="创建批次号" invisible="0" states="" type="object" groups="base.group_system"
                                 name="create_lots"/>
+                        <button name="create_pre_advance" string="创建预付明细" type="object" groups="base.group_system"/>
                         <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <header groups="base.group_system">
@@ -332,6 +333,35 @@
 
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="pre_advance" invisible="0" string="建议预付金额"/>
+                                 <field name="pre_advance_line">
+                                <!--                                    <tree>-->
+                                <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
+                                <!--                                        <field name="real_advance" string="Real Collect Advance"/>-->
+                                <!--                                    </tree>-->
+                                <kanban class="o_kanban_mobile" sample="1">
+                                    <field name="pre_advance"/>
+                                    <field name="real_advance"/>
+                                    <field name="currency_id"/>
+                                    <field name="payment_advance_currency_id"/>
+                                    <templates>
+                                        <t t-name="kanban-box" style="height:20px">
+                                            <div t-attf-class="oe_kanban_card">
+                                                <strong class="o_kanban_record_title"
+                                                        style="float: left;width: 50%;">
+                                                    <span style="float: right; padding-right: 50px">
+                                                        <field name="pre_advance" widget="monetary"/>
+                                                    </span>
+                                                </strong>
+                                                <strong style="float: left;width: 50%;">
+                                                    <span style="float: right; padding-right: 10px">
+                                                        <field name="real_advance" widget="monetary"/>
+                                                    </span>
+                                                </strong>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
                                 <field name="real_advance" invisible="0" string="实际预付金额"/>
                                 <field name="balance" string="实际预付余额"/>
                                 <field name="can_confirm_by_so" readonly="0" invisible="1"/>

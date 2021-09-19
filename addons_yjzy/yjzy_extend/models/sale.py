@@ -524,6 +524,9 @@ class sale_order(models.Model):
     fee_all_ratio = fields.Float(u'总费用占比', digits=(2, 2), compute=compute_info)  # akiny 4改成了2
 
     pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_pre_advance, store=False)
+    pre_advance_line = fields.One2many('pre.advance', 'so_id')
+
+
     advance_po_residual = fields.Float(u'预付余额', compute=compute_po_residual, store=True)
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
@@ -597,7 +600,22 @@ class sale_order(models.Model):
 
     contract_comments_ty =fields.Text('合同备注')
 
-
+    def create_pre_advance(self):
+        payment_term_id = self.payment_term_id
+        payment_term_line = payment_term_id.line_ids
+        pa_obj = self.env['pre.advance']
+        if self.pre_advance_line:
+            for line in self.pre_advance_line:
+                line.unlink()
+        for one in payment_term_line:
+            if one.option == 'advance':
+                pre_advance = pa_obj.create({
+                    'type':'pre_collect_in_advance',
+                    'value':one.value,
+                    'value_amount':one.value_amount,
+                    'so_id':self.id,
+                })
+                pre_advance.compute_pre_advance()
 
     # purchase_update_date = fields.Datetime(u'采购更新的时间')
 

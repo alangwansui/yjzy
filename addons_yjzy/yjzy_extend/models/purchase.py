@@ -273,6 +273,7 @@ class purchase_order(models.Model):
     real_advance = fields.Monetary(u'实际预付金额', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
     pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
                                   help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
+    pre_advance_line = fields.One2many('pre.advance', 'po_id')
 
     # 以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
@@ -315,6 +316,28 @@ class purchase_order(models.Model):
     tb_line_ids = fields.One2many('transport.bill.line', 'po_id')
 
     # amount_payment_org_auto = fields.Monetary('支付金额', currency_field='currency_id',compute=compute_amount_payment_org_auto)
+
+    def create_pre_advance(self):
+        payment_term_id = self.payment_term_id
+        payment_term_line = payment_term_id.line_ids
+        pa_obj = self.env['pre.advance']
+        pre_advance_step = 0
+        if self.pre_advance_line:
+            for line in self.pre_advance_line:
+                line.unlink()
+        for one in payment_term_line:
+            pre_advance_step +=1
+            if one.option == 'advance':
+                pre_advance = pa_obj.create({
+                    'type': 'pre_pay_in_advance',
+                    'value': one.value,
+                    'value_amount': one.value_amount,
+                    'pre_advance_step':pre_advance_step,
+                    'po_id': self.id,
+                })
+                pre_advance.compute_pre_advance()
+                print('pre_advance_akiny', pre_advance)
+        print('pre_advance_line_akiny', self.pre_advance_line, payment_term_id, payment_term_line)
 
     def re_compute_stage(self):
         for one in self:

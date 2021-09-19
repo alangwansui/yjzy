@@ -47,7 +47,7 @@
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
             <tree string="预付申请单" decoration-info="state == 'draft'" class="o_list_view_scroll" default_order="state_1"
-                  decoration-muted="state in ['reconciled', 'cancelled']" edit="false" >
+                  decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="partner_id"/>
                 <field name="name" invisible="1"/>
                 <field name="rcskd_date" string="付款日期" groups="base.group_system"/>
@@ -87,6 +87,7 @@
                 <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
                 <field name="advance_total" string="总已认领金额"/>
+
                 <field name="advance_renling_total" string="认领金额"/>
                 <field name="advance_hexiao_total" string="核销金额"/>
                 <field name="advance_renling_total" string="认领金额"/>
@@ -124,9 +125,9 @@
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                     <button name="open_yfsqd_yfhxd_form" type="object" string="创建应付认领" invisible="1"
-                             attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
-                       <button name="open_wizard_reconcile_invoice" type="object" string="创建应付认领"
-                               attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
+                            attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
+                    <button name="open_wizard_reconcile_invoice" type="object" string="创建应付认领"
+                            attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
                     <button name="open_ppat" type="object" string="查看可申请预付金额工具"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
@@ -178,7 +179,8 @@
                             <div colspan="2">
                                 <field name="display_name"/>
                             </div>
-                            <field name="partner_id" options="{'no_open':1,'no_create':1}" domain="[('is_company','=',True),('supplier','=',1)]" string="供应商"
+                            <field name="partner_id" options="{'no_open':1,'no_create':1}"
+                                   domain="[('is_company','=',True),('supplier','=',1)]" string="供应商"
                                    attrs="{'required': [('payment_type', 'in', ('inbound', 'outbound'))],
                                    'invisible': [('payment_type', 'not in', ('inbound', 'outbound'))],
                                    'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"
@@ -193,7 +195,8 @@
                             ('x_wkf_state','=',185)]"
                                    context="{'show_contract_code': 1,'form_view_ref':'yjzy_extend.new_purchase_order_from'}"
                                    attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
-                            <field name="include_tax" attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
+                            <field name="include_tax"
+                                   attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="fk_journal_id" string="付款银行" options="{'no_open':1}"
                                    attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
                             'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
@@ -228,6 +231,61 @@
                                    options="{'no_open':1}"/>
                             <field name="po_amount"/>
                             <field name="po_real_advance" string="已预付金额"/>
+                            <field name="pre_advance_id"/>
+
+
+                            <field name="pre_advance_line_ids" nolabel="1" colspan="2">
+                                <kanban class="o_kanban_mobile" sample="1">
+                                    <field name="pre_advance"/>
+                                    <field name="real_advance"/>
+                                    <field name="is_selected"/>
+                                    <templates>
+                                        <t t-name="kanban-box" style="height:20px">
+                                            <div style="width:100%">
+                                                <table style="width:100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="width:35%">
+                                                                <strong>
+                                                                    <span>
+                                                                        <t t-esc="record.pre_advance.value"/>
+                                                                    </span>
+                                                                </strong>
+                                                            </td>
+                                                            <td style="width:35%">
+                                                                <strong>
+                                                                    <field name="real_advance" widget="monetary"/>
+                                                                </strong>
+                                                            </td>
+                                                            <td style="width:30%">
+                                                                <t t-if="record.is_selected.raw_value == 0">
+                                                                    <button name="open_wizard_pre_advance"
+                                                                            class="btn btn-primary btn-sm"
+                                                                            type="object"
+                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}">
+                                                                        <span>选择</span>
+                                                                    </button>
+                                                                </t>
+                                                                <t t-if="record.is_selected.raw_value == 1">
+                                                                    <button name="open_wizard_pre_advance"
+                                                                            class="btn btn-primary btn-sm"
+                                                                            type="object"
+                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}">
+                                                                        <span>取消</span>
+                                                                    </button>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                            <field name="so_id" invisible="1"/>
+
                             <field name="po_pre_advance"/>
                             <field name="delivery_amount"/>
                             <field name="un_delivery_amount"/>
@@ -269,7 +327,8 @@
                         <!--                                </tree>-->
                         <!--                            </field>-->
                         <!--                        </page>-->
-                        <page string="预付认领日志" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0),('aml_com_yfzk_ids_count','=',0)]}">
+                        <page string="预付认领日志"
+                              attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0),('aml_com_yfzk_ids_count','=',0)]}">
                             <group col="2">
                                 <group string="预付认领财务日志" attrs="{'invisible':[('aml_com_yfzk_ids_count','=',0)]}">
                                     <field name="aml_com_yfzk_ids" readonly="1" nolabel="1" colspan="2">
@@ -282,37 +341,40 @@
                                         </tree>
                                     </field>
                                 </group>
-                                <group string="所有申请流程日志" attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
-                                        <field name="advance_reconcile_order_line_ids" nolabel="1" colspan="2" readonly="1">
-                                             <tree>
-                                                 <field name="hxd_type_new"/>
-                                                 <field name="invoice_id" readonly="1" invisible="1"/>
-                                                 <field name="create_date" string="创建日期"/>
-                                                 <field name="approve_date"/>
-                                                 <field name="tb_contract_code"/>
+                                <group string="所有申请流程日志"
+                                       attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">
+                                    <field name="advance_reconcile_order_line_ids" nolabel="1" colspan="2" readonly="1">
+                                        <tree>
+                                            <field name="hxd_type_new"/>
+                                            <field name="invoice_id" readonly="1" invisible="1"/>
+                                            <field name="create_date" string="创建日期"/>
+                                            <field name="approve_date"/>
+                                            <field name="tb_contract_code"/>
 
-                                                 <field name="yjzy_currency_id" invisible="1"/>
-                                                 <field name="so_id" attrs="{'column_invisible':[('parent.sfk_type','!=','ysrld')]}"/>
-                                                 <field name="po_id" attrs="{'column_invisible':[('parent.sfk_type','!=','yfsqd')]}"/>
-                                                 <field name="amount_advance_org" string="认领金额"/>
-                                                 <field name="sfk_type" invisible="1"/>
-                                                 <field name="state_1"/>
-                                             </tree>
-                                         </field>
+                                            <field name="yjzy_currency_id" invisible="1"/>
+                                            <field name="so_id"
+                                                   attrs="{'column_invisible':[('parent.sfk_type','!=','ysrld')]}"/>
+                                            <field name="po_id"
+                                                   attrs="{'column_invisible':[('parent.sfk_type','!=','yfsqd')]}"/>
+                                            <field name="amount_advance_org" string="认领金额"/>
+                                            <field name="sfk_type" invisible="1"/>
+                                            <field name="state_1"/>
+                                        </tree>
+                                    </field>
                                     <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
-                                        <field name="payment_hexiao_ids" colspan="2" nolabel="1"
-                                                attrs="{'invisible':[('payment_hexiao_ids_count','=',0)]}">
-                                             <tree>
-                                                 <field name="sfk_type" string="类型"/>
-                                                 <field name="payment_date" string="日期"/>
-                                                 <field name="amount" string="金额"/>
-                                                 <field name="currency_id" invisible="1"/>
-                                                 <field name="state_1"/>
-                                             </tree>
-                                         </field>
-                                         <field name="payment_hexiao_ids_count" invisible="1"/>
+                                    <field name="payment_hexiao_ids" colspan="2" nolabel="1"
+                                           attrs="{'invisible':[('payment_hexiao_ids_count','=',0)]}">
+                                        <tree>
+                                            <field name="sfk_type" string="类型"/>
+                                            <field name="payment_date" string="日期"/>
+                                            <field name="amount" string="金额"/>
+                                            <field name="currency_id" invisible="1"/>
+                                            <field name="state_1"/>
+                                        </tree>
+                                    </field>
+                                    <field name="payment_hexiao_ids_count" invisible="1"/>
 
-                                    </group>
+                                </group>
 
                             </group>
 
@@ -327,73 +389,73 @@
                             <field name="payment_ids_count" invisible="1"/>
                             <field name="payment_no_done_ids_count" invisible="1"/>
                         </page>
-<!--                        <page string="认领明细(old)"-->
-<!--                              attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">-->
+                        <!--                        <page string="认领明细(old)"-->
+                        <!--                              attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0)]}">-->
 
-<!--                            <field name="advance_reconcile_order_line_ids" readonly="1">-->
-<!--                                <tree>-->
-<!--                                    <field name="date" string="日期"/>-->
-<!--                                    <field name="payment_type" invisible="1"/>-->
-<!--                                    <field name="partner_type" invisible="1"/>-->
-<!--                                    <field name="po_id" readonly="1"/>-->
-<!--                                    <field name="invoice_id" readonly="1" invisible="1"/>-->
-<!--                                    <field name="tb_contract_code" string="出运合同"/>-->
-<!--                                    <field name="yjzy_currency_id" invisible="1"/>-->
-<!--                                    <field name="advice_amount_advance_org_real" string="建议预认领" invisible="1"/>-->
-<!--                                    <field name="least_advice_amount_advance_org" invisible="1" string="最低预付认领"/>-->
-<!--                                    <field name="so_tb_percent" string="出运占原采购金额比例" invisible="1"-->
-<!--                                           groups="base.group_system"/>-->
-<!--                                    <field name="no_delivery_amount_so" invisible="1"/>-->
-<!--                                    <field name="amount_invoice_so" string="本次采购原始金额" invisible="1"/>-->
-<!--                                    <field name="amount_invoice_so_proportion" invisible="1"/>-->
-<!--                                    <field name="amount_invoice_so_residual" string="未认领应付" invisible="1"/>-->
-<!--                                    <field name="amount_invoice_so_residual_can_approve" string="可申请应付" invisible="1"/>-->
-<!--                                    <field name="advance_residual2" string="采购合同未认领预付" readonly="0"-->
-<!--                                           groups="base.group_system"/>-->
-<!--                                    <field name="residual" readonly="0" string="总账单应付余额" invisible="1"/>-->
-<!--                                    <field name="invoice_currency_id" invisible="1"/>-->
-<!--                                    <field name="payment_currency_id" invisible="1"/>-->
-<!--                                    <field name="currency_id" invisible="1"/>-->
-<!--                                    <field name="amount_advance_org_self" invisible="1" groups="base.group_system"/>-->
-<!--                                    <field name="duoyu_this_time_advice_advance_org" invisible="1"-->
-<!--                                           groups="base.group_system"/>-->
-<!--                                    <field name="ysrld_advice_amount_advance_org_all" invisible="1"-->
-<!--                                           groups="base.group_system"/>-->
-<!--                                    <field name="ysrld_amount_advance_org_all" invisible="1"-->
-<!--                                           groups="base.group_system"/>-->
-<!--                                    <field name="yjzy_payment_id" string="预付申请单" invisible="1"-->
-<!--                                           context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"-->
-<!--                                           domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>-->
-<!--                                    <field name="amount_advance_org" string="预付认领金额"/>-->
-<!--                                    <field name="amount_payment_org" string="申请付款金额" invisible="1"/>-->
-<!--                                    &lt;!&ndash;field name="amount_bank_org"/&ndash;&gt;-->
-<!--                                    &lt;!&ndash;field name="amount_bank"/&ndash;&gt;-->
-<!--                                    &lt;!&ndash;                                    <field name="amount_diff_org" string="费用" invisible="1"/>&ndash;&gt;-->
-<!--                                    <field name="amount_total_org" string="应付认领合计" groups="base.group_system"/>-->
+                        <!--                            <field name="advance_reconcile_order_line_ids" readonly="1">-->
+                        <!--                                <tree>-->
+                        <!--                                    <field name="date" string="日期"/>-->
+                        <!--                                    <field name="payment_type" invisible="1"/>-->
+                        <!--                                    <field name="partner_type" invisible="1"/>-->
+                        <!--                                    <field name="po_id" readonly="1"/>-->
+                        <!--                                    <field name="invoice_id" readonly="1" invisible="1"/>-->
+                        <!--                                    <field name="tb_contract_code" string="出运合同"/>-->
+                        <!--                                    <field name="yjzy_currency_id" invisible="1"/>-->
+                        <!--                                    <field name="advice_amount_advance_org_real" string="建议预认领" invisible="1"/>-->
+                        <!--                                    <field name="least_advice_amount_advance_org" invisible="1" string="最低预付认领"/>-->
+                        <!--                                    <field name="so_tb_percent" string="出运占原采购金额比例" invisible="1"-->
+                        <!--                                           groups="base.group_system"/>-->
+                        <!--                                    <field name="no_delivery_amount_so" invisible="1"/>-->
+                        <!--                                    <field name="amount_invoice_so" string="本次采购原始金额" invisible="1"/>-->
+                        <!--                                    <field name="amount_invoice_so_proportion" invisible="1"/>-->
+                        <!--                                    <field name="amount_invoice_so_residual" string="未认领应付" invisible="1"/>-->
+                        <!--                                    <field name="amount_invoice_so_residual_can_approve" string="可申请应付" invisible="1"/>-->
+                        <!--                                    <field name="advance_residual2" string="采购合同未认领预付" readonly="0"-->
+                        <!--                                           groups="base.group_system"/>-->
+                        <!--                                    <field name="residual" readonly="0" string="总账单应付余额" invisible="1"/>-->
+                        <!--                                    <field name="invoice_currency_id" invisible="1"/>-->
+                        <!--                                    <field name="payment_currency_id" invisible="1"/>-->
+                        <!--                                    <field name="currency_id" invisible="1"/>-->
+                        <!--                                    <field name="amount_advance_org_self" invisible="1" groups="base.group_system"/>-->
+                        <!--                                    <field name="duoyu_this_time_advice_advance_org" invisible="1"-->
+                        <!--                                           groups="base.group_system"/>-->
+                        <!--                                    <field name="ysrld_advice_amount_advance_org_all" invisible="1"-->
+                        <!--                                           groups="base.group_system"/>-->
+                        <!--                                    <field name="ysrld_amount_advance_org_all" invisible="1"-->
+                        <!--                                           groups="base.group_system"/>-->
+                        <!--                                    <field name="yjzy_payment_id" string="预付申请单" invisible="1"-->
+                        <!--                                           context="{'form_view_ref': 'yjzy_extend.view_rcfkd_form','advance_po_amount':1}"-->
+                        <!--                                           domain="[('sfk_type','=','yfsqd'),('advance_balance_total','!=',0)]"/>-->
+                        <!--                                    <field name="amount_advance_org" string="预付认领金额"/>-->
+                        <!--                                    <field name="amount_payment_org" string="申请付款金额" invisible="1"/>-->
+                        <!--                                    &lt;!&ndash;field name="amount_bank_org"/&ndash;&gt;-->
+                        <!--                                    &lt;!&ndash;field name="amount_bank"/&ndash;&gt;-->
+                        <!--                                    &lt;!&ndash;                                    <field name="amount_diff_org" string="费用" invisible="1"/>&ndash;&gt;-->
+                        <!--                                    <field name="amount_total_org" string="应付认领合计" groups="base.group_system"/>-->
 
 
-<!--                                </tree>-->
-<!--                            </field>-->
-<!--                        </page>-->
+                        <!--                                </tree>-->
+                        <!--                            </field>-->
+                        <!--                        </page>-->
 
 
                         <page groups="base.group_system">
                             <group>
-                                  <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
+                                <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
 
                                 <!--                                <group string="未完成认领单" attrs="{'invisible':[('payment_no_done_ids_count','=',0)]}">-->
-<!--                                    <field name="payment_no_done_ids" nolabel="1" colspan="2">-->
-<!--                                        <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">-->
-<!--                                            <field name="sfk_type" string="类型"/>-->
-<!--                                            <field name="payment_date" string="认领时间"/>-->
-<!--                                            <field name="name" string="单号"/>-->
-<!--                                            <field name="partner_id" string="对象"/>-->
-<!--                                            <field name="amount" string="金额"/>-->
-<!--                                            <field name="state"/>-->
-<!--                                        </tree>-->
-<!--                                    </field>-->
+                                <!--                                    <field name="payment_no_done_ids" nolabel="1" colspan="2">-->
+                                <!--                                        <tree decoration-danger="sfk_type in ['reconcile_ysrld','reconcile_yfsqd']">-->
+                                <!--                                            <field name="sfk_type" string="类型"/>-->
+                                <!--                                            <field name="payment_date" string="认领时间"/>-->
+                                <!--                                            <field name="name" string="单号"/>-->
+                                <!--                                            <field name="partner_id" string="对象"/>-->
+                                <!--                                            <field name="amount" string="金额"/>-->
+                                <!--                                            <field name="state"/>-->
+                                <!--                                        </tree>-->
+                                <!--                                    </field>-->
 
-<!--                                </group>-->
+                                <!--                                </group>-->
                                 <field name="sfk_type"/>
                                 <field name="aml_com_yszk_ids_count"/>
                                 <field name="aml_com_yfzk_ids_count"/>

@@ -438,6 +438,7 @@
                         <button name="open_sale_cost" type='object' string="成本单"/>
                         <button name="open_wizard_multi_sale_line" type='object' string="测试批量"
                                 groups="base.group_system"/>
+                        <button name="create_pre_advance" string="创建预付明细" type="object" groups="base.group_system"/>
                         <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                     </header>
 
@@ -681,6 +682,36 @@
                                 <field name="advance_po_residual" string="实际预付余额" invisible="1" readonly="1"/>
                                 <field name="cip_type"/>
                                 <field name="pre_advance" string="建议预收金额"/>
+                                <field name="pre_advance_line" nolabel="1" colspan="2">
+                                    <!--                                    <tree>-->
+                                    <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
+                                    <!--                                        <field name="real_advance" string="Real Collect Advance"/>-->
+                                    <!--                                    </tree>-->
+                                    <kanban class="o_kanban_mobile" sample="1">
+                                        <field name="pre_advance"/>
+                                        <field name="real_advance"/>
+                                        <field name="currency_id"/>
+                                        <field name="payment_advance_currency_id"/>
+                                        <templates>
+                                            <t t-name="kanban-box" style="height:20px">
+                                                <div t-attf-class="oe_kanban_card">
+                                                    <strong class="o_kanban_record_title"
+                                                            style="float: left;width: 50%;">
+                                                        <span style="float: right; padding-right: 50px">
+                                                            <field name="pre_advance" widget="monetary"/>
+                                                        </span>
+                                                    </strong>
+                                                    <strong style="float: left;width: 50%;">
+                                                        <span style="float: right; padding-right: 10px">
+                                                            <field name="real_advance" widget="monetary"/>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
+
                                 <field name="balance" string="实际预收余额"/>
                                 <field name="gold_sample_state" string="金样管理"/>
                                 <field name="ps_state" string="PS管理"/>
@@ -691,7 +722,8 @@
                                        attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel']),('is_editable','=',False)]}"/>
                                 <field name="hexiao_type" readonly="1"/>
                                 <field name="hexiao_comment" attrs="{'invisible':[('hexiao_type','!=','abnormal')]}"/>
-                                <field name="pricelist_id" groups="product.group_sale_pricelist" invisible="1" required="1"/>
+                                <field name="pricelist_id" groups="product.group_sale_pricelist" invisible="1"
+                                       required="1"/>
                                 <field name="id" invisible="1"/>
                                 <field name="lot_sub_mark" groups="base.group_system" invisible="1"/>
                                 <label for="carrier_id"/>
@@ -701,7 +733,8 @@
                         </group>
                         <notebook>
                             <page string="订单行" name="sale_order_line_new">
-                                <button name="open_elect_multi_product_wizard" type="object" invisible="1" class="btn-primary"
+                                <button name="open_elect_multi_product_wizard" type="object" invisible="1"
+                                        class="btn-primary"
                                         attrs="{'invisible': [('state', '!=', 'draft')]}" string="多选产品"/>
                                 <label string="显示更多字段" invisible="1"/>
                                 <field name="display_detail" widget="boolean_toggle" invisible="1"/>
@@ -773,8 +806,10 @@
                                                 </div>
                                             </group>
                                             <group>
-                                                <field name="supplier_id" domain="[('parent_id','=',False),('state','=','done'),('supplier','=',True),('is_ok','=',True)]"
-                                               attrs="{'readonly':[('pol_id','!=',False)]}" options="{'no_open':1}"/>
+                                                <field name="supplier_id"
+                                                       domain="[('parent_id','=',False),('state','=','done'),('supplier','=',True),('is_ok','=',True)]"
+                                                       attrs="{'readonly':[('pol_id','!=',False)]}"
+                                                       options="{'no_open':1}"/>
                                                 <field name="purchase_price"/>
                                                 <field name="purchase_cost"/>
                                                 <field name="pol_id" groups="base.group_system"/>
@@ -870,14 +905,14 @@
                                         <field name="product_so_line_count" string="下单次数"/>
                                         <field name="tb_line_count" string="发货次数"/>
                                         <button type="object" name="open_bill_ids" icon="fa-archive"
-                                                />
+                                        />
                                         <field name="company_currency_id" invisible="1"/>
 
                                         <field name="qty_undelivered"/>
                                         <field name="qty_delivered" string="已发货"
                                                attrs="{
                                                'readonly': [('qty_delivered_updateable', '=', False)]}"/>
-<!--                                        'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], -->
+                                        <!--                                        'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], -->
                                         <field name="project_tb_qty"/>
                                         <field name="can_project_tb_qty"/>
                                         <field name="layout_category_id" invisible="1" groups="sale.group_sale_layout"/>
@@ -919,7 +954,6 @@
                                         <field name="virtual_available" readonly="1" invisible="1"/>
 
 
-
                                         <field name="qty_invoiced" invisible="1"
                                                attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])]}"/>
                                         <field name="qty_to_invoice" invisible="1"/>
@@ -959,7 +993,8 @@
                                         <field name="invoice_status" invisible="1"/>
                                         <field name="customer_lead" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
-                                        <button icon="fas fa-eye" type="object" name="show_product_attrs" invisible="1"/>
+                                        <button icon="fas fa-eye" type="object" name="show_product_attrs"
+                                                invisible="1"/>
 
 
                                         <field name="lot_id" string="批次号" invisible="1" groups="base.group_system"/>

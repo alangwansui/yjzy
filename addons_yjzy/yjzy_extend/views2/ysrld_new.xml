@@ -123,6 +123,8 @@
                             <field name="amount_total_so"/>
                             <field name="so_real_advance"/>
                             <field name="so_pre_advance"/>
+                             <field name="pre_advance_id"/>
+                        <field name="po_id" invisible="1"/>
                         </group>
                         <group>
 

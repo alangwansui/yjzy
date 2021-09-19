@@ -814,69 +814,21 @@ class account_payment(models.Model):
 
     rcsktsrld_ids = fields.One2many('account.payment', 'yjzy_payment_id', '退税认领',
                                      domain=[('sfk_type', '=', 'rcsktsrld')])
-    # def create_account_bank_statement(self):
-    #     print('invoice_ids', self.ids)
-    #     print('partner_id', len(self.mapped('partner_id')))
-    #     sfk_type = 'yfhxd'
-    #     # name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
-    #     account_bank_statement_obj = self.env['account.bank.statement']
-    #     form_view = self.env.ref('account.view_bank_statement_form')
-    #     for one in self:
-    #         for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选  剩余应付金额！=0的额外账单
-    #             invoice_dic.append(x.id)
-    #         print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
-    #         if one.amount_payment_can_approve_all != 0:  # 考虑已经提交审批的申请
-    #             invoice_dic.append(one.id)
-    #     print('invoice_dic', invoice_dic)
-    #     # test = [(for x in line.yjzy_invoice_all_ids) for line in self)]
-    #     # invoice_ids = self.env['account.invoice'].search([('id','in',invoice_dic)])
-    #     # with_context(
-    #     #     {'fk_journal_id': 1, 'default_be_renling': 1, 'default_invoice_ids': invoice_dic,
-    #     #      'default_payment_type': 'outbound', 'show_so': 1, 'default_sfk_type': 'yfhxd', }).
-    #
-    #     account_reconcile_id = account_reconcile_order_obj.create({
-    #         'partner_id': self[0].partner_id.id,
-    #         'manual_payment_currency_id': self[0].currency_id.id,
-    #         'invoice_ids': [(6, 0, invoice_dic)],
-    #         'payment_type': 'outbound',
-    #         'partner_type': 'supplier',
-    #         'sfk_type': 'yfhxd',
-    #         'be_renling': True,
-    #         'name': name,
-    #         'journal_id': journal.id,
-    #         'payment_account_id': bank_account.id,
-    #         # 'operation_wizard':operation_wizard,
-    #
-    #         'purchase_code_balance': 1,
-    #         'invoice_attribute': attribute,
-    #         'invoice_partner': self[0].invoice_partner,
-    #         'name_title': self[0].name_title
-    #     })
-    #
-    #     if account_reconcile_id.invoice_attribute in ['other_po', 'expense_po', 'other_payment']:
-    #         account_reconcile_id.operation_wizard = '10'
-    #         account_reconcile_id.hxd_type_new = '40'
-    #         account_reconcile_id.make_lines()
-    #     else:
-    #         if account_reconcile_id.supplier_advance_payment_ids_count == 0:  # 如果相关的预付单数量=0，跳过第一步的预付认领
-    #             account_reconcile_id.operation_wizard = '10'
-    #             account_reconcile_id.hxd_type_new = '40'
-    #             account_reconcile_id.make_lines()
-    #         else:
-    #             account_reconcile_id.operation_wizard = '03'
-    #             account_reconcile_id.hxd_type_new = '40'
-    #
-    #     return {
-    #         'type': 'ir.actions.act_window',
-    #         'view_mode': 'form',
-    #         'res_model': 'account.reconcile.order',
-    #         'views': [(form_view.id, 'form')],
-    #         'res_id': account_reconcile_id.id,
-    #         'target': 'current',
-    #         'context': {'default_sfk_type': 'yfhxd',
-    #                     'show_po': 1,
-    #                     }
-    #     }
+    pre_advance_id = fields.Many2one('pre.advance', 'Advice Advance Line',
+                                        domain = "['|',('po_id','=',po_id),('so_id','=',so_id)]")
+    def compute_pre_advance_line_ids(self):
+        for one in self:
+            if one.po_id:
+                pre_advance_line_ids = self.env['pre.advance'].search([('po_id','=',one.po_id.id)])
+            elif one.so_id:
+                pre_advance_line_ids = self.env['pre.advance'].search([('so_id', '=', one.so_id.id)])
+            else:
+                pre_advance_line_ids = False
+            one.pre_advance_line_ids =pre_advance_line_ids
+    pre_advance_line_ids = fields.Many2many('pre.advance','palid','apid','psoid',compute=compute_pre_advance_line_ids)
+    # pre_advance_po_line_ids = fields.One2many('pre.advance', 'po_id',)
+    # pre_advance_so_line_ids = fields.One2many('pre.advance', 'so_id',)
+
 
     def open_ppat(self):
         form_view = self.env.ref('yjzy_extend.purchase_payment_advance_tool_view_form')
@@ -2806,3 +2758,123 @@ def _new_create_payment_entry(self, amount):
 
 
 Account_Payment._create_payment_entry = _new_create_payment_entry
+
+
+# 计算计划预付。按照付款条款，进行创建
+class Pre_Advance(models.Model):
+    _name = 'pre.advance'
+    _description = 'Advice Advance Line'
+
+    @api.depends('payment_advance_ids', 'payment_advance_ids.currency_id','currency_id')
+    def compute_payment_advance_currency_id(self):
+        for one in self:
+            if len(one.payment_advance_ids) >= 1:
+                one.payment_advance_currency_id = one.payment_advance_ids[0].currency_id
+            else:
+                one.payment_advance_currency_id = one.currency_id
+
+    @api.depends('payment_advance_ids', 'payment_advance_ids.amount')
+    def compute_real_advance(self):
+        for one in self:
+            one.real_advance = sum(x.amount for x in one.payment_advance_ids)
+
+
+
+
+    # type=预付或者预收
+    type = fields.Selection(
+        [('pre_collect_in_advance', 'Pre Collect In Advance'), ('pre_pay_in_advance', 'pre_pay_in_advance')], 'type')
+    value_amount = fields.Float('Value Amount')
+    value = fields.Selection([
+        ('balance', 'Balance'),
+        ('percent', 'Percent'),
+        ('fixed', 'Fixed Amount')
+    ], string='Type', required=True, default='balance',
+        help="Select here the kind of valuation related to this payment terms line.")
+    currency_id = fields.Many2one('res.currency', compute='compute_currency_id', store=True)
+    pre_advance = fields.Monetary('Pre Advance', currency_field='currency_id', compute='compute_pre_advance',
+                                  store=True)
+    pre_advance_step = fields.Integer('阶段')
+    pre_advance_step_selection = fields.Selection([('10','第一阶段'),('20','第二阶段'),
+                                                   ('30','第三阶段'),('40','第四阶段')],
+                                                  '预收付阶段',compute='compute_pre_advance_step_selection',store=True)
+
+
+    #实际预收付金额=对应的预付收款单之和
+    payment_advance_currency_id = fields.Many2one('res.currency', compute='compute_payment_advance_currency_id')
+    real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',compute='compute_real_advance',store=True)
+    payment_advance_ids = fields.One2many('account.payment','pre_advance_id',domain=[('state','=','posted')])
+
+
+    po_id = fields.Many2one('purchase.order', 'Purchase Order')
+    so_id = fields.Many2one('sale.order', 'Sale Order')
+    is_selected = fields.Boolean('是否选中')
+
+
+
+    @api.depends('pre_advance_step')
+    def pre_advance_step_selection(self):
+        for one in self:
+            pre_advance_step = one.pre_advance_step
+            if pre_advance_step == 1:
+                pre_advance_step_selection = '10'
+            elif pre_advance_step == 2:
+                pre_advance_step_selection ='20'
+            elif pre_advance_step == 3:
+                pre_advance_step_selection = '30'
+            elif pre_advance_step == 4:
+                pre_advance_step_selection = '40'
+            else:
+                pre_advance_step_selection = False
+            one.pre_advance_step_selection = pre_advance_step_selection
+
+    @api.depends('po_id', 'so_id')
+    def compute_currency_id(self):
+        for one in self:
+            if one.type == 'pre_collect_in_advance' and one.so_id:
+                currency_id = one.so_id.currency_id
+            elif one.type == 'pre_pay_in_advance' and one.po_id:
+                currency_id = one.po_id.currency_id
+            else:
+                currency_id = self.env.company.currency_id
+            one.currency_id = currency_id
+
+    @api.depends('po_id.payment_term_id', 'po_id.amount_total', 'value_amount', 'value')
+    def compute_pre_advance(self):
+        for one in self:
+            if one.type == 'pre_pay_in_advance':
+                amount = one.po_id.amount_total
+                pre_advance = 0
+                if one.value == 'fixed':
+                    pre_advance = one.value_amount
+                elif one.value == 'percent':
+                    pre_advance = amount * (one.value_amount / 100.0)
+                one.pre_advance = pre_advance
+            else:
+                amount = one.so_id.amount_total
+                pre_advance = 0
+                if one.value == 'fixed':
+                    pre_advance = one.value_amount
+                elif one.value == 'percent':
+                    pre_advance = amount * (one.value_amount / 100.0)
+                one.pre_advance = pre_advance
+    def name_get(self):
+        result = []
+        for one in self:
+            name = '%s:/%s' % (one.pre_advance_step_selection,one.pre_advance)
+
+            result.append((one.id, name))
+        return result
+
+    def open_wizard_pre_advance(self):
+        form_view_id = self.env.ref('yjzy_extend.wizard_pre_advance_form')
+        return {
+            'name': u'添加客户',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wizard.pre.advance',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view_id.id, 'form')],
+            'target': 'new',
+            'context': { }
+        }
