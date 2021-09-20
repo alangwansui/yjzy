@@ -342,6 +342,9 @@ class PlanInvoiceAuto(models.Model):
 
     def action_make_real_in_invoice(self):
         self.state_1 = '50'
+        if self.back_tax_invoice_ids:
+            for one in self.back_tax_invoice_ids:
+                one.back_tax_plan_invoice_auto_state_1 = '50'
         self.compute_state_1_2()
 
     def open_wizard_tb_po_invoice_new(self):

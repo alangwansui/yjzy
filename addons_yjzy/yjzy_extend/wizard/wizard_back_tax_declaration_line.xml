@@ -15,8 +15,9 @@
                     <group >
                         <field name="invoice_ids" nolabel="1" options="{'no_create': True,'no_open':True}"
                                context="{'search_default_group_by_bill_id':1,'tree_view_ref':'yjzy_extend.view_account_invoice_back_tax_tree'}"
-                               domain="[('id','not in',have_invoice_ids),('state', 'in',['open']),('plan_invoice_auto_state_1','=','50'),
-                               ('back_tax_declaration_state','!=','20'),('invoice_attribute_all_in_one','in',['130','230','330','620']),('back_tax_type','!=','adjustment')]"/>
+                               domain="[('id','not in',have_invoice_ids),('state', 'in',['open']),('back_tax_plan_invoice_auto_state_1','=','50'),
+                               ('back_tax_declaration_state','!=','20'),('invoice_attribute_all_in_one','in',['130','230','330','620']),
+                               ('back_tax_type','!=','adjustment')]"/>
 
 <!--('real_invoice_auto_state_1','=','30'),-->
                     </group>
