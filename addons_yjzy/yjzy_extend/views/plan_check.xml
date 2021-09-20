@@ -245,13 +245,13 @@
                 <!--            <field name="date_deadline"/>-->
                 <field name="order_track_new_order_state" invisible="1"/>
 
-                <field name="partner_id"/>
+                <field name="partner_id" readonly="1"/>
                 <field name="date_so_requested_is_out_time" invisible="1"/>
                 <button name="open_so_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
                 <field name="so_id" readonly="1" invisible="context.get('type')=='transport_track'"/>
                 <field name="user_id" invisible="1"/>
-                <field name="so_amount_total" invisible="context.get('type')=='transport_track'"/>
+                <field name="so_amount_total" invisible="context.get('type')=='transport_track'" readonly="1"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="time_draft_order" readonly="1" widget="date" string="创建草稿时间"
                        invisible="context.get('type')!='new_order_track'"/>
@@ -259,7 +259,7 @@
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
-                <field name="hegui_date" invisible="context.get('type')=='transport_track'"/>
+                <field name="hegui_date" invisible="context.get('type')=='transport_track'" readonly="1"/>
                 <field name="approve_date" invisible="context.get('type')!='transport_track'"/>
                 <button name="open_factory_return" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='new_order_track'"/>
@@ -307,9 +307,9 @@
 <!--                <field name="sent_amount_percent" widget="progressbar" string=" . .出运进度. . "-->
 <!--                       invisible="context.get('type')!='order_track'"/>-->
                 <field name="so_no_sent_amount_new" invisible="context.get('type')!='order_track'"/>
-                <field name="comments_order_track" invisible="context.get('type')!='order_track'"/>
-                <field name="comments_order_track_date" invisible="context.get('type')!='order_track'"/>
-
+                <field name="comments_order_track" invisible="context.get('type')!='order_track'" readonly="1"/>
+                <field name="comments_order_track_date" invisible="context.get('type')!='order_track'" readonly="1"/>
+                <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
                 <button name="open_tb_id" class="akiny_text_right" type="object" icon="fa-archive"
                         invisible="context.get('type')!='transport_track'"/>
 
@@ -886,20 +886,18 @@
                            attrs="{'invisible':[('type','!=','order_track')]}">
                         <tbody>
                             <tr>
-                                <th width="15%">销售合同</th>
-<!--                                <th width="5%">计划数</th>-->
-<!--                                <th width="5%">计划完成数</th>-->
-<!--                                <th width="5%">计划到期数</th>-->
-<!--                                <th width="5%">到期计划完成数</th>-->
-<!--                                <th width="8%">超时完成计划数</th>-->
+                                <th width="8%">销售合同</th>
+                                <th width="5%">计划数</th>
+                                <th width="5%">计划到期数</th>
+                                <th width="8%">超时完成计划数</th>
                                 <th width="8%">客户确认日期</th>
                                 <th width="8%">合规审批日期</th>
                                 <th width="8%">最迟供应商交期</th>
                                 <th width="8%">客户交期</th>
-                                <th width="12%">客户交期进度</th>
-                                <th width="12%">供应商交期进度</th>
-                                <th width="13%">出运进度</th>
-                                <th width="18%">最后一次备注</th>
+                                <th width="8%">客户交期进度</th>
+                                <th width="8%">供应商交期进度</th>
+                                <th width="8%">出运进度</th>
+                                <th width="10%">最后一次备注</th>
                                 <th width="2%"></th>
 
                             </tr>
@@ -907,21 +905,21 @@
                                 <td>
                                     <field name="so_id" readonly="1"/>
                                 </td>
-<!--                                <td>-->
-<!--                                    <field name="order_track_plan_number" readonly="1"/>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <field name="order_track_finish_number" readonly="1"/>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <field name="order_track_due_number" readonly="1"/>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <field name="order_track_due_finish_number" readonly="1"/>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <field name="order_track_time_out_finish_number" readonly="1"/>-->
-<!--                                </td>-->
+                                <td>
+                                    <field name="order_track_plan_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_finish_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_due_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_due_finish_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_time_out_finish_number" readonly="1"/>
+                                </td>
                                 <td>
                                     <field name="date_so_contract" readonly="1"/>
                                 </td>

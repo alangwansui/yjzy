@@ -583,7 +583,7 @@ class OrderTrack(models.Model):
     comments_transport_track_date = fields.Date('备注日期',track_visibility='onchange')
     can_delete = fields.Boolean('允许删除',default=False)
 
-    @api.depends('date_so_requested_new')
+    @api.onchange('date_so_requested_new')
     def _onchange_date_so_requested_new(self):
         self.date_so_requested_change_date = fields.date.today()
 
