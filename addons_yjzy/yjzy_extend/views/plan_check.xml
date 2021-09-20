@@ -481,6 +481,8 @@
                 <field name="order_track_due_number" readonly="1"/>
                 <field name="order_track_due_finish_number" readonly="1"/>
                 <field name="order_track_time_out_finish_number" class="akiny_text_left" readonly="1"/>
+                <field name="date_po_planned" readonly="1"/>
+                <field name="supplier_delivery_date" readonly="1"/>
                 <field name="plan_check_att_count" invisible="1"/>
                 <button name="open_self" type="object" invisible="1" icon="fa-paperclip"/>
                 <field name="comments" readonly="1"/>
