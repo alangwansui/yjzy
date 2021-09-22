@@ -18,16 +18,18 @@ class Task(models.Model):
     def open_wizard_comments(self):
         comments_obj = self.env['wizard.project.task.comments']
         user = self.env.user.login
-        if user == 'daniel':
+        if user == 'akiny':
             comments = comments_obj.create({
                 'project_task_id': self.id,
                 'type':'daniel',
             })
-        else:
+        elif user == 'daniel':
             comments = comments_obj.create({
                 'project_task_id': self.id,
                 'type': 'benz',
             })
+        else:
+            return True
         form_view = self.env.ref('yjzy_extend.wizard_project_task_comments_form')
         return {
             'name': u'查看',
