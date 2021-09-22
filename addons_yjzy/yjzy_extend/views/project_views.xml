@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="inherit_project_task_views_kanban_tenyale" model="ir.ui.view">
+        <field name="name">project.task.kanban</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_kanban"/>
+        <field name="arch" type="xml">
+            <field name="activity_state" position="after">
+                <field name="daniel_comments"/>
+                <field name="benz_comments"/>
+            </field>
+            <xpath expr="//div[hasclass('o_kanban_record_bottom')]" position="after">
+                 <div class="o_kanban_record_bottom">
+                    <div class="col-xs-8 o_kanban_primary_left">
+                    <small class="o_kanban_record_subtitle">
+                        <span>
+                            <i>
+                                <field name="daniel_comments"/>
+                            </i>
+                        </span>
+                    </small>
+                     <small class="o_kanban_record_subtitle">
+                            <span>
+                                <i>
+                                    <field name="benz_comments"/>
+                                </i>
+                            </span>
+                      </small>
+                    </div>
+                       <div class="col-xs-4 o_kanban_primary_right">
+                        <small class="o_kanban_record_subtitle ">
+                            <button name="open_wizard_comments" type="object" icon="备注"/>
+                        </small>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

@@ -557,6 +557,23 @@ class OrderTrack(models.Model):
     time_contract_requested = fields.Integer('客户交期时限', compute=compute_time_contract_requested, store=True)
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
     date_so_requested_new = fields.Date('最新计划交期',track_visibility='onchange',)
+
+    def create_date_so_requested_new(self):
+        form_view = self.env.ref('yjzy_extend.plan_check_form_purchase_order_date_so').id
+        return ({
+            'name': u'填写新的交期',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'order.track',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view, 'form')],
+            'res_id': self.id,
+            'target': 'new',
+            'context': {}
+
+        })
+
+
     date_so_requested_change_date = fields.Date('交期更新日期')
 
     #--------
@@ -582,6 +599,13 @@ class OrderTrack(models.Model):
     comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
     comments_transport_track_date = fields.Date('备注日期',track_visibility='onchange')
     can_delete = fields.Boolean('允许删除',default=False)
+
+    @api.multi
+    def action_save_test(self):
+        # your code
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
 
     @api.onchange('date_so_requested_new')
     def _onchange_date_so_requested_new(self):

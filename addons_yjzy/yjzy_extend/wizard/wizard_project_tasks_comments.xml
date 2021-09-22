@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="wizard_project_task_comments_form" model="ir.ui.view">
+            <field name="name">wizard.project.task.comments.form</field>
+            <field name="model">wizard.project.task.comments</field>
+            <field name="arch" type="xml">
+                <form string="备注">
+                    <group>
+                        <field name="project_task_id" readonly="1" invisible="1"/>
+                        <field name="type" invisible="1"/>
+                        <field name="comments" />
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确认"/>
+                        <button special="cancel" class="oe_highlight" string="取消"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

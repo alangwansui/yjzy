@@ -200,23 +200,22 @@
 
                 <field name="tb_id" invisible="context.get('type')!='transport_track'"/>
                 <field name="tb_org_sale_amount_new" invisible="context.get('type')!='transport_track'"/>
-
-
+                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="工厂发货日期"
+                       invisible="context.get('type')!='transport_track'"/>
                 <field name="date_out_in" invisible="context.get('type')!='transport_track'"
-                       options='{"fg_color": "red:is_date_out_in == False"}'/>
+                       options='{"fg_color": "red:is_date_out_in == False"}' string="出运日期"/>
                 <button name="action_date_out_in" type="object" string="确认并生成应收付"
                         attrs="{'invisible':1}" confirm="确认后，应收应付就会生成，请谨慎！"
                         invisible="context.get('type')!='transport_track'"/>
-                <field name="date_ship" invisible="context.get('type')!='transport_track'"/>
-                <field name="date_customer_finish" invisible="context.get('type')!='transport_track'"/>
-                <field name="tb_purchase_invoice_ids" widget="many2many_tags" string="工厂发货日期"
-                       invisible="context.get('type')!='transport_track'"/>
+                <field name="date_ship" invisible="context.get('type')!='transport_track'" string="船期"/>
+                <field name="date_customer_finish" invisible="context.get('type')!='transport_track'" string="向客户交单日"/>
+
                 <button name="open_order_track_tb" type="object" class="oe_stat_button" icon="fa-archive" string="工厂发货明细"
                         invisible="context.get('type')!='transport_track'"/>
-                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'"
-                       groups="base.group_system"/>
-                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'"
-                       groups="base.group_system"/>
+                <field name="sale_invoice_balance" invisible="context.get('type')!='transport_track'" readonly="1"
+                       />
+                <field name="purchase_invoice_balance" invisible="context.get('type')!='transport_track'" readonly="1"
+                       />
                 <field name="back_tax_invoice_balance" invisible="context.get('type')!='transport_track'"
                        groups="base.group_system"/>
                 <field name="zc_invoice_profile_residual_total_new" invisible="context.get('type')!='transport_track'"
@@ -288,9 +287,10 @@
 
                 <field name="date_so_requested" invisible="context.get('type')!='order_track'" widget="date"
                        string="客户交期"/>
-                <field name="date_so_requested_new" invisible="context.get('type_out')!='out_date'" widget="date"/>
+                <field name="date_so_requested_new" invisible="context.get('type_out')!='out_date'" widget="date" readonly="1"/>
+                <button name="create_date_so_requested_new" string="填写新交期" type="object" icon="fa-clock-o"/>
                 <field name="date_so_requested_change_date" invisible="context.get('type_out')!='out_date'"
-                       widget="date"/>
+                       widget="date" readonly="1"/>
                 <field name="time_contract_requested" invisible="1"/>
                 <field name="time_supplier_requested" invisible="1"/>
                 <field name="check_all_number" invisible="1"/>
@@ -546,6 +546,33 @@
                             <field name="type"/>
                         </page>
                     </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="order_track_form_purchase_order_date_so" model="ir.ui.view">
+        <field name="name">order.track.form</field>
+        <field name="model">order.track</field>
+        <field name="arch" type="xml">
+            <form string="检查点">
+                <sheet>
+                    <group >
+                        <group>
+                            <field name="date_so_requested_new"/>
+                            <field name="date_so_requested_change_date"/>
+                        </group>
+                    </group>
+                 <footer invisible="not context.get('open')">
+                        <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                        <button string="关闭" class="btn-primary" special="cancel"/>
+                    </footer>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -1742,7 +1769,7 @@
 
 
     <record id="action_order_track_tb" model="ir.actions.act_window">
-        <field name="name">出运跟踪</field>
+        <field name="name">出运相关日期跟踪</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
@@ -1812,7 +1839,7 @@
               sequence="2"/>
 
 
-    <menuitem id="menu_order_track_tb" name="出运跟踪" parent="menu_order_track_root" action="action_order_track_tb"
+    <menuitem id="menu_order_track_tb" name="出运相关日期跟踪" parent="menu_order_track_root" action="action_order_track_tb"
               sequence="7"/>
     <menuitem id="menu_order_track_tb_done" name="出运跟踪" parent="menu_order_track_done_root"
               action="action_order_track_tb_done"

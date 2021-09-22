@@ -64,6 +64,7 @@
         'wizard/wizard_tb_po_invoice_new.xml',
         'wizard/manual_complete_real_invoice.xml',
         'wizard/wizard_pre_advance.xml',
+        'wizard/wizard_project_tasks_comments.xml',
 
         'views/account_invoice_extra.xml',
         'views/account_journal.xml',
@@ -141,6 +142,7 @@
         'views/dashboard.xml',
         'views/transport_bill_customs_invoice.xml',
         'views/order_track_att.xml',
+        'views/project_views.xml',
 
 
         'views/trasnport_bill_stage.xml',
