@@ -559,7 +559,7 @@ class OrderTrack(models.Model):
     date_so_requested_new = fields.Date('最新计划交期',track_visibility='onchange',)
 
     def create_date_so_requested_new(self):
-        form_view = self.env.ref('yjzy_extend.plan_check_form_purchase_order_date_so').id
+        form_view = self.env.ref('yjzy_extend.order_track_form_purchase_order_date_so').id
         return ({
             'name': u'填写新的交期',
             'view_type': 'form',

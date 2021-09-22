@@ -314,7 +314,8 @@
                         invisible="context.get('type')!='transport_track'"/>
 
                 <field name="tb_id" invisible="context.get('type')!='transport_track'"/>
-                <field name="tb_org_sale_amount_new" invisible="context.get('type')!='transport_track'"/>
+<!--                invisible="context.get('type')!='transport_track'"-->
+                <field name="tb_org_sale_amount_new" invisible="1"  />
 
 
                 <field name="date_out_in" invisible="context.get('type')!='transport_track'"
@@ -914,12 +915,14 @@
                         </tbody>
                     </table>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
-                           attrs="{'invisible':[('type','!=','order_track')]}">
+                           attrs="{'invisible':['|',('type','!=','order_track'),('date_so_requested_is_out_time','=','40_in_out_time')]}">
                         <tbody>
                             <tr>
-                                <th width="8%">销售合同</th>
+                                <th width="10%">销售合同</th>
                                 <th width="5%">计划数</th>
+                                <th width="5%">计划完成数</th>
                                 <th width="5%">计划到期数</th>
+                                <th width="5%">到期计划完成数</th>
                                 <th width="8%">超时完成计划数</th>
                                 <th width="8%">客户确认日期</th>
                                 <th width="8%">合规审批日期</th>
@@ -928,7 +931,7 @@
                                 <th width="8%">客户交期进度</th>
                                 <th width="8%">供应商交期进度</th>
                                 <th width="8%">出运进度</th>
-                                <th width="10%">最后一次备注</th>
+                                <th width="8%">最后一次备注</th>
                                 <th width="2%"></th>
 
                             </tr>
@@ -972,6 +975,78 @@
                                 </td>
                                 <td>
                                     <field name="sent_amount_percent" widget="progressbar"/>
+                                </td>
+                                <td>
+                                    <field name="comments_order_track" readonly="1"/>
+                                </td>
+                                <td>
+                                    <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
+                           attrs="{'invisible':['|',('type','!=','order_track'),('date_so_requested_is_out_time','!=','40_in_out_time')]}">
+                        <tbody>
+                            <tr>
+                                <th width="10%">销售合同</th>
+                                <th width="5%">计划数</th>
+                                <th width="5%">计划完成数</th>
+                                <th width="5%">计划到期数</th>
+                                <th width="5%">到期计划完成数</th>
+                                <th width="8%">超时完成计划数</th>
+                                <th width="8%">客户确认日期</th>
+                                <th width="8%">合规审批日期</th>
+                                <th width="8%">最迟供应商交期</th>
+                                <th width="8%">客户交期</th>
+                                <th width="8%">最新计划交期</th>
+                                <th width="2%"></th>
+                                <th width="8%">交期更新日期</th>
+                                <th width="14%">最后一次备注</th>
+                                <th width="2%"></th>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <field name="so_id" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_plan_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_finish_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_due_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_due_finish_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="order_track_time_out_finish_number" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="date_so_contract" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="hegui_date" readonly="1"/>
+                                </td>
+                                <td>
+                                    <field name="latest_date_po_planned"/>
+                                </td>
+                                <td>
+                                    <field name="date_so_requested" readonly="1" widget="date"/>
+                                </td>
+
+                                <td>
+                                    <field name="date_so_requested_new" readonly="1"/>
+                                </td>
+                                <td>
+                                    <button name="create_date_so_requested_new"  type="object" icon="fa-clock-o"/>
+                                </td>
+                                <td>
+                                    <field name="date_so_requested_change_date" readonly="1"/>
                                 </td>
                                 <td>
                                     <field name="comments_order_track" readonly="1"/>
@@ -1277,6 +1352,7 @@
                         </page>
                         <page groups="base.group_system">
                             <group>
+                                <field name="date_so_requested_is_out_time"/>
                                 <field name="comments_new_order_track_date"/>
                                 <field name="comments_order_track_date"/>
                                 <field name="comments_transport_track_date"/>

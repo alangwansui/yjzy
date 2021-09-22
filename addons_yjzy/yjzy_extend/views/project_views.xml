@@ -13,7 +13,7 @@
             </field>
             <xpath expr="//div[hasclass('o_kanban_record_bottom')]" position="after">
                  <div class="o_kanban_record_bottom">
-                    <div class="col-xs-8 o_kanban_primary_left">
+                    <div class="col-xs-10 o_kanban_primary_left">
                     <small class="o_kanban_record_subtitle">
                         <span>
                             <i>
@@ -29,9 +29,9 @@
                             </span>
                       </small>
                     </div>
-                       <div class="col-xs-4 o_kanban_primary_right">
+                       <div class="col-xs-2 o_kanban_primary_right">
                         <small class="o_kanban_record_subtitle ">
-                            <button name="open_wizard_comments" type="object" icon="备注"/>
+                            <button name="open_wizard_comments" type="object" icon="注"/>
                         </small>
                     </div>
                 </div>
