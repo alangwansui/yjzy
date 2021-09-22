@@ -1830,6 +1830,7 @@
 
                             <page groups="base.group_system">
                                 <group>
+                                    <field name="back_tax_plan_invoice_auto_state_1"/>
                                     <field name="invoice_attribute_all_in_one"/>
                                     <field name="reconcile_order_ids_count"/>
                                     <field name="move_line_com_yfzk_ids_count"/>

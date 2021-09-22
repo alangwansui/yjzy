@@ -1098,8 +1098,8 @@
                             <page string="其他信息">
                                 <group>
                                     <group name="sale_shipping">
-                                        <field name="warehouse_id" invisible="1" options="{'no_create': True}"
-                                               groups="stock.group_stock_multi_locations"/>
+                                        <field name="warehouse_id" invisible="0" options="{'no_create': True}"
+                                               groups="base.group_system"/>
                                         <field name="incoterm" invisible="1" widget="selection"
                                                groups="sale_stock.group_display_incoterm"/>
                                         <field name="mark_comb_id" string="唛头"

@@ -27,7 +27,6 @@
             <field name="state">done</field>
         </record>
 
-
         <record model="account.invoice.stage" id="stage_refuse">
             <field name="name">账单拒绝</field>
             <field name="code">005</field>

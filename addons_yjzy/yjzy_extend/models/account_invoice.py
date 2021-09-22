@@ -17,7 +17,7 @@ Invoice_Selection = [('draft', u'草稿'),
                      ('invoice_origin', u'原始账单')]
 
 
-class Stage(models.Model):
+class AccountInvoiceStage(models.Model):
     _name = "account.invoice.stage"
     _description = "Invoice Stage"
     _order = 'sequence'
