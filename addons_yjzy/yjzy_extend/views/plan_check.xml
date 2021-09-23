@@ -566,11 +566,12 @@
                 <sheet>
                     <group >
                         <group>
+                            <field name="id" readonly="1"/>
                             <field name="date_so_requested_new"/>
-                            <field name="date_so_requested_change_date"/>
+                            <field name="date_so_requested_change_date" invisible="1"/>
                         </group>
                     </group>
-                 <footer invisible="not context.get('open')">
+                 <footer>
                         <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
                         <button string="关闭" class="btn-primary" special="cancel"/>
                     </footer>
