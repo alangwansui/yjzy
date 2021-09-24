@@ -683,7 +683,7 @@
                                 <field name="cip_type"/>
                                 <field name="pre_advance" string="建议预收金额"/>
                                 <div colspan="2" style="padding-left:10px;padding-right:10px"
-                                     attrs="{'invisible':[('pre_advance','=',0)]}">
+                                     attrs="{'invisible':[('pre_advance_line_count','=',0)]}">
                                 <table style="width:100%">
                                     <tbody>
                                         <tr>

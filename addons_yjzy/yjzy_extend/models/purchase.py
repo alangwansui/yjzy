@@ -275,6 +275,8 @@ class purchase_order(models.Model):
     pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
                                   help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
     pre_advance_line = fields.One2many('pre.advance', 'po_id')
+    pre_advance_line_count = fields.Integer('预收付明细数量',compute='compute_pre_advance_line_count',store=True)
+
 
     # 以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
@@ -317,6 +319,10 @@ class purchase_order(models.Model):
     tb_line_ids = fields.One2many('transport.bill.line', 'po_id')
 
     # amount_payment_org_auto = fields.Monetary('支付金额', currency_field='currency_id',compute=compute_amount_payment_org_auto)
+    @api.depends('pre_advance_line')
+    def compute_pre_advance_line_count(self):
+        for one in self:
+            one.pre_advance_line_count = len(one.pre_advance_line)
 
     def create_pre_advance(self):
         payment_term_id = self.payment_term_id

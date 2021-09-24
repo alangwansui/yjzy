@@ -822,12 +822,19 @@ class account_payment(models.Model):
         for one in self:
             if one.po_id:
                 pre_advance_line_ids = self.env['pre.advance'].search([('po_id','=',one.po_id.id)])
+                pre_advance_line_ids_count = len(pre_advance_line_ids)
             elif one.so_id:
                 pre_advance_line_ids = self.env['pre.advance'].search([('so_id', '=', one.so_id.id)])
+                pre_advance_line_ids_count = len(pre_advance_line_ids)
             else:
                 pre_advance_line_ids = False
+                pre_advance_line_ids_count = 0
             one.pre_advance_line_ids =pre_advance_line_ids
+            one.pre_advance_line_ids_count = pre_advance_line_ids_count
+
+
     pre_advance_line_ids = fields.Many2many('pre.advance','palid','apid','psoid',compute=compute_pre_advance_line_ids,store=True)
+    pre_advance_line_ids_count = fields.Integer('预收付明细数量',compute=compute_pre_advance_line_ids,store=True)
 
     is_pre_advance_line = fields.Boolean('是否已经填了预付明细')
     pre_advance_step = fields.Integer('阶段',related='pre_advance_id.pre_advance_step',store=True)

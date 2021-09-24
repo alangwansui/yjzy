@@ -525,7 +525,7 @@ class sale_order(models.Model):
 
     pre_advance = fields.Monetary(u'预收金额', currency_field='currency_id', compute=compute_pre_advance, store=False)
     pre_advance_line = fields.One2many('pre.advance', 'so_id')
-
+    pre_advance_line_count = fields.Integer('预收付明细数量', compute='compute_pre_advance_line_count', store=True)
 
     advance_po_residual = fields.Float(u'预付余额', compute=compute_po_residual, store=True)
     yjzy_payment_ids = fields.One2many('account.payment', 'so_id', u'预收认领单')
@@ -599,6 +599,11 @@ class sale_order(models.Model):
     #14.0——————————————————
 
     contract_comments_ty =fields.Text('合同备注')
+
+    @api.depends('pre_advance_line')
+    def compute_pre_advance_line_count(self):
+        for one in self:
+            one.pre_advance_line_count = len(one.pre_advance_line)
 
     def create_pre_advance(self):
         payment_term_id = self.payment_term_id
