@@ -229,8 +229,27 @@
                                    options="{'no_open':1}"/>
                             <field name="po_amount"/>
                             <field name="po_real_advance" string="已预付金额"/>
-                            <field name="pre_advance_id"/>
 
+                            <div colspan="2" style="padding-left:10px;padding-right:10px">
+                                <table style="width:100%">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width:25%">
+                                                <span>预付属性</span>
+                                            </th>
+                                            <th style="width:25%">
+                                                <span>计划应预付</span>
+                                            </th>
+                                            <th style="width:25%">
+                                                <span>实际总预付</span>
+                                            </th>
+                                            <th style="width:25%">
+
+                                            </th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <field name="pre_advance_line_ids" nolabel="1" colspan="2">
                                 <tree>
@@ -238,12 +257,13 @@
                                     <field name="real_advance"/>
                                     <field name="is_selected"/>
                                     <field name="pre_advance_step"/>
-                                     <button name="open_wizard_pre_advance" class="btn btn-primary btn-sm" type="object" string="选择"
-                                             attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
-                                    context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
+                                    <button name="open_wizard_pre_advance" class="btn btn-primary btn-sm" type="object"
+                                            string="选择"
+                                            attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
+                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
                                     <button name="open_wizard_pre_advance" class="btn btn-primary btn-sm" type="object"
                                             attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}" string="取消"
-                                        context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
+                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
                                 </tree>
 
 
@@ -254,27 +274,16 @@
                                     <field name="pre_advance_step"/>
                                     <field name="pre_advance_options"/>
                                     <templates>
+
                                         <t t-name="kanban-box" style="height:20px">
                                             <div style="width:100%">
                                                 <table style="width:100%">
                                                     <tbody>
-                                                        <th >
-                                                            <td style="width:25%">
-                                                                <span>预付属性</span>
-                                                            </td>
-                                                            <td style="width:25%">
-                                                                <span>计划应预付</span>
-                                                            </td>
-                                                            <td style="width:25%">
-                                                                <span>实际总预付</span>
-                                                            </td>
-                                                            <td style="width:25%">
-                                                            </td>
-                                                        </th>
-                                                        <tr>
-                                                             <td style="width:25%">
 
-                                                                    <field name="pre_advance_options"/>
+                                                        <tr>
+                                                            <td style="width:25%">
+
+                                                                <field name="pre_advance_options"/>
 
                                                             </td>
                                                             <td style="width:25%">
@@ -290,16 +299,17 @@
                                                                 </strong>
                                                             </td>
                                                             <td style="width:25%">
-                                                                    <button name="open_wizard_pre_advance" attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
-                                                                            class="btn btn-primary btn-sm"
-                                                                            type="object" icon="选择"
-                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
+                                                                <button name="open_wizard_pre_advance"
+                                                                        attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
+                                                                        class="btn btn-primary btn-sm"
+                                                                        type="object" icon="选择"
+                                                                        context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
 
-                                                                    <button name="open_wizard_pre_advance" attrs="{'invisible':['|',('parent.is_pre_advance_line','=',False),('is_selected','=',False)]}"
-                                                                            class="btn btn-primary btn-sm"
-                                                                            type="object" icon="取消"
-                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
-
+                                                                <button name="open_wizard_pre_advance"
+                                                                        attrs="{'invisible':['|',('parent.is_pre_advance_line','=',False),('is_selected','=',False)]}"
+                                                                        class="btn btn-primary btn-sm"
+                                                                        type="object" icon="取消"
+                                                                        context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
 
 
                                                             </td>
@@ -469,6 +479,7 @@
 
                         <page groups="base.group_system">
                             <group>
+                                <field name="pre_advance_id"/>
                                 <field name="pre_advance_step"/>
                                 <field name="is_pre_advance_line"/>
                                 <field name="advance_reconcile_order_line_ids_count" invisible="1"/>

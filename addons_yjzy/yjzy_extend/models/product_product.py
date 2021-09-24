@@ -159,7 +159,7 @@ class Product_Product(models.Model):
             default_code = one.default_code
             can_be_expensed = one.can_be_expensed
             hs_name = one.hs_id.name
-            if variant_seller_ids:
+            if variant_seller_ids and variant_seller_ids.product_name:
                 product_supplier_ref = variant_seller_ids.product_name
             else:
                 product_supplier_ref = '无'

@@ -85,6 +85,7 @@
                         <filter string="状态" domain="[]" name="group_by_state_1" context="{'group_by':'so_id_state_1'}"/>
                         <filter string="stage" domain="[]" name="group_by_so_stage" context="{'group_by':'so_id_stage'}"/>
                         <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="客户" domain="[]" context="{'group_by':'customer_id'}"/>
                         <filter string="交期" domain="[]" context="{'group_by':'date_planned'}"/>
 
                     </group>
@@ -96,7 +97,7 @@
             <field name="name">purchase.order.tree</field>
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
-                <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"
+                <tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'" class="o_list_view_scroll"
                       decoration-info="state in ('wait','confirmed')" string="采购合同">
                     <field name="approve_date"/>
                     <field name="source_so_id" string="原始合同号"/>
@@ -333,6 +334,24 @@
 
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="pre_advance" invisible="0" string="建议预付金额"/>
+                                 <div colspan="2" style="padding-left:10px;padding-right:10px">
+                                <table style="width:100%">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width:25%">
+                                                <span>预付属性</span>
+                                            </th>
+                                            <th style="width:35%">
+                                                <span>计划应预付</span>
+                                            </th>
+                                            <th style="width:45%">
+                                                <span>实际总预付</span>
+                                            </th>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                                 <field name="pre_advance_line" string="预付明细">
                                 <!--                                    <tree>-->
                                 <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
@@ -349,26 +368,14 @@
                                             <div style="width:100%">
                                                 <table style="width:100%">
                                                     <tbody>
-                                                        <th>
-                                                            <td>
-                                                                <span>预付属性</span>
-                                                            </td>
-                                                            <td>
-                                                                <span>计划应预付</span>
-                                                            </td>
-                                                            <td>
-                                                                <span>实际总预付</span>
-                                                            </td>
-
-                                                        </th>
                                                         <tr>
-                                                             <td>
+                                                             <td style="width:25%">
                                                                 <field name="pre_advance_options"/>
                                                             </td>
-                                                            <td>
+                                                            <td style="width:35%">
                                                                 <field name="pre_advance" widget="monetary"/>
                                                             </td>
-                                                            <td>
+                                                            <td style="width:40%">
                                                                 <field name="real_advance" widget="monetary"/>
                                                             </td>
                                                         </tr>

@@ -682,6 +682,24 @@
                                 <field name="advance_po_residual" string="实际预付余额" invisible="1" readonly="1"/>
                                 <field name="cip_type"/>
                                 <field name="pre_advance" string="建议预收金额"/>
+                                <div colspan="2" style="padding-left:10px;padding-right:10px">
+                                <table style="width:100%">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width:25%">
+                                                <span>预付属性</span>
+                                            </th>
+                                            <th style="width:35%">
+                                                <span>计划应预付</span>
+                                            </th>
+                                            <th style="width:45%">
+                                                <span>实际总预付</span>
+                                            </th>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                                 <field name="pre_advance_line" nolabel="1" colspan="2">
                                     <!--                                    <tree>-->
                                     <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
@@ -698,26 +716,15 @@
                                                 <div style="width:100%">
                                                 <table style="width:100%">
                                                     <tbody>
-                                                        <th>
-                                                            <td style="width:25%">
-                                                                <span>预收属性</span>
-                                                            </td>
-                                                            <td style="width:35%">
-                                                                <span>计划应预收</span>
-                                                            </td>
-                                                            <td style="width:40%">
-                                                                <span>实际总预收</span>
-                                                            </td>
 
-                                                        </th>
                                                         <tr>
-                                                             <td>
+                                                             <td style="width:25%">
                                                                 <field name="pre_advance_options"/>
                                                             </td>
-                                                            <td>
+                                                            <td style="width:35%">
                                                                 <field name="pre_advance" widget="monetary"/>
                                                             </td>
-                                                            <td>
+                                                            <td style="width:40%">
                                                                 <field name="real_advance" widget="monetary"/>
                                                             </td>
                                                         </tr>
