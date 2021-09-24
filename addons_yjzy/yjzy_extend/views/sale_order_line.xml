@@ -177,5 +177,21 @@
 
  	<menuitem id="sh_sol_quotation_line_all" name="所有销售明细" action="sh_action_sale_order_lines_all"
 		groups="sales_team.group_sale_manager" parent="new_sale_order_root_4" sequence="99"/>
+
+		<record id="sh_action_sale_order_lines_all_new" model="ir.actions.act_window">
+			<field name="name">Sale Order Line</field>
+			<field name="res_model">sale.order.line</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form,kanban</field>
+            <field name="domain">[]</field>
+
+			<field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
+            <field name="view_id" ref="sh_sol_sale_quotation_line_tree_view_inherit_1"/>
+		</record>
+		<menuitem id="product_newesee" name="产品_新菜单"
+		groups="sales_team.group_sale_manager" sequence="99"/>
+ 		<menuitem id="sh_sol_quotation_line_all_new" name="产品为中心的销售采购明细" action="sh_action_sale_order_lines_all_new"
+		groups="sales_team.group_sale_manager" parent="product_newesee" sequence="99"/>
 	</data>
 </odoo>
