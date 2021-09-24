@@ -854,7 +854,7 @@ class transport_bill(models.Model):
 
             today = datetime.now()
             # 未发货，开始发货，待核销，已核销
-            if one.state in ( 'invoiced', 'verifying', 'abnormal'):
+            if one.state in ('invoiced', 'verifying', 'abnormal'):
                 if sale_invoice_balance == 0 and purchase_invoice_balance == 0 and back_tax_invoice_balance == 0:
                     stage_id = self._stage_find(domain=[('code', '=', '007')])
                     second_state = '60'
@@ -2056,8 +2056,8 @@ class transport_bill(models.Model):
             return 'yjzy_extend.mt_tb_w_sale_director'
         elif 'state' in init_values and self.state == 'confirmed':
             return 'yjzy_extend.mt_tb_confirmed'
-        elif 'state' in init_values and self.state == 'locked':
-            return 'yjzy_extend.mt_tb_locked'
+
+
         elif 'state' in init_values and self.state == 'done':
             return 'yjzy_extend.mt_tb_done'
 
@@ -2483,7 +2483,7 @@ class transport_bill(models.Model):
         print('===write need==', need)
         if need and date_out_in:
             if self.state not in (
-            'approve', 'confirmed', 'delivered', 'invoiced', 'locked', 'finish_add_purchase', 'verifying', 'done'):
+            'approve', 'confirmed', 'delivered', 'invoiced',  'finish_add_purchase', 'verifying', 'done'):
                 raise Warning('非执行中的出运单，不允许填写日期')
             else:
                 # 730 填写日期后，自动发货和生成账单，等待审批完成后过账
@@ -3317,8 +3317,8 @@ class transport_bill(models.Model):
         self.write({  # 'state': 'draft',
             'stage_id': stage_id.id})
 
-    def confirmed2locked(self):
-        self.state = 'locked'
+    # def confirmed2locked(self):
+    #     self.state = 'locked'
 
     def action_done(self):
         self.state = 'done'
