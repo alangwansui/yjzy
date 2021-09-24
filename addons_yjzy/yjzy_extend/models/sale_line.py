@@ -101,6 +101,7 @@ class sale_order_line(models.Model):
 
 
     tbl_ids = fields.One2many('transport.bill.line', 'sol_id', u'出运明细')  # 13已
+
     rest_tb_qty = fields.Float('出运剩余数', compute=compute_info)  # 13已 参与测试后期删除
     new_rest_tb_qty = fields.Float('新:出运剩余数', compute='compute_rest_tb_qty', store=True)  # 13已
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
@@ -205,6 +206,22 @@ class sale_order_line(models.Model):
     purchase_cost_new = fields.Monetary(u'采购总价', currency_field='company_currency_id',
                                         compute='compute_purchase_cost_new')
     tb_line_count = fields.Integer('发货次数', compute=compute_tb_line_count)
+
+    #——————————销售明细汇总————
+    product_customer_ref = fields.Char(u'客户编号',related='product_id.customer_ref',store=True)
+    product_supplier_ref = fields.Char(u'供应商编号',compute='compute_product_supplier_ref',store=True)
+
+    @api.depends('product_id','supplier_id','product_id.variant_seller_ids.product_name','product_id.variant_seller_ids')
+    def compute_product_supplier_ref(self):
+        for one in self:
+            product_supplierinfo = one.product_id.variant_seller_ids.filtered(lambda x: x.name == one.supplier_id)
+            if len(product_supplierinfo) > 1:
+                product_supplier_ref = product_supplierinfo[0].product_name
+            else:
+                product_supplier_ref = product_supplierinfo.product_name
+
+            one.product_supplier_ref = product_supplier_ref
+
 
     def open_bill_ids(self):
         tree_view_id = self.env.ref('yjzy_extend.view_transport_bill_tenyale_sales_tree').id

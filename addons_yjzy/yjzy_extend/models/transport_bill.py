@@ -854,7 +854,7 @@ class transport_bill(models.Model):
 
             today = datetime.now()
             # 未发货，开始发货，待核销，已核销
-            if one.state in ('locked', 'invoiced', 'verifying', 'abnormal'):
+            if one.state in ( 'invoiced', 'verifying', 'abnormal'):
                 if sale_invoice_balance == 0 and purchase_invoice_balance == 0 and back_tax_invoice_balance == 0:
                     stage_id = self._stage_find(domain=[('code', '=', '007')])
                     second_state = '60'

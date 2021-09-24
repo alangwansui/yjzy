@@ -45,22 +45,39 @@
 					<button name="compute_today_hegui_date" type="object" string="hegui" groups="base.group_system"/>
 					<button name="compute_product_last_price" type="object" string="price" groups="base.group_system"/>
 					<button name="compute_product_other_price" type="object" string="other_price" groups="base.group_system"/>
+					<field name="product_id" string="产品" invisible="1"/>
+					<field name="product_customer_ref"/>
+					<field name="product_supplier_ref"/>
+					<field name="is_gold_sample" string="金样状态"/>
+					<field name="is_ps" string="PS状态"/>
 					<field name="order_partner_id" string="客户"/>
-					<field name="order_id" string="订单号"/>
-					<field name="customer_pi" string="PO号"/>
-					<field name="purchase_contract_code" string="采购合同号" invisible="1"/>
+					<field name="order_id" string="销售合同"/>
+					<field name="customer_pi" string="客户PO号"/>
+					<field name="product_uom_qty" string="数量" sum="小计" />
 					<field name="contract_date" string="下单日期"/>
-					<field name="product_id" string="客户型号"/>
+					<field name="price_unit" string="销售单价"/>
+					<field name="price_total" widget="monetary" string="销售总价" groups="sale.group_show_price_total"/>
+					<field name="supplier_id" options="{'no_open':True}"/>
+					<field name="purchase_contract_code" string="采购合同号"/>
+					<field name="purchase_price" string="采购单价"/>
+					<field name="purchase_cost_new"/>
+					<field name="current_date_rate" string="下单时汇率"/>
+					<field name="product_so_line_count" string="下单次数"/>
+					<field name="tb_line_count" string="发货次数"/>
+					<field name="tbl_ids"/>
+
+					<button type="object" name="open_bill_ids" icon="fa-archive"/>
+					<field name="qty_undelivered"/>
+					<field name="qty_delivered" string="已发货"/>
+					<field name="project_tb_qty"/>
+					<field name="can_project_tb_qty"/>
 					<field name="name" invisible="1"/>
 					<field name="product_uom" invisible="1"/>
-					<field name="product_uom_qty" string="数量"/>
-					<field name="price_unit" string="销售单价"/>
-					<field name="purchase_price" string="采购单价"/>
+
 					<field name="tax_id" widget="many2many_tags" invisible="1"/>
 					<field name="discount" invisible="1"/>
-					<field name="price_subtotal" string="销售总价"/>
-					<field name="purchase_cost" string="采购总价"/>
-					<field name="current_date_rate" string="下单时汇率"/>
+
+
 				</tree>
 			</field>
 		</record>
