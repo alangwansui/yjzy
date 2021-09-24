@@ -1278,6 +1278,7 @@
                                 </div>
                                 <field name="plan_check_ids"/>
                                 <group>
+                                    <field name="pre_advance_line_count"/>
                                     <field name="stage_id"/>
                                     <field name="company_id" options="{'no_create': True}"
                                            groups="base.group_multi_company"/>

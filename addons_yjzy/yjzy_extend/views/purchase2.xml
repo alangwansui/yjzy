@@ -610,6 +610,7 @@
                             </page>
                             <page string="管理员信息" groups="base.group_system">
                                 <group>
+                                    <field name="pre_advance_line_count"/>
                                     <field name="company_id" groups="base.group_system" options="{'no_create': True}"
                                            invisible="0"/>
                                     <field name="main_sign_uid" groups="sale.hegui_all"/>

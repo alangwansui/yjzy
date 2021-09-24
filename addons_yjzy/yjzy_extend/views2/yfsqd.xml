@@ -479,6 +479,7 @@
 
                         <page groups="base.group_system">
                             <group>
+                                <field name="pre_advance_line_ids_count"/>
                                 <field name="pre_advance_id"/>
                                 <field name="pre_advance_step"/>
                                 <field name="is_pre_advance_line"/>
