@@ -123,7 +123,7 @@
                     <field name="name" string="模糊搜索" filter_domain="['|','|',('contract_code','ilike',self),('product_id','ilike',self),('order_partner_id','child_of',self)]"/>
                     <field name="order_partner_id" string="客户" filter_domain="['|','|',('order_partner_id','ilike',self),('order_id','ilike',self),('product_id','ilike',self)]"/>
                     <field name="contract_code" string="合同号"/>
-                    <field name="product_id" string="产品"/>
+                    <field name="product_customer_ref" string="产品"/>
                     <field name="contract_date" string="客户下单日期"/>
                     <separator/>
                     <group expand="0" string="Group By">
@@ -185,8 +185,8 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form,kanban</field>
             <field name="domain">[]</field>
-
-			<field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
+			<field name="search_view_id" ref="sh_sol_sale_quotation_line_search_view_inherit_1"/>
+			<field name="context">{}</field>
             <field name="view_id" ref="sh_sol_sale_quotation_line_tree_view_inherit_1"/>
 		</record>
 		<menuitem id="product_newesee" name="产品_新菜单"
