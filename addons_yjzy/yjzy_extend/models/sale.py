@@ -604,16 +604,30 @@ class sale_order(models.Model):
         payment_term_id = self.payment_term_id
         payment_term_line = payment_term_id.line_ids
         pa_obj = self.env['pre.advance']
+        pre_advance_step = 0
         if self.pre_advance_line:
             for line in self.pre_advance_line:
                 line.unlink()
         for one in payment_term_line:
+            pre_advance_step +=1
             if one.option == 'advance':
                 pre_advance = pa_obj.create({
                     'type':'pre_collect_in_advance',
                     'value':one.value,
                     'value_amount':one.value_amount,
+                    'pre_advance_step': pre_advance_step,
+                    'pre_advance_options': 'advance_in',
                     'so_id':self.id,
+                })
+                pre_advance.compute_pre_advance()
+            if one.option == 'before_delivered':
+                pre_advance = pa_obj.create({
+                    'type': 'pre_pay_in_advance',
+                    'value': one.value,
+                    'value_amount': one.value_amount,
+                    'pre_advance_step': pre_advance_step,
+                    'pre_advance_options':'before_delivered',
+                    'po_id': self.id,
                 })
                 pre_advance.compute_pre_advance()
 

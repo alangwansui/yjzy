@@ -1743,7 +1743,7 @@
                 [('state','in',['cancel','draft','refused','submit','sales_approve','manager_approve'])]
             </field>
             <field name="context">
-                {'search_default_group_by_stage':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
+                {'search_default_group_by_stage':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),
@@ -1769,7 +1769,7 @@
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
             <field name="domain">[('state','in',['locked','finish_add_purchase','approve','delivered','invoiced','verifying'])]</field>
             <field name="context">
-                {'search_default_group_by_state_type':1,'only_name':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
+                {'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
             </field>
             <field name="view_ids" eval="[(5, 0, 0),

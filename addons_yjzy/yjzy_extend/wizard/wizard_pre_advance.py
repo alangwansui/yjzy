@@ -18,12 +18,14 @@ class wizard_pre_advance(models.TransientModel):
         self.ensure_one()
         self.payment_advance_id.pre_advance_id = self.pre_advance_line
         self.pre_advance_line.is_selected = True
+        self.payment_advance_id.is_pre_advance_line = True
         return True
 
     def cancel(self):
         self.ensure_one()
         self.payment_advance_id.pre_advance_id = False
         self.pre_advance_line.is_selected = False
+        self.payment_advance_id.is_pre_advance_line = False
         return True
 
 

@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 
 Option_Add = [
     ('advance', u'预收付'),
+    ('before_delivered',u'发货前'),
     ('date_after_ship', u'客户交单后的天数'),
     ('date_after_finish', u'供应商交单日期'),
 ]
@@ -816,6 +817,7 @@ class account_payment(models.Model):
                                      domain=[('sfk_type', '=', 'rcsktsrld')])
     pre_advance_id = fields.Many2one('pre.advance', 'Advice Advance Line',
                                         domain = "['|',('po_id','=',po_id),('so_id','=',so_id)]")
+    @api.depends('po_id','so_id')
     def compute_pre_advance_line_ids(self):
         for one in self:
             if one.po_id:
@@ -825,7 +827,10 @@ class account_payment(models.Model):
             else:
                 pre_advance_line_ids = False
             one.pre_advance_line_ids =pre_advance_line_ids
-    pre_advance_line_ids = fields.Many2many('pre.advance','palid','apid','psoid',compute=compute_pre_advance_line_ids)
+    pre_advance_line_ids = fields.Many2many('pre.advance','palid','apid','psoid',compute=compute_pre_advance_line_ids,store=True)
+
+    is_pre_advance_line = fields.Boolean('是否已经填了预付明细')
+    pre_advance_step = fields.Integer('阶段',related='pre_advance_id.pre_advance_step',store=True)
     # pre_advance_po_line_ids = fields.One2many('pre.advance', 'po_id',)
     # pre_advance_so_line_ids = fields.One2many('pre.advance', 'so_id',)
 
@@ -2794,18 +2799,19 @@ class Pre_Advance(models.Model):
     currency_id = fields.Many2one('res.currency', compute='compute_currency_id', store=True)
     pre_advance = fields.Monetary('Pre Advance', currency_field='currency_id', compute='compute_pre_advance',
                                   store=True)
-    pre_advance_step = fields.Integer('阶段')
+    pre_advance_step = fields.Integer('阶段',default=0)
     pre_advance_step_selection = fields.Selection([('10','第一阶段'),('20','第二阶段'),
                                                    ('30','第三阶段'),('40','第四阶段')],
                                                   '预收付阶段',compute='compute_pre_advance_step_selection',store=True)
+    pre_advance_options = fields.Selection([('advance',u'预付款'),
+                                            ('advance_in', u'预收款'),
+                                            ('before_delivered',u'发货前')],u'预付属性')
 
 
     #实际预收付金额=对应的预付收款单之和
     payment_advance_currency_id = fields.Many2one('res.currency', compute='compute_payment_advance_currency_id')
     real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',compute='compute_real_advance',store=True)
     payment_advance_ids = fields.One2many('account.payment','pre_advance_id',domain=[('state','=','posted')])
-
-
     po_id = fields.Many2one('purchase.order', 'Purchase Order')
     so_id = fields.Many2one('sale.order', 'Sale Order')
     is_selected = fields.Boolean('是否选中')

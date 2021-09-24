@@ -343,20 +343,37 @@
                                     <field name="real_advance"/>
                                     <field name="currency_id"/>
                                     <field name="payment_advance_currency_id"/>
+                                    <field name="pre_advance_options"/>
                                     <templates>
                                         <t t-name="kanban-box" style="height:20px">
-                                            <div t-attf-class="oe_kanban_card">
-                                                <strong class="o_kanban_record_title"
-                                                        style="float: left;width: 50%;">
-                                                    <span style="float: right; padding-right: 50px">
-                                                        <field name="pre_advance" widget="monetary"/>
-                                                    </span>
-                                                </strong>
-                                                <strong style="float: left;width: 50%;">
-                                                    <span style="float: right; padding-right: 10px">
-                                                        <field name="real_advance" widget="monetary"/>
-                                                    </span>
-                                                </strong>
+                                            <div style="width:100%">
+                                                <table style="width:100%">
+                                                    <tbody>
+                                                        <th>
+                                                            <td>
+                                                                <span>预付属性</span>
+                                                            </td>
+                                                            <td>
+                                                                <span>计划应预付</span>
+                                                            </td>
+                                                            <td>
+                                                                <span>实际总预付</span>
+                                                            </td>
+
+                                                        </th>
+                                                        <tr>
+                                                             <td>
+                                                                <field name="pre_advance_options"/>
+                                                            </td>
+                                                            <td>
+                                                                <field name="pre_advance" widget="monetary"/>
+                                                            </td>
+                                                            <td>
+                                                                <field name="real_advance" widget="monetary"/>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </t>
                                     </templates>

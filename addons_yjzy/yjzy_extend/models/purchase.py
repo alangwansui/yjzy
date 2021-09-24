@@ -333,6 +333,17 @@ class purchase_order(models.Model):
                     'value': one.value,
                     'value_amount': one.value_amount,
                     'pre_advance_step':pre_advance_step,
+                    'pre_advance_options': 'advance',
+                    'po_id': self.id,
+                })
+                pre_advance.compute_pre_advance()
+            if one.option == 'before_delivered':
+                pre_advance = pa_obj.create({
+                    'type': 'pre_pay_in_advance',
+                    'value': one.value,
+                    'value_amount': one.value_amount,
+                    'pre_advance_step': pre_advance_step,
+                    'pre_advance_options':'before_delivered',
                     'po_id': self.id,
                 })
                 pre_advance.compute_pre_advance()

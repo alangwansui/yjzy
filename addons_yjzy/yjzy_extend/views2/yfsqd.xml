@@ -151,8 +151,6 @@
                             <field name="advance_reconcile_order_count_all" widget="statinfo" nolabel="1"/>
                             <field name="advance_reconcile_order_ids" invisible="1"/>
                         </button>
-
-
                         <button class="oe_stat_button" name="button_journal_entries"
                                 string="Journal Items" type="object"
                                 groups="base.group_system"
@@ -235,45 +233,75 @@
 
 
                             <field name="pre_advance_line_ids" nolabel="1" colspan="2">
+                                <tree>
+                                    <field name="pre_advance"/>
+                                    <field name="real_advance"/>
+                                    <field name="is_selected"/>
+                                    <field name="pre_advance_step"/>
+                                     <button name="open_wizard_pre_advance" class="btn btn-primary btn-sm" type="object" string="选择"
+                                             attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
+                                    context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
+                                    <button name="open_wizard_pre_advance" class="btn btn-primary btn-sm" type="object"
+                                            attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}" string="取消"
+                                        context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
+                                </tree>
+
+
                                 <kanban class="o_kanban_mobile" sample="1">
                                     <field name="pre_advance"/>
                                     <field name="real_advance"/>
                                     <field name="is_selected"/>
+                                    <field name="pre_advance_step"/>
+                                    <field name="pre_advance_options"/>
                                     <templates>
                                         <t t-name="kanban-box" style="height:20px">
                                             <div style="width:100%">
                                                 <table style="width:100%">
                                                     <tbody>
+                                                        <th >
+                                                            <td style="width:25%">
+                                                                <span>预付属性</span>
+                                                            </td>
+                                                            <td style="width:25%">
+                                                                <span>计划应预付</span>
+                                                            </td>
+                                                            <td style="width:25%">
+                                                                <span>实际总预付</span>
+                                                            </td>
+                                                            <td style="width:25%">
+                                                            </td>
+                                                        </th>
                                                         <tr>
-                                                            <td style="width:35%">
+                                                             <td style="width:25%">
+
+                                                                    <field name="pre_advance_options"/>
+
+                                                            </td>
+                                                            <td style="width:25%">
                                                                 <strong>
                                                                     <span>
                                                                         <t t-esc="record.pre_advance.value"/>
                                                                     </span>
                                                                 </strong>
                                                             </td>
-                                                            <td style="width:35%">
+                                                            <td style="width:25%">
                                                                 <strong>
                                                                     <field name="real_advance" widget="monetary"/>
                                                                 </strong>
                                                             </td>
-                                                            <td style="width:30%">
-                                                                <t t-if="record.is_selected.raw_value == 0">
-                                                                    <button name="open_wizard_pre_advance"
+                                                            <td style="width:25%">
+                                                                    <button name="open_wizard_pre_advance" attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
                                                                             class="btn btn-primary btn-sm"
-                                                                            type="object"
-                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}">
-                                                                        <span>选择</span>
-                                                                    </button>
-                                                                </t>
-                                                                <t t-if="record.is_selected.raw_value == 1">
-                                                                    <button name="open_wizard_pre_advance"
+                                                                            type="object" icon="选择"
+                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
+
+                                                                    <button name="open_wizard_pre_advance" attrs="{'invisible':['|',('parent.is_pre_advance_line','=',False),('is_selected','=',False)]}"
                                                                             class="btn btn-primary btn-sm"
-                                                                            type="object"
-                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}">
-                                                                        <span>取消</span>
-                                                                    </button>
-                                                                </t>
+                                                                            type="object" icon="取消"
+                                                                            context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
+
+
+
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -441,6 +469,8 @@
 
                         <page groups="base.group_system">
                             <group>
+                                <field name="pre_advance_step"/>
+                                <field name="is_pre_advance_line"/>
                                 <field name="advance_reconcile_order_line_ids_count" invisible="1"/>
 
                                 <!--                                <group string="未完成认领单" attrs="{'invisible':[('payment_no_done_ids_count','=',0)]}">-->

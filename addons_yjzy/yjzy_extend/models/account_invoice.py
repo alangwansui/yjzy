@@ -948,6 +948,7 @@ class account_invoice(models.Model):
     date_ship = fields.Date(u'出运船日期')
     date_finish = fields.Date(u'交单日期')
     date_out_in = fields.Date('进仓日')
+    po_delivered_date = fields.Date('供应商发货日期')
     purchase_date_finish_att = fields.Many2many('ir.attachment', string='供应商交单日附件')
     purchase_date_finish_att_count = fields.Integer(u'供应商交单附件数量', compute=compute_info)
     purchase_date_finish_state = fields.Selection([('draft', u'待提交'), ('submit', u'待审批'), ('done', u'完成')], '供应商交单审批状态',
