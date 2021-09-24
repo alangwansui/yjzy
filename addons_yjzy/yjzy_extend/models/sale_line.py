@@ -158,14 +158,19 @@ class sale_order_line(models.Model):
     export_insurance_currency_id = fields.Many2one('res.currency', u'出口保险费货币', related='order_id.export_insurance_currency_id')
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
     #14.0--------------------------
-    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.qty','qty_delivered','product_uom_qty')
+    @api.depends('tbl_ids','tbl_ids.state','tbl_ids.plan_qty','qty_delivered','product_uom_qty')
     def compute_project_tb_qty(self):
         for one in self:
             tbl_ids_undone = one.tbl_ids.filtered(lambda x: x.state in ['draft','submit','sale_approve','manager_approve','approve','refused'])
+
             project_tb_qty = sum(x.plan_qty for x in tbl_ids_undone)
+            project_tb_qty_new = project_tb_qty
             can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
+            can_project_tb_qty_new = can_project_tb_qty
             one.project_tb_qty = project_tb_qty
             one.can_project_tb_qty = can_project_tb_qty
+            one.project_tb_qty_new = project_tb_qty_new
+            one.can_project_tb_qty_new = can_project_tb_qty_new
     @api.depends('purchase_price','product_uom_qty')
     def compute_purchase_cost_new(self):
         for one in self:
@@ -189,6 +194,7 @@ class sale_order_line(models.Model):
     def compute_qty_undelivered(self):
         for one in self:
             one.qty_undelivered = one.product_uom_qty - one.qty_delivered
+            one.qty_undelivered_new = one.product_uom_qty - one.qty_delivered
 
     @api.depends('tbl_ids','tbl_ids.bill_id.state')
     def compute_tb_line_count(self):
@@ -198,6 +204,9 @@ class sale_order_line(models.Model):
     qty_undelivered = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered)
     project_tb_qty = fields.Float('已计划发货',compute='compute_project_tb_qty')
     can_project_tb_qty = fields.Float('可计划发货',compute='compute_project_tb_qty')
+    qty_undelivered_new = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered,store=True)
+    project_tb_qty_new = fields.Float('已计划发货', compute='compute_project_tb_qty',store=True)
+    can_project_tb_qty_new = fields.Float('可计划发货', compute='compute_project_tb_qty',store=True)
     # product_default_code = fields.Char('公司型号',related='product_id.default_code',store=True)
     # product_customer_ref = fields.Char('供应商型号',related='product_id.customer_ref',store=True)
     # product_supplier_ref = fields.Char('供应商信号',compute='compute_product_supplier_ref',store=True)

@@ -41,7 +41,7 @@
 			<field name="model">sale.order.line</field>
 			<field name="priority" eval="1"/>
 			<field name="arch" type="xml">
-				<tree >
+				<tree class="o_list_view_scroll">
 					<button name="compute_today_hegui_date" type="object" string="hegui" groups="base.group_system"/>
 					<button name="compute_product_last_price" type="object" string="price" groups="base.group_system"/>
 					<button name="compute_product_other_price" type="object" string="other_price" groups="base.group_system"/>
@@ -67,10 +67,13 @@
 					<field name="tbl_ids"/>
 
 					<button type="object" name="open_bill_ids" icon="fa-archive"/>
-					<field name="qty_undelivered"/>
+					<field name="qty_undelivered" groups="base.group_system"/>
+					<field name="qty_undelivered_new"/>
 					<field name="qty_delivered" string="已发货"/>
-					<field name="project_tb_qty"/>
-					<field name="can_project_tb_qty"/>
+					<field name="project_tb_qty" groups="base.group_system"/>
+					<field name="project_tb_qty_new"/>
+					<field name="can_project_tb_qty" groups="base.group_system"/>
+					<field name="can_project_tb_qty_new"/>
 					<field name="name" invisible="1"/>
 					<field name="product_uom" invisible="1"/>
 
