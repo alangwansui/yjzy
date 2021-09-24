@@ -1851,7 +1851,7 @@
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">
-            [('type','=','transport_track'),('date_all_state','!=','50_payable_done')]
+            [('type','=','transport_track'),('date_all_state','not in',['50_payable_done','30_un_done'])]
         </field>
         <!--        ('order_track_new_order_state','in',['10_doing','15_receivable_payment']),-->
         <field name="search_view_id" ref="view_order_track_search"/>
