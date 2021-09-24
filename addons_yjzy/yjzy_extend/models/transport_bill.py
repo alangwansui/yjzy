@@ -3317,8 +3317,8 @@ class transport_bill(models.Model):
         self.write({  # 'state': 'draft',
             'stage_id': stage_id.id})
 
-    # def confirmed2locked(self):
-    #     self.state = 'locked'
+    def confirmed2locked(self):
+        self.state = 'locked'
 
     def action_done(self):
         self.state = 'done'
