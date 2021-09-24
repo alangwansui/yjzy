@@ -199,7 +199,7 @@
                                    attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
                             'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
                             <label for="amount" string="本次申请金额"/>
-                            <div name="amount_div" class="o_row">
+                            <div name="amount_div" class="o_row" attrs="{'invisible':[('is_pre_advance_line','=',False)]}">
                                 <field name="amount"
                                        attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"
                                        string="预付金额"/>

@@ -26,6 +26,7 @@ class wizard_pre_advance(models.TransientModel):
         self.payment_advance_id.pre_advance_id = False
         self.pre_advance_line.is_selected = False
         self.payment_advance_id.is_pre_advance_line = False
+        self.payment_advance_id.amount = 0
         return True
 
 
