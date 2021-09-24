@@ -20,7 +20,8 @@ Transport_Selection = [('cancel', u'取消'),
                        ('submit', u'待责任人审批'), ('sales_approve', u'待合规审批'), ('manager_approve', u'总经理审批'),
                        ('approve', u'合规已审批'), ('delivered', u'发货完成'),
                        ('invoiced', u'账单已确认'), ('abnormal', u'异常待核销'),
-                       # ('locked', u'锁定并等待增加采购完成'),('finish_add_purchase','完成增加采购'),
+                       ('locked', u'锁定并等待增加采购完成'),
+                       # ('finish_add_purchase','完成增加采购'),
                        ('verifying', u'待核销'),
                        ('done', u'已核销'), ('paid', '已收款'), ('edit', u'可修改')]
 
