@@ -29,8 +29,7 @@ class AccountPaymentTerm(models.Model):
         self.ensure_one()
         advance = 0.0
         for line in self.line_ids:
-            amt = 0
-            if line.option == 'advance' or line.option == 'before_delivered':
+            if line.option in ['advance','before_delivered']:
                 amt = 0
                 if line.value == 'fixed':
                     amt = line.value_amount
