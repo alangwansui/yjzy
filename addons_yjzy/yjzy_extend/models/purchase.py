@@ -123,6 +123,7 @@ class purchase_order(models.Model):
                  'order_line.product_qty', 'order_line', 'order_line.sol_id_price_total_undelivered')
     def _compute_no_deliver_amount(self):
         for one in self:
+
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
             one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
             one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
@@ -132,12 +133,16 @@ class purchase_order(models.Model):
                  'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit')
     def compute_no_deliver_amount(self):
         for one in self:
-            if one.so_id_state_1 not in ['draft','cancel','refused','submit','sales_approve','manager_approval']:
+            if one.so_id_state_1 and one.so_id_state_1 not in ['draft','cancel','refused','submit','sales_approve','manager_approval']:
                 one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
                 one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
                 sale_no_deliver_amount = sum((x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
                     in one.order_line)
                 one.sale_no_deliver_amount = sale_no_deliver_amount
+            else:
+                one.sale_no_deliver_amount = 0
+                one.no_deliver_amount_new = 0
+                one.deliver_amount_new = 0
             # one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
     # 13ok
