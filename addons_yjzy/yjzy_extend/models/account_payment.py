@@ -30,7 +30,7 @@ class AccountPaymentTerm(models.Model):
         advance = 0.0
         for line in self.line_ids:
             amt = 0
-            if line.option == 'advance':
+            if line.option == 'advance' or line.oprion == 'before_delivered':
                 amt = 0
                 if line.value == 'fixed':
                     amt = line.value_amount
