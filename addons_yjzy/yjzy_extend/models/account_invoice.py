@@ -264,14 +264,22 @@ class account_invoice(models.Model):
     def compute_display_name(self):
         for one in self:
             show_date_finish = self.env.context.get('show_date_finish')
+            supplier_delivery_date = self.env.context.get('supplier_delivery_date')
             # one.display_name = '%s[%s]' % (one.tb_contract_code, str(one.amount_total))
-            if show_date_finish:
-                if one.date_finish:
+            # if show_date_finish:
+            #     if one.date_finish:
+            #         name = '%s %s' % (
+            #             one.date_finish or '', one.partner_id.name or '',)
+            #     else:
+            #         name = '%s %s' % (
+            #             '无交单日', one.partner_id.name or '',)
+            if supplier_delivery_date:
+                if one.supplier_delivery_date:
                     name = '%s %s' % (
-                        one.date_finish or '', one.partner_id.name or '',)
+                        one.supplier_delivery_date or '', one.partner_id.name or '',)
                 else:
                     name = '%s %s' % (
-                        '无交单日', one.partner_id.name or '',)
+                        '无发货日', one.partner_id.name or '',)
             else:
                 if one.bill_id:
                     # else:

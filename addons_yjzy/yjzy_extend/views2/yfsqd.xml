@@ -198,38 +198,6 @@
                             <field name="fk_journal_id" string="付款银行" options="{'no_open':1}"
                                    attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
                             'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
-                            <label for="amount" string="本次申请金额"/>
-                            <div name="amount_div" class="o_row" attrs="{'invisible':[('is_pre_advance_line','=',False)]}">
-                                <field name="amount"
-                                       attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"
-                                       string="预付金额"/>
-                                <span invisible="1">货币：</span>
-                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" invisible="0"
-                                       groups="base.group_multi_currency"
-                                       attrs="{'readonly': ['|',('state', '!=', 'draft'),('state_1','!=','10_draft')]}"/>
-                            </div>
-                            <field name="destination_journal_id" widget="selection"
-                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')],
-                                   'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
-                            <field name="hide_payment_method" invisible="1"/>
-                            <field name="payment_method_id" string=" " widget="radio"
-                                   attrs="{'invisible': [('hide_payment_method', '=', True)],
-                                   'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
-                            <field name="payment_method_code" invisible="1"/>
-                            <field name="advance_balance_total" string="未认领预付"
-                                   invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
-                            <field name="amount_advance_org_all" string="完成认领预付"
-                                   invisible="context.get('operation')"
-                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
-                        </group>
-                        <group>
-                            <field name="supplier_payment_term_id" readonly="1" options="{'no_open':1}"/>
-                            <field name="purchase_payment_term_id" string="采购单付款条款" readonly="1"
-                                   options="{'no_open':1}"/>
-                            <field name="po_amount"/>
-                            <field name="po_real_advance" string="已预付金额"/>
-
                             <div colspan="2" style="padding-left:10px;padding-right:10px" attrs="{'invisible':[('pre_advance_line_ids_count','=',0)]}">
                                 <table style="width:100%">
                                     <tbody>
@@ -300,13 +268,13 @@
                                                             </td>
                                                             <td style="width:25%">
                                                                 <button name="open_wizard_pre_advance"
-                                                                        attrs="{'invisible':[('parent.is_pre_advance_line','=',True)]}"
+                                                                        attrs="{'invisible':['|',('parent.is_pre_advance_line','=',True),('parent.state_1','!=','10_draft')]}"
                                                                         class="btn btn-primary btn-sm"
                                                                         type="object" icon="选择"
                                                                         context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':1}"/>
 
                                                                 <button name="open_wizard_pre_advance"
-                                                                        attrs="{'invisible':['|',('parent.is_pre_advance_line','=',False),('is_selected','=',False)]}"
+                                                                        attrs="{'invisible':['|','|',('parent.is_pre_advance_line','=',False),('is_selected','=',False),('parent.state_1','!=','10_draft')]}"
                                                                         class="btn btn-primary btn-sm"
                                                                         type="object" icon="取消"
                                                                         context="{'default_payment_advance_id':parent.id,'default_pre_advance_line':id,'default_is_selected':0}"/>
@@ -322,6 +290,39 @@
                                     </templates>
                                 </kanban>
                             </field>
+                            <label for="amount" string="本次申请金额"/>
+                            <div name="amount_div" class="o_row" attrs="{'invisible':[('is_pre_advance_line','=',False)]}">
+                                <field name="amount"
+                                       attrs="{'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"
+                                       string="预付金额"/>
+                                <span invisible="1">货币：</span>
+                                <field name="currency_id" options="{'no_create': True, 'no_open': True}" invisible="0"
+                                       groups="base.group_multi_currency"
+                                       attrs="{'readonly': ['|',('state', '!=', 'draft'),('state_1','!=','10_draft')]}"/>
+                            </div>
+                            <field name="destination_journal_id" widget="selection"
+                                   attrs="{'required': [('payment_type', '=', 'transfer')], 'invisible': [('payment_type', '!=', 'transfer')],
+                                   'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
+                            <field name="hide_payment_method" invisible="1"/>
+                            <field name="payment_method_id" string=" " widget="radio"
+                                   attrs="{'invisible': [('hide_payment_method', '=', True)],
+                                   'readonly': ['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
+                            <field name="payment_method_code" invisible="1"/>
+                            <field name="advance_balance_total" string="未认领预付"
+                                   invisible="context.get('operation')"
+                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
+                            <field name="amount_advance_org_all" string="完成认领预付"
+                                   invisible="context.get('operation')"
+                                   attrs="{'invisible':[('state_1','not in',['50_posted','60_done'])]}"/>
+                        </group>
+                        <group>
+                            <field name="supplier_payment_term_id" readonly="1" options="{'no_open':1}"/>
+                            <field name="purchase_payment_term_id" string="采购单付款条款" readonly="1"
+                                   options="{'no_open':1}"/>
+                            <field name="po_amount"/>
+                            <field name="po_real_advance" string="已预付金额"/>
+
+
                             <field name="so_id" invisible="1"/>
 
                             <field name="po_pre_advance"/>
