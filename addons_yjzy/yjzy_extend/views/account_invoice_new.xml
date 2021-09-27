@@ -319,7 +319,7 @@
                             groups="base.group_system"/>
                     <field name="payment_term_id"
                            invisible="not context.get('for_sales') or context.get('from_purchase')"/>
-                    <field name="invoice_date_deadline" string="账期计算方式" invisible="context.get('from_purchase')"/>
+                    <field name="invoice_date_deadline" string="账期起点" invisible="context.get('from_purchase')"/>
                     <field name="days_term" string="账期" invisible="context.get('from_purchase')"/>
                     <field name="date_deadline_new" string="实际到期日" invisible="context.get('from_purchase')"/>
                     <field name="residual_times_new" invisible="1"/>
@@ -487,19 +487,26 @@
                            options="{'max_width': '100px', 'line_clamp': '1', 'mode_mouse':'hover','popover_max_width':'200px','placement':'right'}"/>
                     <field name="invoice_attribute_all_in_one" string="账单属性" invisible="1"/>
                     <field name="date_invoice" string="出运日期"/>
-                    <field name="date_finish" string="交单日期"/>
-                    <field name="date_ship" string="出运船日期"/>
-                    <field name="invoice_date_deadline" string="账期计算方式"/>
-                    <field name="days_term" string="账期"/>
+                    <field name="date_finish" string="交单日期" invisible="1"/>
+                    <field name="supplier_delivery_date" string="工厂发货日"/>
+                    <field name="date_ship" string="出运船日期" invisible="1"/>
+                    <field name="invoice_date_deadline" string="账期起点"/>
+
+                    <field name="days_term" string="账期天数" />
+                    <field name="date_due" string="到期日" invisible="1"/>
+                    <field name="date_deadline_new" string="到期日" />
+                    <field name="residual_times_new" string="距离到期日天数"/>
+                    <field name="residual_times_out_in" string="距离到期日天数" invisible="1" />
+
                     <button name="open_supplier_reconcile_order_line" groups="base.group_system"
                             icon="fa-pencil-square-o" type="object"
                             attrs="{'invisible':[('reconcile_order_line_count','=',0)]}"/>
-                    <field name="date_deadline_new" string="实际到期日" invisible="1"/>
-                    <field name="residual_times_out_in" string="到期天数1"/>
-                    <field name="residual_times" string="到期天数2"/>
 
-                    <field name="residual_times_new" invisible="1"/>
-                    <field name="date_due" string="进仓到期日" groups="base.group_system"/>
+
+
+
+
+
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
                     <field name="amount_total_signed" string="初始应付款" sum="Total"/>
@@ -507,12 +514,12 @@
                     <field name="amount_advance_org_done" string="已认领预付" sum="Total"/>
                     <field name="residual_signed" string="剩余应付款" sum="Amount Due"/>
                     <field name="amount_payment_org_approved" string="已审批应付" sum="Total"/>
-                    <field name="wait_advance" sum="Total" string="所有剩余预付"/>
+                    <field name="wait_advance" sum="Total" string="所有剩余预付" groups="basel.group_system"/>
                     <field name="advance_pre" sum="Total" string="建议预付认领" invisible="1"/>
-                    <field name="jianyi_advance" sum="Total" string="建议预付认领"/>
+                    <field name="jianyi_advance" sum="Total" string="应认领预付款"/>
                     <field name="amount_payment_can_approve_all" string="可申请支付应付款" sum="小计"
                            options="{'fg_color':'black'}"/>
-                    <field name="amount_payment_can_approve_all_1" string="可申请支付应付款1" sum="小计"/>
+                    <field name="amount_payment_can_approve_all_1" string="可申请支付应付款1" groups="base.group_system" sum="小计"/>
                     <field name="yjzy_total" string="总原始应付款" invisible="1" sum="小计"/>
                     <field name="yjzy_residual" string="总剩余应付款" invisible="1" sum="小计"/>
                     <field name="yjzy_amount_payment_can_approve_all" string="总可申请应付款" invisible="1"

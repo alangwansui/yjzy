@@ -558,6 +558,35 @@ class OrderTrack(models.Model):
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
     date_so_requested_new = fields.Date('最新计划交期',track_visibility='onchange',)
 
+    @api.depends('date_so_requested_is_out_time','date_so_requested_new')
+    def compute_requested_new_state(self):
+        for one in self:
+            date_so_requested_is_out_time = one.date_so_requested_is_out_time
+            date_so_requested_new = one.date_so_requested_new
+            if date_so_requested_is_out_time == '40_in_out_time':
+                if date_so_requested_new == False:
+                    date_so_requested_new_state = '10'
+                else:
+                    strptime = datetime.strptime
+                    strftime = datetime.strftime
+                    today = datetime.today() - relativedelta(hours=-8)
+                    date_so_requested_new_1 = "%s" % (strptime(date_so_requested_new, '%Y-%m-%d 00:00:00'))  # akiny 参考
+                    today_1 = "%s" % (strftime(today, '%Y-%m-%d 00:00:00'))  # akiny 参考
+                    time_today_requested = (strptime(date_so_requested_new_1, DATETIME_FORMAT) - strptime(today_1,
+                                                                                                    DATETIME_FORMAT)).days  # akiny 参考
+                    print('time_today_requested_akiny', today_1, date_so_requested_new_1, time_today_requested)
+                    if time_today_requested > 0 :
+                        date_so_requested_new_state = '20'
+
+                    else:
+                        date_so_requested_new_state = '已计划新交期且已到期'
+                one.date_so_requested_new_state = date_so_requested_new_state
+
+
+    date_so_requested_new_state = fields.Selection([('10','未计划新交期'),
+                                                    ('20','已计划新交期且未到期'),
+                                                    ('30','已计划新交期且已到期'),
+                                                    ],'requested_new_state',compute=compute_requested_new_state,store=True)
     def create_date_so_requested_new(self):
         form_view = self.env.ref('yjzy_extend.order_track_form_purchase_order_date_so').id
         return ({

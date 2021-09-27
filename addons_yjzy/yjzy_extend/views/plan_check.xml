@@ -44,7 +44,9 @@
                     <filter string="客户交期期限状态" name="group_ddate_so_requested_is_out_time" domain="[]"
                             context="{'group_by':['date_so_requested_is_out_time']}"
                             invisible="context.get('type')!='order_track'"/>
-
+                    <filter string="新交期状态" name="group_date_so_requested_new_state" domain="[]"
+                            context="{'group_by':['date_so_requested_new_state']}"
+                            invisible="context.get('type')!='order_track'"/>
                     <filter string="下单前状态" name="group_new_order_state" domain="[]"
                             context="{'group_by':['order_track_new_order_state']}" invisible="1"/>
                 </group>
@@ -254,7 +256,7 @@
                 <field name="currency_id" invisible="1"/>
                 <field name="time_draft_order" readonly="1" widget="date" string="创建草稿时间"
                        invisible="context.get('type')!='new_order_track'"/>
-
+                <field name="date_so_requested_new_state" groups="base.group_system"/>
                 <field name="time_receive_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sent_pi" invisible="context.get('type')!='new_order_track'"/>
                 <field name="time_sign_pi" invisible="context.get('type')!='new_order_track'"/>
@@ -1789,11 +1791,12 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">order.track</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_order_track_search"/>
         <field name="domain">
             [('type','=','order_track'),('order_track_new_order_state','=','10_doing'),('so_po_return_state','=','returned'),
             ('date_so_requested_is_out_time','=','40_in_out_time')]
         </field>
-        <field name="context">{'type': 'order_track','type_out':'out_date'}</field>
+        <field name="context">{'type': 'order_track','type_out':'out_date','search_default_group_date_so_requested_new_state':1}</field>
         <field name="view_ids" eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('order_track_tree_view_out_time')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('order_track_form_new')})]"/>
