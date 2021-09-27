@@ -66,14 +66,14 @@ class account_invoice(models.Model):
         for one in self:
             if one.state == 'open':
                 if one.date_deadline:
-                    residual_times = today - strptime(one.date_deadline, DF)
+                    residual_times = strptime(one.date_deadline, DF) - today
                     one.residual_times = residual_times.days
                     one.residual_times_new = residual_times.days
                 else:
                     one.residual_times = -999
                     one.residual_times_new = -999
                 if one.date_due:
-                    residual_times_out_in = today - strptime(one.date_due, DF)  # 参考
+                    residual_times_out_in = strptime(one.date_due, DF) - today    # 参考
                     one.residual_times_out_in = residual_times_out_in.days
                     one.residual_times_out_in_new = residual_times_out_in.days
                 else:
