@@ -761,6 +761,8 @@ class account_invoice(models.Model):
                 one.df_new_id = df_new_id
             else:
                 one.df_new_id = False
+
+    @api.depends('supplier_delivery_date')
     def compute_po_delivered_date(self):
         for one in self:
             one.po_delivered_date = one.supplier_delivery_date
