@@ -44,6 +44,7 @@ class account_invoice(models.Model):
         for one in self:
             if one.date_due and one.date_invoice and one.payment_term_id.invoice_date_deadline_field:
                 dump_date = getattr(one, one.payment_term_id.invoice_date_deadline_field)
+                print('dump_date_akiny', dump_date,one.payment_term_id.invoice_date_deadline_field)
                 if not dump_date:
                     continue
                 diff = strptime(dump_date, DF) - strptime(one.date_invoice, DF)
