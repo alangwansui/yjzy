@@ -53,6 +53,9 @@ class account_invoice(models.Model):
             elif one.invoice_attribute in ['expense_po', 'other_payment']:
                 one.date_deadline = one.date_due
                 one.date_deadline_new = one.date_due
+            else:
+                one.date_deadline = one.date_due
+                one.date_deadline_new = one.date_due
 
     def compute_info(self):
         for one in self:
