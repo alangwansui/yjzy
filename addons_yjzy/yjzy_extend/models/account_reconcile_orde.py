@@ -1420,7 +1420,7 @@ class account_reconcile_order(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state_1 not in ['draft','draft_yshxd','draft_all','cancel']:
+            if one.state_1 not in ['draft','draft_yshxd','draft_all','cancel','account_approval_yshxd']:
                 raise Warning(u'只有取消草稿状态允许删除')
         return super(account_reconcile_order, self).unlink()
 
