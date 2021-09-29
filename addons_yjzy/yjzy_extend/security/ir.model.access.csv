@@ -58,6 +58,7 @@ access_purchase_invoice_hsname,access_purchase_invoice_hsname,model_purchase_inv
 access_wizard_tb_po_invoice_line_new,access_wizard_tb_po_invoice_line_new,model_wizard_tb_po_invoice_line_new,base.group_user,1,1,1,1
 access_partner_name_used,access_partner_name_used,model_partner_name_used,base.group_user,1,1,1,1
 access_pre_advance,access_pre_advance,model_pre_advance,base.group_user,1,1,1,1
+access_tb_po_line,access_tb_po_line,model_tb_po_line,base.group_user,1,1,1,1
 
 
 

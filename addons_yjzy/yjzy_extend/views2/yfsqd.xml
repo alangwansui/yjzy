@@ -193,12 +193,14 @@
                             ('x_wkf_state','=',185)]"
                                    context="{'show_contract_code': 1,'form_view_ref':'yjzy_extend.new_purchase_order_from'}"
                                    attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
+                            <field name="tb_id"/>
                             <field name="include_tax"
                                    attrs="{'readonly':['|',('state_1','!=','10_draft'),('state', '!=', 'draft')]}"/>
                             <field name="fk_journal_id" string="付款银行" options="{'no_open':1}"
                                    attrs="{'invisible':[('state_1','in',['10_draft','80_refused','90_cancel'])],
                             'readonly':['|',('state_1','not in',['10_draft','20_account_submit']),('state', 'in', ['posted','reconciled'])]}"/>
-                            <div colspan="2" style="padding-left:10px;padding-right:10px" attrs="{'invisible':[('pre_advance_line_ids_count','=',0)]}">
+                            <div colspan="2" style="padding-left:10px;padding-right:10px"
+                                 attrs="{'invisible':[('pre_advance_line_ids_count','=',0)]}">
                                 <table style="width:100%">
                                     <tbody>
                                         <tr>
@@ -480,6 +482,7 @@
 
                         <page groups="base.group_system">
                             <group>
+                                <field name="prepayment_type"/>
                                 <field name="pre_advance_line_ids_count"/>
                                 <field name="pre_advance_id"/>
                                 <field name="pre_advance_step"/>
@@ -515,6 +518,20 @@
                                 <field name="journal_id" domain="[('type','=','renling')]"/>
 
                             </group>
+                            <field name="tb_po_line_ids">
+                                <tree editable="bottom">
+                                    <field name="tb_id"/>
+                                    <field name="po_id"/>
+                                    <field name="po_currency_id"/>
+                                    <field name="po_tb_amount"/>
+                                    <field name="po_tb_percent"/>
+                                    <field name="tb_po_amount"/>
+                                    <field name="pre_advance_total"/>
+                                    <field name="pre_advance_id"/>
+                                    <field name="real_advance_amount"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
                         </page>
 
                         <!--                        <footer invisible="not context.get('open')">-->

@@ -1631,6 +1631,13 @@ class account_payment(models.Model):
 
                 if one.yfsqd_ids:
                     one.yfsqd_ids.post()
+                    for line in one.yfsqd_ids:
+                        if line.tb_po_line_ids:
+                            for x in line.tb_po_line_ids:
+                                x.state = 'posted'
+                        else:
+                            return True
+
                 # if one.fybg_ids:
                 #     one.fybg_ids.action_sheet_move_create()
                 # if one.fybg_ids:
@@ -2784,10 +2791,18 @@ class Pre_Advance(models.Model):
             else:
                 one.payment_advance_currency_id = one.currency_id
 
-    @api.depends('payment_advance_ids', 'payment_advance_ids.amount')
+    #如果是出运前的计划，那么就是统计出运合同下的合并采购合同后的明细行的，分配过来的实际预付申请
+    @api.depends('payment_advance_ids', 'payment_advance_ids.amount','tb_po_line','tb_po_line.real_advance_amount')
     def compute_real_advance(self):
         for one in self:
-            one.real_advance = sum(x.amount for x in one.payment_advance_ids)
+            pre_advance_options = one.pre_advance_options
+            if pre_advance_options in ['advance','advance_in']:
+                payment_advance_ids = one.payment_advance_ids.filtered(lambda x: x.pre_advance_options in ['advance','advance_in'])
+                real_advance = sum(x.amount for x in payment_advance_ids)
+            else:
+                real_advance = sum(x.real_advance_amount for x in one.tb_po_line)#？？？？？？再思考一下但是肯定还是需要重新算pre和real通过tb_po_line 分别的合计
+            one.real_advance = real_advance
+
 
 
 
@@ -2818,6 +2833,9 @@ class Pre_Advance(models.Model):
     payment_advance_currency_id = fields.Many2one('res.currency', compute='compute_payment_advance_currency_id')
     real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',compute='compute_real_advance',store=True)
     payment_advance_ids = fields.One2many('account.payment','pre_advance_id',domain=[('state','=','posted')])
+
+    tb_po_line = fields.One2many('tb.po.line','pre_advance_id',domain=[('state','=','posted')])
+
     po_id = fields.Many2one('purchase.order', 'Purchase Order')
     so_id = fields.Many2one('sale.order', 'Sale Order')
     is_selected = fields.Boolean('是否选中')

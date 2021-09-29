@@ -396,7 +396,6 @@ class transport_bill(models.Model):
         Compute the total amounts of the SO.
         """
         for one in self:
-
             sale_invoice_total_new = one.sale_invoice_total_new
             purchase_invoice_total_new = one.purchase_invoice_total_new
             current_date_rate = one.current_date_rate
@@ -1091,71 +1090,58 @@ class transport_bill(models.Model):
 
     tba_id = fields.Many2one('transport.bill.account', '转账调节单')
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
-    org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info,
-                                      digits=dp.get_precision('Money'))
+    org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info)
 
-    org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all',
-                                                   digits=dp.get_precision('Account'), track_visibility='always')
-    org_sale_amount_new_origin = fields.Monetary('原销售金额', store=True, currency_field='sale_currency_id',
-                                                 compute=amount_all,
-                                                 digits=dp.get_precision('Money'))  # 13ok
-    org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info,
-                                           digits=dp.get_precision('Money'))
+    org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all', track_visibility='always')
+    org_sale_amount_new_origin = fields.Monetary('原销售金额',  currency_field='sale_currency_id',
+                                                 compute=amount_all,store=True)  # 13ok
+    org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info)    # ok
+    org_sale_amount_new = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=amount_all,store=True)  # 13ok 这个是对line_ids的出运统计
 
-    # ok
-    org_sale_amount_new = fields.Monetary('销售金额', store=True, currency_field='sale_currency_id', compute=amount_all,
-                                          digits=dp.get_precision('Money'))  # 13ok 这个是对line_ids的出运统计
-
-    org_hsname_actual_amount = fields.Monetary('实际出运金额', store=True, currency_field='sale_currency_id',
-                                               compute=amount_all,
-                                               digits=dp.get_precision('Money'))  # 这个是对汇总后的实际出运金额的统计
-    org_real_sale_amount_new = fields.Monetary('原始出运金额', store=True, currency_field='sale_currency_id',
-                                               compute=amount_all,
-                                               digits=dp.get_precision('Money'))  # 这个是对汇总后的原始出运金额的统计if
-    hsname_actual_amount_cny = fields.Monetary('实际人名币销售金额', currency_field='third_currency_id', compute=amount_all,
-                                               digits=dp.get_precision('Money'))
-    real_sale_amount_cny = fields.Monetary('原始人名币销售金额', currency_field='third_currency_id', compute=amount_all,
-                                           digits=dp.get_precision('Money'))  # 13ok
-    diff_real_sale_hsmame_actual_amount = fields.Monetary('出运账单和实际差额', store=True, currency_field='sale_currency_id',
-                                                          compute=amount_all,
-                                                          digits=dp.get_precision('Money'))  # 原始出运和实际出运的差额
+    org_hsname_actual_amount = fields.Monetary('实际出运金额', currency_field='sale_currency_id',
+                                               compute=amount_all,store=True)  # 这个是对汇总后的实际出运金额的统计
+    org_real_sale_amount_new = fields.Monetary('原始出运金额',  currency_field='sale_currency_id',
+                                               compute=amount_all,store=True)  # 这个是对汇总后的原始出运金额的统计if
+    hsname_actual_amount_cny = fields.Monetary('实际人名币销售金额', currency_field='third_currency_id', compute=amount_all)
+    real_sale_amount_cny = fields.Monetary('原始人名币销售金额', currency_field='third_currency_id', compute=amount_all)  # 13ok
+    diff_real_sale_hsmame_actual_amount = fields.Monetary('出运账单和实际差额',  currency_field='sale_currency_id',
+                                                          compute=amount_all,store=True)  # 原始出运和实际出运的差额
 
     org_real_purchase_amount_new = fields.Monetary('原始采购金额', currency_field='third_currency_id', compute=amount_all,
-                                                   store=True,
-                                                   )  # 13ok
+                                                   store=True)  # 13ok
     purchase_hsname_actual_cost_total = fields.Monetary(u'实际采购金额', currency_field='third_currency_id',
                                                         compute=amount_all, store=True)  # 13ok先通过报关采购金额计算
-    diff_real_purchase_hsname_actual_amount = fields.Monetary('采购账单和实际差额', store=True,
+    diff_real_purchase_hsname_actual_amount = fields.Monetary('采购账单和实际差额',
                                                               currency_field='third_currency_id',
-                                                              compute=amount_all, )  # 原始出运和实际出运的差额
+                                                              compute=amount_all, store=True)  # 原始出运和实际出运的差额
 
     # 统计金额
 
     # 统计金额
     sale_amount = fields.Monetary('销售金额', currency_field='third_currency_id', compute=compute_info,
-                                  digits=dp.get_precision('Money'))  # 13ok
+                                  )  # 13ok
     real_sale_amount = fields.Monetary('实际销售金额', currency_field='third_currency_id', compute=compute_info,
-                                       digits=dp.get_precision('Money'))
+                                       )
     sale_commission_amount = fields.Monetary('经营计提金额', currency_field='third_currency_id', compute=compute_info)
     purchase_cost = fields.Monetary('采购成本', currency_field='third_currency_id', compute=compute_info,
-                                    digits=dp.get_precision('Money'))
+                                    )
     fandian_amount = fields.Monetary('返点金额字', currency_field='third_currency_id', compute=compute_info,
-                                     digits=dp.get_precision('Money'))
+                                     )
     stock_cost = fields.Monetary('库存成本', currency_field='third_currency_id', compute=compute_info,
-                                 igits=dp.get_precision('Money'))  # 13ok
+                                 )  # 13ok
     other_cost = fields.Monetary('其他费用总计', currency_field='third_currency_id', compute=compute_info,
-                                 igits=dp.get_precision('Money'))
+                                 )
 
     vat_diff_amount = fields.Monetary(u'增值税差额', currency_field='third_currency_id', compute=compute_info,
-                                      digits=dp.get_precision('Money'))
+                                      )
     profit_amount = fields.Monetary('利润', currency_field='third_currency_id', compute=compute_info,
-                                    igits=dp.get_precision('Money'))
+                                    )
     profit_ratio = fields.Float('利润率', digits=(2, 4), compute=compute_info)
 
     back_tax_amount = fields.Monetary('退税金额', currency_field='third_currency_id', compute=compute_info,
-                                      digits=dp.get_precision('Money'))
+                                      )
     back_tax_amount_org = fields.Monetary('原始退税金额', currency_field='third_currency_id', compute=compute_info,
-                                          digits=dp.get_precision('Money'))
+                                          )
     shoukuan_amount = fields.Monetary(u'收款金额', digits=(2, 4), compute=compute_info)
     fukuan_amount = fields.Monetary(u'付款金额', digits=(2, 4), compute=compute_info)
 
