@@ -183,7 +183,7 @@ class account_payment(models.Model):
                 advance_balance_total = one.amount - advance_total - advance_total_2
                 if advance_balance_total == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
-                    one.test_reconcile()
+                    # one.test_reconcile()
                 if advance_balance_total != 0 and one.state_1 == '60_done':
                     one.state_1 = '50_posted'
                     # one.write({'state': 'reconciled'})

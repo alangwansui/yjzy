@@ -630,7 +630,7 @@
         <field name="name">account.reconcile.order.tree</field>
         <field name="model">account.reconcile.order</field>
         <field name="arch" type="xml">
-            <tree string="应付核销单" create="false" decoration-info="state == 'draft'"
+            <tree string="应付核销单" create="false" decoration-info="state == 'draft'" class="o_list_view_scroll"
                   decoration-muted="state =='cancelled'" edit="false">
                 <field name="name"/>
                 <field name="partner_id" string="付款对象"/>
