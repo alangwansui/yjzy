@@ -160,7 +160,7 @@ class sale_order(models.Model):
     def compute_purchase_amount_total(self):
         for one in self:
             print('total', one)
-            purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
+            purchase_amount_total = sum(one.po_ids.mapped('amount_total'))
             one.purchase_amount_total = purchase_amount_total
 
     @api.one
