@@ -3,7 +3,7 @@ import math
 
 from odoo import models, fields, api, _
 from odoo.addons import decimal_precision as dp
-from odoo.exceptions import Warning
+from odoo.exceptions import Warning, UserError
 from odoo.osv import expression
 from odoo.addons.purchase.models.purchase import PurchaseOrder
 
@@ -680,7 +680,7 @@ class purchase_order(models.Model):
     def unlink(self):
         for one in self:
             if one.state_1 not in ['cancel','draft','refused'] or one.state not in ['cancel','draft','refused']:
-                raise Warning(u'只有取消状态允许删除')
+                raise UserError(_('In order to delete a purchase order, you must cancel it first.'))
         return super(purchase_order, self).unlink()
 
     @api.model
