@@ -211,6 +211,11 @@ class purchase_order(models.Model):
             qty_received_amount = sum(x.qty_received for x in one.order_line)
             one.qty_received_amount = qty_received_amount
 
+    @api.depends('source_so_id','source_so_id.state_1')
+    def compute_so_id_state_1(self):
+        for one in self:
+            one.so_id_state_1 = one.source_so_id.state_1
+
     stage_id = fields.Many2one(
         'purchase.order.stage',
         default=_default_purchase_order_stage, copy=False)
@@ -308,9 +313,11 @@ class purchase_order(models.Model):
                                               related='partner_id.property_supplier_payment_term_id')
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
+
+
     # akiny
     so_id_state = fields.Selection('源销售合同状态', related='source_so_id.state')
-    so_id_state_1 = fields.Selection(Sale_Selection, u'源销售合同状态', index=True, related='source_so_id.state_1', store=True)
+    so_id_state_1 = fields.Selection(Sale_Selection, u'源销售合同状态', compute='compute_so_id_state_1', store=True)
     so_id_stage = fields.Many2one('sale.order.stage',related='source_so_id.stage_id',store=True)
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
     so_currentcy_id = fields.Many2one('res.currency', '销售合同币种', related='source_so_id.currency_id')
