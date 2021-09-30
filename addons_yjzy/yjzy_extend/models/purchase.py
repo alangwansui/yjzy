@@ -129,7 +129,7 @@ class purchase_order(models.Model):
             one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
     @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id','source_so_id.state_1',
-                 'order_line.product_qty', 'order_line', 'order_line.sol_id.price_total', 'order_line.sol_id',
+                 'order_line.product_qty', 'order_line', 'order_line.sol_id.price_total', 'order_line.sol_id','so_id_state_1',
                  'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit')
     def compute_no_deliver_amount(self):
         for one in self:
