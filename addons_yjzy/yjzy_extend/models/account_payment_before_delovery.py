@@ -29,7 +29,7 @@ class account_payment(models.Model):
 
     def action_percent_amount(self):
         for x in self.tb_po_line_ids:
-            self.real_advance_amount = self.amount * x.po_tb_percent
+            x.real_advance_amount = self.amount * x.po_tb_percent
 
     # @api.onchange('tb_id')
     # def onchange_tb_id(self):
@@ -39,8 +39,8 @@ class account_payment(models.Model):
     def action_manager_post(self):
         if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
             raise Warning('合同未完成审批！')
-        elif self.tb_id.state not in ['approve']:
-            raise Warning('出运合同未完成审批！')
+        # elif self.tb_id.state not in ['approve']:
+        #     raise Warning('出运合同未完成审批！')
         else:
             today = fields.date.today()
             self.write({'post_uid': self.env.user.id,

@@ -132,6 +132,7 @@
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header groups="base.group_system">
+                    <field name="action_percent_amount" string="计算实际预付金额" />
                     <button name="create_rcfkd" string="生成日常付款单" type='object' icon=""
                             groups="account.group_account_manager"/>
                     <button name="post" class="oe_highlight" states="draft" string="Confirm" type="object"
