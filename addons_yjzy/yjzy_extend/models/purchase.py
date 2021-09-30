@@ -679,7 +679,7 @@ class purchase_order(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state != 'cancel':
+            if one.state_1 not in ['cancel','draft','refused']:
                 raise Warning(u'只有取消状态允许删除')
         return super(purchase_order, self).unlink()
 
