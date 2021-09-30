@@ -875,7 +875,7 @@ class account_payment(models.Model):
 
         })
         ppat_id.compute_purchase_amount()
-        if float_compare(ppat_id.can_apply_amount,amount) < 0:
+        if float_compare(ppat_id.can_apply_amount,amount,precision_digits=2) < 0:
         # if ppat_id.can_apply_amount < amount:
             raise Warning('test')
 
