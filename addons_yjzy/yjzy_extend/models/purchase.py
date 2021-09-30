@@ -498,8 +498,8 @@ class purchase_order(models.Model):
                     'stage_id': stage_id.id})
 
     def action_to_cancel_stage(self):
-        if self.create_uid.id != self.env.user.id:
-            raise Warning('只有创建者才允许取消！')
+        # if self.create_uid.id != self.env.user.id:
+        #     raise Warning('只有创建者才允许取消！')
         if self.state not in ['draft', 'refused']:
             raise Warning('只有草稿或者拒绝状态的才能取消')
         self.button_cancel()
