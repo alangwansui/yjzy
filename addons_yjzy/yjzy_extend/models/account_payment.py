@@ -6,6 +6,7 @@ from odoo.addons.account.models.account_payment import account_payment as Accoun
 from .comm import sfk_type, invoice_attribute_all_in_one
 from odoo.addons import decimal_precision as dp
 from datetime import datetime, timedelta
+from odoo.tools import float_is_zero, float_compare
 
 Option_Add = [
     ('advance', u'预收付'),
@@ -874,7 +875,8 @@ class account_payment(models.Model):
 
         })
         ppat_id.compute_purchase_amount()
-        if ppat_id.can_apply_amount < amount:
+        if float_compare(ppat_id.can_apply_amount,amount) < 0:
+        # if ppat_id.can_apply_amount < amount:
             raise Warning('test')
 
     def new_advance_payment_id_chushihua(self):

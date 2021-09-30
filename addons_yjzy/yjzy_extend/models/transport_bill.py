@@ -387,8 +387,8 @@ class transport_bill(models.Model):
     #         })
 
     @api.depends('line_ids', 'line_ids.plan_qty', 'current_date_rate', 'line_ids.org_currency_sale_amount',
-                 'purchase_invoice_total_new', 'state','stage_id','second_state',
-                 'sale_invoice_total_new', 'line_ids.org_currency_sale_amount_origin',  'hsname_ids',
+                 'purchase_invoice_total_new','stage_id','second_state',
+                 'sale_invoice_total_new', 'line_ids.org_currency_sale_amount_origin', 'hsname_ids',
                  'hsname_ids.amount', 'hsname_ids.actual_amount', 'current_date_rate',
                  'hsname_ids.purchase_amount2', 'hsname_ids.purchase_amount', 'line_ids.purchase_cost_new')
     def amount_all(self):
