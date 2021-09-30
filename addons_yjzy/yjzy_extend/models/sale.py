@@ -145,7 +145,8 @@ class sale_order(models.Model):
     # @api.depends('po_ids')
     def compute_purchase_balance(self):
         for one in self:
-            purchase_balance_sum = sum(one.po_ids.mapped('balance'))
+            purchase_balance_sum = sum(x.balance for x in one.po_ids)
+            #purchase_balance_sum = sum(one.po_ids.mapped('balance'))
             one.purchase_balance_sum = purchase_balance_sum
 
     @api.one
@@ -154,13 +155,15 @@ class sale_order(models.Model):
         for one in self:
             if one.state != 'verification':
                 print('balance_new', one)
-                purchase_balance_sum = sum(one.po_ids_new.mapped('balance_new'))
+                purchase_balance_sum = sum(x.balance_new for x in one.po_ids_new)
+                #purchase_balance_sum = sum(one.po_ids_new.mapped('balance_new'))
                 one.purchase_balance_sum3 = purchase_balance_sum
 
     def compute_purchase_amount_total(self):
         for one in self:
             print('total', one)
-            purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
+            purchase_amount_total = sum(x.amount_total for x in one.po_ids_new)
+            #purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
             one.purchase_amount_total = purchase_amount_total
 
     @api.one
@@ -169,7 +172,7 @@ class sale_order(models.Model):
         for one in self:
             if one.state != 'verification':
                 print('total', one)
-                purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
+                purchase_amount_total = sum(x.amount_total for x in one.po_ids_new)
                 one.purchase_amount_total_new = purchase_amount_total
 
     # 13ok
@@ -193,7 +196,8 @@ class sale_order(models.Model):
         for one in self:
             if one.state != 'verification':
                 print('total', one)
-                one.purchase_no_deliver_amount_new = sum(one.po_ids_new.mapped('no_deliver_amount_new'))
+                one.purchase_no_deliver_amount_new = sum(x.no_deliver_amount_new for x in one.po_ids_new)
+                #one.purchase_no_deliver_amount_new = sum(one.po_ids_new.mapped('no_deliver_amount_new'))
 
     # @api.depends('po_ids.balance')
     def compute_po_residual(self):
