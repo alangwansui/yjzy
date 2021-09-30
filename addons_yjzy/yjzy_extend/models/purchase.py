@@ -455,6 +455,7 @@ class purchase_order(models.Model):
             raise Warning('请先设置采购签字人员！')
         print('stage_id.user_ids', stage_id.user_ids)
         main_sign_uid = stage_id.main_sign_uid
+        self.compute_no_deliver_amount()
         return self.write({'stage_id': stage_id.id,
                            'can_confirm_by_so': True,
                            'purchaser_uid': self.env.user.id,

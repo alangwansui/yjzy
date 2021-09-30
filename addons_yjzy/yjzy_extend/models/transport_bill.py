@@ -3103,6 +3103,7 @@ class transport_bill(models.Model):
             # else:
             if self.ref and self.partner_id and self.date_project and self.incoterm and self.current_date_rate > 0 and \
                     self.payment_term_id and self.line_ids and self.sale_currency_id:
+                self.amount_all()
                 stage_id = self._stage_find(domain=[('code', '=', '002')])
                 return self.write({'stage_id': stage_id.id,
                                    # 'state': 'submit',
