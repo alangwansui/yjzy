@@ -10,7 +10,7 @@ from odoo.tools import float_is_zero, float_compare
 
 Option_Add = [
     ('advance', u'预收付'),
-    ('before_delivered',u'发货前'),
+    ('before_delivered', u'发货前'),
     ('date_after_ship', u'客户交单后的天数'),
     ('date_after_finish', u'供应商交单日期'),
 ]
@@ -21,7 +21,8 @@ class AccountPaymentTerm(models.Model):
     # _order = "sequence"
 
     type = fields.Selection([('purchase', '采购'), ('sale', '销售'), ('comm', u'通用')], u'类型', default='comm')
-    invoice_date_deadline_field = fields.Selection([('date_ship', u'出运船日期'), ('date_finish', '交单日期'),('po_delivered_date','发货日期')])
+    invoice_date_deadline_field = fields.Selection(
+        [('date_ship', u'出运船日期'), ('date_finish', '交单日期'), ('po_delivered_date', '发货日期')])
     active = fields.Boolean(u'归档', default=True)
 
     # sequence = fields.Integer(u'排序', default=10, index=True)
@@ -30,7 +31,7 @@ class AccountPaymentTerm(models.Model):
         self.ensure_one()
         advance = 0.0
         for line in self.line_ids:
-            if line.option in ['advance','before_delivered']:
+            if line.option in ['advance', 'before_delivered']:
                 amt = 0
                 if line.value == 'fixed':
                     amt = line.value_amount
@@ -170,7 +171,7 @@ class account_payment(models.Model):
 
     @api.depends('advance_reconcile_order_line_ids.order_id.state', 'advance_balance_total', 'amount',
                  'advance_reconcile_order_line_ids.amount_advance_org', 'advance_reconcile_order_line_ids',
-                 'payment_ids.amount', 'payment_ids', 'payment_ids.state','payment_ids.sfk_type','state_1')
+                 'payment_ids.amount', 'payment_ids', 'payment_ids.state', 'payment_ids.sfk_type', 'state_1')
     def compute_advance_balance_total(self):
         for one in self:
             if one.sfk_type in ['ysrld', 'yfsqd']:
@@ -293,7 +294,7 @@ class account_payment(models.Model):
             one.advance_reconcile_order_no_draft_ids_count = advance_reconcile_order_no_draft_ids_count
             one.advance_reconcile_order_draft_amount_advance = advance_reconcile_order_draft_amount_advance
             one.advance_reconcile_order_count_char = '%s/%s' % (
-            str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_count_all))
+                str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_count_all))
             one.advance_reconcile_order_no_draft_count_char = '%s/%s' % (
                 str(advance_reconcile_order_draft_ids_count), str(advance_reconcile_order_no_draft_ids_count))
 
@@ -516,7 +517,7 @@ class account_payment(models.Model):
         ('30_payment_in', u'收款认领'),
         ('40_advance_in', u'预收认领'),
         ('45_declaration_tax', u'申报认领'),
-        ('47_declaration_payment',u'收款申报认领'),
+        ('47_declaration_payment', u'收款申报认领'),
         ('50_reconcile', u'本次核销'),
         # ('600_reconcile_ysrld',u'预收核销'),
         # ('605_reconcile_yfsqd',u'预付核销'),
@@ -740,7 +741,7 @@ class account_payment(models.Model):
     po_amount = fields.Monetary(u'采购合同总金额', currency_field='po_id_currency_id', related='po_id.amount_total')
     po_pre_advance = fields.Monetary(u'应付预付款', currency_field='po_id_currency_id', related='po_id.pre_advance')
     po_real_advance = fields.Monetary(u'预付金额', currency_field='po_id_currency_id', related='po_id.real_advance')
-
+    po_real_advance_new = fields.Monetary(u'预付金额', currency_field='po_id_currency_id', related='po_id.real_advance_new')
     so_id = fields.Many2one('sale.order', u'销售合同')
     so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
     amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')
@@ -814,33 +815,59 @@ class account_payment(models.Model):
                                           domain=[('yjzy_type_1', '=', 'back_tax'), ('is_manual', '=', 'True')])
 
     rcsktsrld_ids = fields.One2many('account.payment', 'yjzy_payment_id', '退税认领',
-                                     domain=[('sfk_type', '=', 'rcsktsrld')])
+                                    domain=[('sfk_type', '=', 'rcsktsrld')])
     pre_advance_id = fields.Many2one('pre.advance', 'Advice Advance Line',
-                                        domain = "['|',('po_id','=',po_id),('so_id','=',so_id)]")
-    @api.depends('po_id','so_id')
+                                     domain="['|',('po_id','=',po_id),('so_id','=',so_id)]")
+
+    @api.depends('po_id', 'so_id')
     def compute_pre_advance_line_ids(self):
         for one in self:
             if one.po_id:
-                pre_advance_line_ids = self.env['pre.advance'].search([('po_id','=',one.po_id.id)])
+                pre_advance_line_ids = self.env['pre.advance'].search([('po_id', '=', one.po_id.id)])
                 pre_advance_line_ids_count = len(pre_advance_line_ids)
+                pre_advance_line_pre_ids = self.env['pre.advance'].search([('po_id', '=', one.po_id.id),('pre_advance_options','!=','before_delivered')])
+                pre_advance_line_pre_ids_count = len(pre_advance_line_pre_ids)
+                pre_advance_line_before_delivery_ids = self.env['pre.advance'].search([('po_id', '=', one.po_id.id),('pre_advance_options','=','before_delivered')])
+                pre_advance_line_before_delivery_ids_count = len(pre_advance_line_before_delivery_ids)
             elif one.so_id:
                 pre_advance_line_ids = self.env['pre.advance'].search([('so_id', '=', one.so_id.id)])
                 pre_advance_line_ids_count = len(pre_advance_line_ids)
+                pre_advance_line_pre_ids = False
+                pre_advance_line_pre_ids_count = 0
+                pre_advance_line_before_delivery_ids = False
+                pre_advance_line_before_delivery_ids_count = 0
             else:
                 pre_advance_line_ids = False
                 pre_advance_line_ids_count = 0
-            one.pre_advance_line_ids =pre_advance_line_ids
+                pre_advance_line_pre_ids = False
+                pre_advance_line_pre_ids_count = 0
+                pre_advance_line_before_delivery_ids = False
+                pre_advance_line_before_delivery_ids_count = 0
+
+            one.pre_advance_line_ids = pre_advance_line_ids
             one.pre_advance_line_ids_count = pre_advance_line_ids_count
 
+            one.pre_advance_line_pre_ids = pre_advance_line_pre_ids
+            one.pre_advance_line_pre_ids_count = pre_advance_line_pre_ids_count
+            one.pre_advance_line_before_delivery_ids = pre_advance_line_before_delivery_ids
+            one.pre_advance_line_before_delivery_ids_count = pre_advance_line_before_delivery_ids_count
 
-    pre_advance_line_ids = fields.Many2many('pre.advance','palid','apid','psoid',compute=compute_pre_advance_line_ids,store=True)
-    pre_advance_line_ids_count = fields.Integer('预收付明细数量',compute=compute_pre_advance_line_ids,store=True)
+
+    pre_advance_line_ids = fields.Many2many('pre.advance', 'palid', 'apid', 'psoid',
+                                            compute=compute_pre_advance_line_ids, store=True)
+    pre_advance_line_ids_count = fields.Integer('总预收付明细数量', compute=compute_pre_advance_line_ids, store=True)
+    pre_advance_line_pre_ids = fields.Many2many('pre.advance', 'palpid', 'apid', 'psoid',
+                                            compute=compute_pre_advance_line_ids, store=True)
+    pre_advance_line_pre_ids_count = fields.Integer('预收付明细数量', compute=compute_pre_advance_line_ids, store=True)
+    pre_advance_line_before_delivery_ids = fields.Many2many('pre.advance', 'palbid', 'apid', 'psoid',
+                                            compute=compute_pre_advance_line_ids, store=True)
+    pre_advance_line_before_delivery_ids_count = fields.Integer('发货前预收付明细数量', compute=compute_pre_advance_line_ids, store=True)
 
     is_pre_advance_line = fields.Boolean('是否已经填了预付明细')
-    pre_advance_step = fields.Integer('阶段',related='pre_advance_id.pre_advance_step',store=True)
+    pre_advance_step = fields.Integer('阶段', related='pre_advance_id.pre_advance_step', store=True)
+
     # pre_advance_po_line_ids = fields.One2many('pre.advance', 'po_id',)
     # pre_advance_so_line_ids = fields.One2many('pre.advance', 'so_id',)
-
 
     def open_ppat(self):
         form_view = self.env.ref('yjzy_extend.purchase_payment_advance_tool_view_form')
@@ -875,8 +902,8 @@ class account_payment(models.Model):
 
         })
         ppat_id.compute_purchase_amount()
-        if float_compare(ppat_id.can_apply_amount,amount,precision_digits=2) < 0:
-        # if ppat_id.can_apply_amount < amount:
+        if float_compare(ppat_id.can_apply_amount, amount, precision_digits=2) < 0:
+            # if ppat_id.can_apply_amount < amount:
             raise Warning('test')
 
     def new_advance_payment_id_chushihua(self):
@@ -1721,7 +1748,7 @@ class account_payment(models.Model):
                                                                       invoice_id=invoice_id)
         plan_invoice_id = ''
         new_payment_id = self.id
-        if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld','rcsktsrld', 'yingshourld', 'yingfurld']:
+        if self.sfk_type in ['ysrld', 'yfsqd', 'rcfksqd', 'rcskrld', 'rcsktsrld', 'yingshourld', 'yingfurld']:
             if self.fkzl_id:
                 new_payment_id = self.fkzl_id.id
             else:
@@ -2785,7 +2812,7 @@ class Pre_Advance(models.Model):
     _name = 'pre.advance'
     _description = 'Advice Advance Line'
 
-    @api.depends('payment_advance_ids', 'payment_advance_ids.currency_id','currency_id')
+    @api.depends('payment_advance_ids', 'payment_advance_ids.currency_id', 'currency_id')
     def compute_payment_advance_currency_id(self):
         for one in self:
             if len(one.payment_advance_ids) >= 1:
@@ -2793,21 +2820,22 @@ class Pre_Advance(models.Model):
             else:
                 one.payment_advance_currency_id = one.currency_id
 
-    #如果是出运前的计划，那么就是统计出运合同下的合并采购合同后的明细行的，分配过来的实际预付申请
-    @api.depends('payment_advance_ids', 'payment_advance_ids.amount','tb_po_line','tb_po_line.real_advance_amount')
+    # 如果是出运前的计划，那么就是统计出运合同下的合并采购合同后的明细行的，分配过来的实际预付申请
+    @api.depends('payment_advance_ids', 'payment_advance_ids.amount', 'tb_po_line', 'tb_po_line.real_advance_amount',
+                 'tbl_ids')
     def compute_real_advance(self):
         for one in self:
             pre_advance_options = one.pre_advance_options
-            if pre_advance_options in ['advance','advance_in']:
-                payment_advance_ids = one.payment_advance_ids.filtered(lambda x: x.pre_advance_options in ['advance','advance_in'])
+            if pre_advance_options in ['advance', 'advance_in']:
+                payment_advance_ids = one.payment_advance_ids.filtered(
+                    lambda x: x.pre_advance_options in ['advance', 'advance_in'])
                 real_advance = sum(x.amount for x in payment_advance_ids)
             else:
-                real_advance = sum(x.real_advance_amount for x in one.tb_po_line)#？？？？？？再思考一下但是肯定还是需要重新算pre和real通过tb_po_line 分别的合计
+                real_advance = 0
+                for line in one.tbl_ids:
+                    real_advance += sum(x.real_advance_amount for x in line.tbrl_ids)
+
             one.real_advance = real_advance
-
-
-
-
 
     # type=预付或者预收
     type = fields.Selection(
@@ -2822,27 +2850,26 @@ class Pre_Advance(models.Model):
     currency_id = fields.Many2one('res.currency', compute='compute_currency_id', store=True)
     pre_advance = fields.Monetary('Pre Advance', currency_field='currency_id', compute='compute_pre_advance',
                                   store=True)
-    pre_advance_step = fields.Integer('阶段',default=0)
-    pre_advance_step_selection = fields.Selection([('10','第一阶段'),('20','第二阶段'),
-                                                   ('30','第三阶段'),('40','第四阶段')],
-                                                  '预收付阶段',compute='compute_pre_advance_step_selection',store=True)
-    pre_advance_options = fields.Selection([('advance',u'预付款'),
+    pre_advance_step = fields.Integer('阶段', default=0)
+    pre_advance_step_selection = fields.Selection([('10', '第一阶段'), ('20', '第二阶段'),
+                                                   ('30', '第三阶段'), ('40', '第四阶段')],
+                                                  '预收付阶段', compute='compute_pre_advance_step_selection', store=True)
+    pre_advance_options = fields.Selection([('advance', u'预付款'),
                                             ('advance_in', u'预收款'),
-                                            ('before_delivered',u'发货前')],u'预付属性')
+                                            ('before_delivered', u'发货前')], u'预付属性')
 
-
-    #实际预收付金额=对应的预付收款单之和
+    # 实际预收付金额=对应的预付收款单之和
     payment_advance_currency_id = fields.Many2one('res.currency', compute='compute_payment_advance_currency_id')
-    real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',)#compute='compute_real_advance',store=True
-    payment_advance_ids = fields.One2many('account.payment','pre_advance_id',domain=[('state','=','posted')])
+    real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',
+                                   compute='compute_real_advance')  #
+    payment_advance_ids = fields.One2many('account.payment', 'pre_advance_id', domain=[('state', '=', 'posted')])
 
-    tb_po_line = fields.One2many('tb.po.line','pre_advance_id',domain=[('state','=','posted')])
+    tb_po_line = fields.One2many('tb.po.line', 'pre_advance_id', domain=[('state', '=', 'posted')])
 
     po_id = fields.Many2one('purchase.order', 'Purchase Order')
     so_id = fields.Many2one('sale.order', 'Sale Order')
     is_selected = fields.Boolean('是否选中')
-
-
+    tbl_ids = fields.One2many('tb.po.line', 'pre_advance_id', u'出运采购合并')
 
     @api.depends('pre_advance_step')
     def pre_advance_step_selection(self):
@@ -2851,7 +2878,7 @@ class Pre_Advance(models.Model):
             if pre_advance_step == 1:
                 pre_advance_step_selection = '10'
             elif pre_advance_step == 2:
-                pre_advance_step_selection ='20'
+                pre_advance_step_selection = '20'
             elif pre_advance_step == 3:
                 pre_advance_step_selection = '30'
             elif pre_advance_step == 4:
@@ -2890,10 +2917,11 @@ class Pre_Advance(models.Model):
                 elif one.value == 'percent':
                     pre_advance = amount * (one.value_amount / 100.0)
                 one.pre_advance = pre_advance
+
     def name_get(self):
         result = []
         for one in self:
-            name = '%s:/%s' % (one.pre_advance_step_selection,one.pre_advance)
+            name = '%s:/%s' % (one.pre_advance_step_selection, one.pre_advance)
 
             result.append((one.id, name))
         return result
@@ -2908,5 +2936,5 @@ class Pre_Advance(models.Model):
             'type': 'ir.actions.act_window',
             'views': [(form_view_id.id, 'form')],
             'target': 'new',
-            'context': { }
+            'context': {}
         }

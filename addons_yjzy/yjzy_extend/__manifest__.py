@@ -65,6 +65,7 @@
         'wizard/manual_complete_real_invoice.xml',
         'wizard/wizard_pre_advance.xml',
         'wizard/wizard_project_tasks_comments.xml',
+        'wizard/wizard_prepayment_before_delivery.xml',
 
         'views/account_invoice_extra.xml',
         'views/account_journal.xml',

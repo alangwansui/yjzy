@@ -94,3 +94,4 @@ from . import account_payment_tuishui
 from . import project
 from . import account_payment_before_delovery
 from . import transport_bill_advance_before_delivery
+from . import account_invoice_purchase_per

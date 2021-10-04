@@ -4002,6 +4002,8 @@ class account_reconcile_order_line_no(models.Model):
     amount_bank_org = fields.Monetary(u'银行扣款', currency_field='payment_currency_id')
     amount_diff_org = fields.Monetary(u'订单费用', currency_field='payment_currency_id')
 
+
+
     def open_invoice_id(self):
         form_view = self.env.ref('yjzy_extend.view_account_invoice_rizhi').id
         return {'name': '查看日志',

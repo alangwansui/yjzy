@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wizard_prepayment_before_delivery_form" model="ir.ui.view">
+            <field name="name">wizard.prepayment.before.delivery.form</field>
+            <field name="model">wizard.prepayment.before.delivery</field>
+            <field name="arch" type="xml">
+                <form string="创建预付申请">
+                    <group>
+                        <field name="tb_id" />
+                        <field name="tb_po_line_ids" />
+                        <field name="partner_id" />
+                    </group>
+                    <footer>
+                        <button name="apply" class="oe_highlight" type='object' string="确定" />
+                        <button special="cancel" class="oe_highlight" string="放弃"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
+

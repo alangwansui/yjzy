@@ -38,6 +38,7 @@ from . import wizard_tb_po_invoice_new
 from . import manual_complete_real_invoice
 from . import wizard_pre_advance
 from . import wizard_project_tasks_comments
+from . import wizard_prepayment_before_delivery
 
 
 

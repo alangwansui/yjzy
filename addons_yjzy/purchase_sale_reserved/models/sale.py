@@ -108,32 +108,35 @@ class sale_order(models.Model):
 
     def new_open_wizard_so2po(self):
         self.ensure_one()
-        wizard = self.env['wizard.so2po'].create({'so_id': self.id})
-        view = self.env.ref('purchase_sale_reserved.wizard_wizard_so2po_form')
-        line_obj = self.env['wizard.so2po.line']
+        if len(self.po_ids) != len(self.po_ids_new):
+            raise Warning('有多余的无用采购合同和这张销售合同关联，请检查！')
+        else:
+            wizard = self.env['wizard.so2po'].create({'so_id': self.id})
+            view = self.env.ref('purchase_sale_reserved.wizard_wizard_so2po_form')
+            line_obj = self.env['wizard.so2po.line']
 
-        for sol in self.order_line.filtered(lambda x: not x.lot_id):
-            if not sol.supplier_id:
-                raise Warning('没有批次号的销售明细必须指定一个供应商')
+            for sol in self.order_line.filtered(lambda x: not x.lot_id):
+                if not sol.supplier_id:
+                    raise Warning('没有批次号的销售明细必须指定一个供应商')
 
-            line_obj.create({
-                'wizard_id': wizard.id,
-                'sol_id': sol.id,
-                'supplier_id': sol.supplier_id.id,
-                'qty': sol.product_qty,
-            })
+                line_obj.create({
+                    'wizard_id': wizard.id,
+                    'sol_id': sol.id,
+                    'supplier_id': sol.supplier_id.id,
+                    'qty': sol.product_qty,
+                })
 
-        return {
-            'name': _(u'创建采购单'),
-            'view_type': 'tree,form',
-            "view_mode": 'form',
-            'res_model': 'wizard.so2po',
-            'type': 'ir.actions.act_window',
-            'view_id': view.id,
-            'target': 'new',
-            'res_id': wizard.id,
-            # 'context': { },
-        }
+            return {
+                'name': _(u'创建采购单'),
+                'view_type': 'tree,form',
+                "view_mode": 'form',
+                'res_model': 'wizard.so2po',
+                'type': 'ir.actions.act_window',
+                'view_id': view.id,
+                'target': 'new',
+                'res_id': wizard.id,
+                # 'context': { },
+            }
 
 
     def open_wizard_so2po(self):

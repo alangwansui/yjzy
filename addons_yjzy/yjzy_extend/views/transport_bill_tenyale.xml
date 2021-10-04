@@ -104,16 +104,16 @@
                     <field name="org_sale_amount" groups="base.group_system"/>
                     <field name="org_real_sale_amount_new" sum="小计"/>
                     <field name="org_hsname_actual_amount" sum="小计"/>
-                    <field name="sale_invoice_total_new"  sum="小计"/>
+                    <field name="sale_invoice_total_new" sum="小计"/>
                     <field name="diff_real_sale_hsmame_actual_amount"/>
                     <field name="purchase_cost_total" sum="小计" groups="base.group_system"/>
                     <field name="org_real_purchase_amount_new" sum="小计"/>
                     <field name="purchase_hsname_actual_cost_total" sum="小计"/>
-                    <field name="purchase_invoice_total_new"  sum="小计"/>
+                    <field name="purchase_invoice_total_new" sum="小计"/>
                     <field name="diff_real_purchase_hsname_actual_amount"/>
 
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
-                    <field name="ciq_amount" groups="base.group_system" />
+                    <field name="ciq_amount" groups="base.group_system"/>
                     <field name="no_ciq_amount" groups="base.group_system" invisible="1"/>
                     <field name="state" invisible="1" groups="base.group_system"/>
                     <field name="company_currency_id" invisible="1" groups="base.group_system"/>
@@ -218,7 +218,7 @@
                     <field name="invoice_paid_state" invisible="1"/>
 
                     <field name="org_sale_amount_new" sum="小计" groups="base.group_system"/>
-                    <field name="org_real_sale_amount_new" sum="小计" />
+                    <field name="org_real_sale_amount_new" sum="小计"/>
                     <field name="org_hsname_actual_amount" sum="小计"/>
                     <field name="purchase_cost_total" sum="小计"/>
 
@@ -265,7 +265,8 @@
             <field name="name">transport.bill.tree</field>
             <field name="model">transport.bill</field>
             <field name="arch" type="xml">
-                <tree string="年度合同" default_order="date_out_in desc" decoration-danger="org_hsname_actual_amount != sale_invoice_total_new"  create="false">
+                <tree string="年度合同" default_order="date_out_in desc"
+                      decoration-danger="org_hsname_actual_amount != sale_invoice_total_new" create="false">
                     <field name="current_date_rate" string="汇率"/>
                     <field name="ref"/>
                     <field name="name" invisible="1" groups="base.group_system"/>
@@ -275,14 +276,14 @@
                     <field name="invoice_paid_state" invisible="1"/>
                     <field name="sale_type"/>
                     <field name="org_sale_amount_new" sum="小计" groups="base.group_system"/>
-                    <field name="org_real_sale_amount_new" sum="小计" />
+                    <field name="org_real_sale_amount_new" sum="小计"/>
                     <field name="org_hsname_actual_amount" sum="小计"/>
                     <field name="ciq_amount" sum="小计" groups="base.group_system"/>
-                    <field name="sale_invoice_total_new"  sum="小计"/>
+                    <field name="sale_invoice_total_new" sum="小计"/>
                     <field name="diff_real_sale_hsmame_actual_amount"/>
                     <field name="org_real_purchase_amount_new" sum="小计"/>
                     <field name="purchase_hsname_actual_cost_total" sum="小计"/>
-                    <field name="purchase_invoice_total_new"  sum="小计"/>
+                    <field name="purchase_invoice_total_new" sum="小计"/>
                     <field name="diff_real_purchase_hsname_actual_amount"/>
                     <field name="purchase_cost_total" sum="小计" groups="base.group_system"/>
                     <field name="sale_amount" groups="base.group_system" invisible="1"/>
@@ -294,19 +295,14 @@
                     <field name="include_tax"/>
 
 
-
-
-                    <field name="back_tax_invoice_total_new"  sum="小计"/>
-                    <field name="fzzc_back_tax_invoice_total_new"  sum="小计"/>
+                    <field name="back_tax_invoice_total_new" sum="小计"/>
+                    <field name="fzzc_back_tax_invoice_total_new" sum="小计"/>
                     <field name="zc_invoice_profile_total_new" sum="小计"/>
                     <field name="sale_invoice_balance_new" sum="小计"/>
-                    <field name="purchase_invoice_balance_new"  sum="小计"/>
-                    <field name="back_tax_invoice_balance_new"  sum="小计"/>
-                    <field name="fzzc_back_tax_invoice_residual_total_new"  sum="小计"/>
+                    <field name="purchase_invoice_balance_new" sum="小计"/>
+                    <field name="back_tax_invoice_balance_new" sum="小计"/>
+                    <field name="fzzc_back_tax_invoice_residual_total_new" sum="小计"/>
                     <field name="zc_invoice_profile_residual_total_new" sum="小计"/>
-
-
-
 
 
                     <field name="state_type" invisible="1"/>
@@ -389,7 +385,8 @@
                                 class="oe_highlight"/>
                         <button name="action_manager_approve" states="manager_approve" type="object" string="总经理特批"
                                 class="oe_highlight"/>
-                        <button name="action_lock_stage" type="object" states="invoiced" string="锁定" groups="base.group_system"/>
+                        <button name="action_lock_stage" type="object" states="invoiced" string="锁定"
+                                groups="base.group_system"/>
                         <button name="%(transport_refuse_wizard_action)d" string="拒绝" type="action"
                                 attrs="{'invisible':[('state','in',['invoiced','abnormal','verifying','done','paid','cancel','refused','draft'])]}"/>
                         <button name="action_hexiao" states="verifying" string="核销" type="object"/>
@@ -399,13 +396,14 @@
                                 confirm="重新添加销售明细，将会清除所有的清关和报关资料！是否继续"
                                 attrs="{'invisible':['|',('operation_wizard','in',['first','second','third','fourth']),('state','not in',['draft'])]}"
                                 class="oe_highlight"/>
-                         <button name="make_new_order_track_tb" type="object" string="创建出运检查" groups="base.group_system"/>
+                        <button name="make_new_order_track_tb" type="object" string="创建出运检查"
+                                groups="base.group_system"/>
 
                         <field name="state" widget="statusbar" statusbar_visible=" "/>
                     </header>
                     <header groups="base.group_system">
                         <button name="create_tb_po_line_ids" type="object" string="创建采购合并"/>
- <button string="计算合同号" name="compute_tb_ref_1" type="object"/>
+                        <button string="计算合同号" name="compute_tb_ref_1" type="object"/>
                         <button string="添加向导" states="draft" type="object" name="open_transport_self" invisible="1"
                                 context="{'form_xml_id':'yjzy_extend.view_transport_bill_wkf_form','name':'向导开始'}"
                                 class="oe_highlight"/>
@@ -613,7 +611,8 @@
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
                                 <field name="gongsi_id" groups="base.group_system" options="{'no_open':1}" string="销售主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
-                                <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}" string="采购主体"
+                                <field name="purchase_gongsi_id" groups="base.group_system" options="{'no_open':1}"
+                                       string="采购主体"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
                                 <field name="locked" invisible="1"/>
                             </group>
@@ -810,10 +809,12 @@
                                 </field>
                                 <group class="oe_subtotal_footer oe_right">
                                     <field name="back_tax_amount_org"/>
-                                    <field name="org_sale_amount_new_origin" attrs="{'invisible':[('is_discount','=',False)]}"/>
+                                    <field name="org_sale_amount_new_origin"
+                                           attrs="{'invisible':[('is_discount','=',False)]}"/>
                                     <field name="org_real_sale_amount_new"/>
                                     <field name="org_hsname_actual_amount"/>
-                                    <field name="org_sale_amount_new_discount" string="折扣" attrs="{'invisible':[('is_discount','=',False)]}"/>
+                                    <field name="org_sale_amount_new_discount" string="折扣"
+                                           attrs="{'invisible':[('is_discount','=',False)]}"/>
                                     <field name="org_sale_amount_new" class="oe_subtotal_footer_separator"/>
 
                                     <field name="purchase_cost_total" class="oe_subtotal_footer_separator"
@@ -837,16 +838,20 @@
                             <page string="采购合并" groups="base.group_system">
                                 <field name="tb_po_line_ids">
                                     <tree>
-                                         <field name="tb_id"/>
-                                    <field name="po_id"/>
-                                    <field name="po_currency_id"/>
-                                    <field name="po_tb_amount"/>
-                                    <field name="po_tb_percent"/>
-                                    <field name="tb_po_amount"/>
-                                    <field name="pre_advance_total"/>
-                                    <field name="pre_advance_id"/>
-                                    <field name="real_advance_amount"/>
-                                    <field name="state"/>
+                                        <field name="tb_id"/>
+                                        <field name="po_id"/>
+                                        <field name="po_currency_id"/>
+                                        <field name="po_tb_amount"/>
+                                        <field name="po_tb_percent"/>
+                                        <field name="po_po_tb_percent"/>
+                                        <field name="po_supplier_amount"/>
+                                        <field name="po_amount"/>
+                                        <field name="tb_po_amount"/>
+                                        <field name="po_supplier_percent"/>
+                                        <field name="pre_advance_total"/>
+                                        <field name="pre_advance_id"/>
+                                        <field name="real_advance_amount"/>
+                                        <field name="state"/>
                                     </tree>
                                 </field>
 
@@ -1185,7 +1190,7 @@
                             </page>
                             <page string="费用明细" invisible="0">
                                 <field name="expense_ids" readonly="1">
-                                    <tree >
+                                    <tree>
                                         <field name="date"/>
                                         <field name="create_uid"/>
                                         <field name="employee_id" string="责任人"/>
@@ -1785,7 +1790,9 @@
             <field name="limit">20</field>
             <field name="view_mode">tree,form,kanban</field>
             <field name="search_view_id" ref="view_transport_bill_tenyale_filter"/>
-            <field name="domain">[('state','in',['locked','finish_add_purchase','approve','delivered','invoiced','verifying'])]</field>
+            <field name="domain">
+                [('state','in',['locked','finish_add_purchase','approve','delivered','invoiced','verifying'])]
+            </field>
             <field name="context">
                 {'search_default_group_by_state_type':1,'default_outer_currency_id':3,'default_export_insurance_currency_id':3,'default_other_currency_id':3,'show_po_code':
                 1}
