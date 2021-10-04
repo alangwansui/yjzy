@@ -718,8 +718,8 @@ class account_invoice(models.Model):
             one.days_term = days_term
 
     @api.depends('invoice_line_ids', 'invoice_line_ids.advice_advance_amount',
-                 'invoice_line_ids.advice_advance_amount_1', 'amount_advance_org_done', 'amount_payment_can_approve_all'
-        , 'invoice_line_ids.rest_advance_so_po_balance')
+                 'invoice_line_ids.advice_advance_amount_1', 'amount_advance_org_done', 'amount_payment_can_approve_all',
+                 'invoice_line_ids.rest_advance_so_po_balance')
     def compute_advance_pre_rest(self):
         for one in self:
             advance_pre = sum(x.advice_advance_amount for x in one.invoice_line_ids)
@@ -2637,8 +2637,7 @@ class account_invoice_line(models.Model):
     # back_tax_add_this_time = fields.Float('本次应生成退税', compute=compute_back_tax)
 
     @api.depends('purchase_id', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
-                 'so_id',
-                 'so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
+                 'so_id', 'so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
     def _compute_original_so_po_amount(self):
         for one in self:
             if one.invoice_id.type == 'in_invoice':
@@ -2667,10 +2666,9 @@ class account_invoice_line(models.Model):
                 one.proportion_tb = proportion_tb
                 one.advice_advance_amount = advice_advance_amount
                 one.advice_advance_amount_1 = advice_advance_amount_1
-
+    #发货前的预付是要全部认领的。在是预付的金额*这次出运/总采购金额
     @api.depends('purchase_id', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
-                 'so_id',
-                 'so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
+                 'so_id','so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
     def compute_original_so_po_amount(self):
         for one in self:
             if one.invoice_id.type == 'in_invoice':

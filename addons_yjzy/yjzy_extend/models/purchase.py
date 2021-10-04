@@ -119,25 +119,9 @@ class purchase_order(models.Model):
             one.balance_new = balance
             one.real_advance = real_advance
 
-    @api.depends('yjzy_payment_ids', 'yjzy_payment_ids.prepayment_type', 'yjzy_payment_ids.amount')
-    def compute_real_advance_new(self):
-        for one in self:
-            yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type != 'before_delivery')
-            if one.yjzy_payment_ids:                
-                real_advance_new = sum([x.amount for x in yjzy_payment_ids])
-            else:
-                real_advance_new = 0
-            one.real_advance_new = real_advance_new
 
-    @api.depends('yjzy_payment_ids', 'yjzy_payment_ids.prepayment_type', 'yjzy_payment_ids.amount')
-    def compute_real_advance_before_delivery_new(self):
-        for one in self:
-            yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type == 'before_delivery')
-            if one.yjzy_payment_ids:
-                real_advance_before_delivery_new = sum([x.amount for x in yjzy_payment_ids])
-            else:
-                real_advance_before_delivery_new = 0
-            one.real_advance_before_delivery_new = real_advance_before_delivery_new
+
+
 
     @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id',
                  'order_line.product_qty', 'order_line', 'order_line.sol_id_price_total_undelivered')
@@ -306,9 +290,7 @@ class purchase_order(models.Model):
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
     real_advance = fields.Monetary(u'实际预付金额', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
-    real_advance_new = fields.Monetary(u'实际预付金额', compute='compute_real_advance_new', currency_field='yjzy_currency_id', store=True)
-    real_advance_before_delivery_new = fields.Monetary(u'实际发货前金额', compute='compute_real_advance_before_delivery_new', currency_field='yjzy_currency_id',
-                                       store=True)
+
     pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
                                   help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
     pre_advance_line = fields.One2many('pre.advance', 'po_id')
