@@ -2861,7 +2861,7 @@ class Pre_Advance(models.Model):
     payment_advance_currency_id = fields.Many2one('res.currency', compute='compute_payment_advance_currency_id')
     real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',
                                    compute='compute_real_advance')  #
-    payment_advance_ids = fields.One2many('account.payment', 'pre_advance_id', domain=[('state', '=', 'posted')])
+    payment_advance_ids = fields.One2many('account.payment', 'pre_advance_id', )#domain=[('state', '=', 'posted')]
 
     tb_po_line = fields.One2many('tb.po.line', 'pre_advance_id', domain=[('state', '=', 'posted')])
 
