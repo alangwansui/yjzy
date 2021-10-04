@@ -2827,13 +2827,12 @@ class Pre_Advance(models.Model):
         for one in self:
             pre_advance_options = one.pre_advance_options
             if pre_advance_options in ['advance', 'advance_in']:
-                payment_advance_ids = one.payment_advance_ids.filtered(
-                    lambda x: x.pre_advance_options in ['advance', 'advance_in'])
+                payment_advance_ids = one.payment_advance_ids
                 real_advance = sum(x.amount for x in payment_advance_ids)
             else:
                 real_advance = 0
-                for line in one.tbl_ids:
-                    real_advance += sum(x.real_advance_amount for x in line.tbrl_ids)
+                # for line in one.tbl_ids:
+                #     real_advance += sum(x.real_advance_amount for x in line.tbrl_ids)
 
             one.real_advance = real_advance
 
