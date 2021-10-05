@@ -40,7 +40,6 @@ class account_payment(models.Model):
                 else:
                     raise Warning('已经不存在需要发货前付款')
             else:
-                one.tb_po_line_ids.state = 'draft'
                 one.po_id = False
                 one.pre_advance_id = False
                 one.is_pre_advance_line = False
