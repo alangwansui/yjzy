@@ -720,7 +720,7 @@ class account_invoice(models.Model):
     @api.depends('invoice_line_ids', 'invoice_line_ids.advice_advance_amount',
                  'invoice_line_ids.advice_advance_amount_1', 'amount_advance_org_done', 'amount_payment_can_approve_all',
                  'invoice_line_ids.rest_advance_so_po_balance')
-    def compute_advance_pre_rest(self):
+    def _compute_advance_pre_rest(self):
         for one in self:
             advance_pre = sum(x.advice_advance_amount for x in one.invoice_line_ids)
 
@@ -735,6 +735,8 @@ class account_invoice(models.Model):
             one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
             one.rest_advance_so_po_balance = rest_advance_so_po_balance
             one.jianyi_advance = jianyi_advance < rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
+
+
 
     @api.depends('tb_po_invoice_id', 'tb_po_invoice_id.invoice_ids', 'tb_po_invoice_id.invoice_ids.amount_total',
                  'tb_po_invoice_id.invoice_ids.residual')
@@ -775,7 +777,40 @@ class account_invoice(models.Model):
     tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
     is_manual = fields.Boolean('是否手动创建', default=False)
 
+    @api.depends('invoice_line_ids', 'invoice_line_ids.advice_advance_amount',
+                 'invoice_line_ids.advice_advance_amount_1', 'amount_advance_org_done',
+                 'amount_payment_can_approve_all',
+                 'invoice_line_ids.rest_advance_so_po_balance')
+    def compute_advance_pre_rest(self):
+        for one in self:
+            po_ids = self.invoice_line_ids.mapped('purchase_id')
+            advance_before_delivery_pre = 0
+            real_advance_new = 0
+            jianyi_advance =0
+            rest_advance_so_po_balance = 0
+            for po in po_ids:
+                advance_before_delivery_pre += po.real_advance_before_delivery_new
+                real_advance_new += po.real_advance_new
+                invoice_line_po_ids = one.invoice_line_ids.filtered(lambda x: x.purchase_id == po)
+                delivery_amount_po = sum(x.price_total for x in invoice_line_po_ids)
+                po_amount = po.amount_total
+                delivery_po_percent = po_amount !=0 and delivery_amount_po / po_amount or 0
+                jianyi_advance += po.real_advance_new * delivery_po_percent
+                rest_advance_so_po_balance += po.balance_new
+
+            amount_advance_org_done = one.amount_advance_org_done
+            wait_advance = jianyi_advance - amount_advance_org_done
+            amount_payment_can_approve_all_1 = one.amount_payment_can_approve_all - wait_advance
+
+            one.wait_advance = wait_advance >= 0 and wait_advance or 0
+            one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
+            one.rest_advance_so_po_balance = rest_advance_so_po_balance
+            one.jianyi_advance = jianyi_advance < rest_advance_so_po_balance and jianyi_advance or rest_advance_so_po_balance
+
     advance_pre = fields.Monetary('建议认领预收付总金额', currency_field='currency_id', compute=compute_advance_pre_rest,
+                                  store=True)
+
+    advance_before_delivery_pre = fields.Monetary('建议发货前认领金额', currency_field='currency_id', compute=compute_advance_pre_rest,
                                   store=True)
     wait_advance = fields.Monetary('待认领预付', currency_field='currency_id', compute=compute_advance_pre_rest,
                                    store=True)  # 相关剩余预收付金额
@@ -785,6 +820,9 @@ class account_invoice(models.Model):
                                                  compute=compute_advance_pre_rest, store=True)
     jianyi_advance = fields.Monetary('建议预收预付', currency_field='currency_id',
                                      compute=compute_advance_pre_rest, store=True)  # 按照比例计算的预收付建议认领金额
+
+
+
 
     days_term = fields.Integer('账期', compute=compute_days_term)
     invoice_date_deadline = fields.Selection('账期计算方式', related='payment_term_id.invoice_date_deadline_field')
