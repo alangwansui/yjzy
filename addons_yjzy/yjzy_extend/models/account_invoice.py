@@ -801,7 +801,7 @@ class account_invoice(models.Model):
             amount_advance_org_done = one.amount_advance_org_done
             wait_advance = jianyi_advance - amount_advance_org_done
             amount_payment_can_approve_all_1 = one.amount_payment_can_approve_all - wait_advance
-
+            one.advance_before_delivery_pre = advance_before_delivery_pre
             one.wait_advance = wait_advance >= 0 and wait_advance or 0
             one.amount_payment_can_approve_all_1 = amount_payment_can_approve_all_1
             one.rest_advance_so_po_balance = rest_advance_so_po_balance
