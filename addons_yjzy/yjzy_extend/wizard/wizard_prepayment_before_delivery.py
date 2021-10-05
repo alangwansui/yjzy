@@ -35,7 +35,9 @@ class wizard_prepayment_before_delivery(models.TransientModel):
 
 
     def cancel_1(self):
-        return True
+        self.ensure_one()
+        # close popup
+        return {'type': 'ir.actions.act_window_close'}
 
     def apply(self):
         yfsqd_obj = self.env['account.payment']
