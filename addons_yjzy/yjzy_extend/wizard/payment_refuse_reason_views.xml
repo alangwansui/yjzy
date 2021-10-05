@@ -24,4 +24,30 @@
         <field name="view_id" ref="payment_refuse_wizard_view_form"/>
         <field name="target">new</field>
     </record>
+
+
+        <record id="payment_before_delivery_refuse_wizard_view_form" model="ir.ui.view">
+        <field name="name">payment.refuse.wizard.form</field>
+        <field name="model">payment.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reconcile refuse reason">
+                <separator string="请填写您的拒绝理由"/>
+                <field name="account_payment_id" invisible="1"/>
+                <field name="reason"/>
+                <footer>
+                    <button string='拒绝' name="payment_before_delivery_refuse_reason" type="object" class="oe_highlight"/>
+                    <button string="取消" class="oe_link" special="cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="payment_before_delivery_refuse_wizard_action" model="ir.actions.act_window">
+        <field name="name">审批拒绝</field>
+        <field name="res_model">payment.refuse.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="payment_before_delivery_refuse_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
 </odoo>

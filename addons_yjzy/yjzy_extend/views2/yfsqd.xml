@@ -133,6 +133,7 @@
                 </header>
                 <header groups="base.group_system">
                     <button name="action_before_delivery_submit" string="提交" type="object"/>
+                    <button name="%(payment_before_delivery_refuse_wizard_action)d" string="财务据拒绝" />
                     <button name="action_percent_amount" string="计算实际预付金额" type="object" />
                     <button name="create_rcfkd" string="生成日常付款单" type='object' icon=""
                             groups="account.group_account_manager"/>

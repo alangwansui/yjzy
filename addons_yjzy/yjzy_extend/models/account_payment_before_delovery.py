@@ -67,25 +67,26 @@ class account_payment(models.Model):
             if one.state == 'creating':
                 one.state = 'approval'
                 one.pre_payment_id = self
+        if len(self.tb_po_line_ids.filtered(lambda x: x.state == 'draft')) == 1:
+            wizard_obj = self.env['wizard.prepayment.before.delivery']
+            wizard_id = wizard_obj.with_context({'default_tb_po_line_ids': self.tb_po_line_ids.ids}).create({
+                'tb_id': self.tb_id.id,
+                'partner_id': self.partner_id.id
+            })
 
-        wizard_obj = self.env['wizard.prepayment.before.delivery']
-        wizard_id = wizard_obj.with_context({'default_tb_po_line_ids': self.tb_po_line_ids.ids}).create({
-            'tb_id': self.tb_id.id,
-            'partner_id': self.partner_id.id
-        })
-        wizard_id.onchange_tb_po_line()
-        form_view = self.env.ref('yjzy_extend.wizard_prepayment_before_delivery_form')
-        return {
-            'name': '创建预付申请',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'wizard.prepayment.before.delivery',
-            'views': [(form_view.id, 'form')],
-            'res_id': wizard_id.id,
-            'target': 'new',
-            'type': 'ir.actions.act_window',
-            # 'context': ctx,
-        }
+            wizard_id.onchange_tb_po_line()
+            form_view = self.env.ref('yjzy_extend.wizard_prepayment_before_delivery_form')
+            return {
+                'name': '创建预付申请',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'wizard.prepayment.before.delivery',
+                'views': [(form_view.id, 'form')],
+                'res_id': wizard_id.id,
+                'target': 'new',
+                'type': 'ir.actions.act_window',
+                # 'context': ctx,
+            }
 
     def action_before_delivery_account_post(self):
         self.write({'state_1': '30_manager_approve'
@@ -109,20 +110,29 @@ class account_payment(models.Model):
                 'real_advance_amount': self.amount * x.po_supplier_percent,
             })
 
-    # @api.onchange('tb_id')
-    # def onchange_tb_id(self):
-    #     for one in self.tb_po_line_ids:
-    #         one.real_advance_amount = self.amount * one.po_tb_percent
 
-    def action_manager_post(self):
-        if self.po_id and self.po_id.so_id_state not in ['approve', 'sale']:
-            raise Warning('合同未完成审批！')
-        # elif self.tb_id.state not in ['approve']:
-        #     raise Warning('出运合同未完成审批！')
-        else:
-            today = fields.date.today()
-            self.write({'post_uid': self.env.user.id,
-                        'post_date': today,
-                        'state_1': '40_approve'
-                        })
-            self.create_rcfkd()
+    def action_before_delivery_refuse(self, reason):
+        if self.sfk_type in ['yfsqd']:
+            if self.state_1 == '40_approve':
+                if self.state == 'draft' and (
+                        self.yjzy_payment_id and self.yjzy_payment_id.state == 'draft' or self.yjzy_payment_id.state_fkzl == '05_fkzl'):
+                    self.yjzy_payment_id.unlink()
+                    self.write({'state_1': '80_refused',
+                                'state': 'draft'
+                                })
+                    tb_po_line_ids = self.tb_po_line_ids.filtered(lambda x: x.pre_payment_id == self)
+                    for x in tb_po_line_ids:
+                        x.pre_payment_id = False
+                        x.state = 'creating'
+                else:
+                    raise Warning('已经提交付款申请，无法拒绝！')
+            else:
+                self.write({'state_1': '80_refused',
+                            'state': 'draft'
+                            })
+
+        for tb in self:
+            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
+                                      values={'reason': reason, 'name': self.name},
+                                      subtype_id=self.env.ref(
+                                          'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式

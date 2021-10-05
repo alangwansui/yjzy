@@ -32,4 +32,9 @@ class PaymentRefuseWizard(models.TransientModel):
         self.account_payment_id.action_refuse(self.reason)
         return {'type': 'ir.actions.act_window_close'}
 
+    def payment_before_delivery_refuse_reason(self):
+        self.ensure_one()
+        self.account_payment_id.action_before_delivery_refuse(self.reason)
+        return {'type': 'ir.actions.act_window_close'}
+
 
