@@ -506,7 +506,11 @@
 
 
 
-
+                    <field name="advance_before_delivery_pre" groups="base.group_system"/>
+                    <field name="wait_advance_new" groups="base.group_system"/>
+                    <field name="amount_payment_can_approve_all_1_new" groups="base.group_system"/>
+                    <field name="rest_advance_so_po_balance_new" groups="base.group_system"/>
+                    <field name="advice_advance_new" groups="base.group_system"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
                     <field name="amount_total_signed" string="初始应付款" sum="Total"/>

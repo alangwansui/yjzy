@@ -57,7 +57,8 @@ class purchase_order(models.Model):
     @api.depends('yjzy_payment_ids', 'yjzy_payment_ids.prepayment_type', 'yjzy_payment_ids.amount')
     def compute_real_advance_before_delivery_new(self):
         for one in self:
-            yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type == 'before_delivery')
+
+            yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type == 'before_delivery' and x.state_1 == '60_done')
             if one.yjzy_payment_ids:
                 real_advance_before_delivery_new = sum([x.amount for x in yjzy_payment_ids])
             else:

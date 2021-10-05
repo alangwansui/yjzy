@@ -158,6 +158,12 @@ class purchase_order(models.Model):
                 one.pre_advance = one.payment_term_id.get_advance(one.amount_total)
             else:
                 one.pre_advance = 0
+            pre_advance_line = one.pre_advance_line.filtered(lambda x: x.pre_advance_options != 'before_delivered')
+            pre_advance_before_delivery_line = one.pre_advance_line.filtered(lambda x: x.pre_advance_options == 'before_delivered')
+            pre_advance_advance = sum(x.pre_advance for x in pre_advance_line)
+            pre_advance_before_delivery = sum(x.pre_advance for x in pre_advance_before_delivery_line)
+            one.pre_advance_advance = pre_advance_advance
+            one.pre_advance_before_delivery = pre_advance_before_delivery
 
     # is_cip = fields.Boolean(u'报关', default=False)
     # is_fapiao = fields.Boolean(u'含税')
@@ -291,8 +297,14 @@ class purchase_order(models.Model):
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
     real_advance = fields.Monetary(u'实际预付金额', compute='compute_balance', currency_field='yjzy_currency_id', store=True)
 
-    pre_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
+    pre_advance = fields.Monetary(u'计划总预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
                                   help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
+    pre_advance_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance,
+                                  help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
+    pre_advance_before_delivery = fields.Monetary(u'计划发货前金额', currency_field='currency_id', compute=compute_pre_advance,
+
+                                          help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
+
     pre_advance_line = fields.One2many('pre.advance', 'po_id')
     pre_advance_line_count = fields.Integer('预收付明细数量',compute='compute_pre_advance_line_count',store=True)
 
