@@ -14,7 +14,7 @@ class account_payment(models.Model):
     prepayment_type = fields.Selection([('normal', '正常预付'),
                                         ('before_delivery', '出运前预付'),
                                         ], 'Prepayment Type', defualt='normal')  # 预付的两个type
-    tb_id = fields.Many2one('transport.bill', u'出运合同', domain=[('state', '=', 'approve')])
+    tb_id = fields.Many2one('transport.bill', u'出运合同', )#domain=[('state', '=', 'approve')]akiny
     tb_po_line_ids = fields.Many2many('tb.po.line', 'tpl', 'tb', 'po', u'出运采购合并')
     po_real_advance_before_delivery_new = fields.Monetary(u'实际发货前金额', currency_field='po_id_currency_id',
                                                           related='po_id.real_advance_before_delivery_new')
