@@ -783,7 +783,7 @@ class account_invoice(models.Model):
                  'invoice_line_ids.rest_advance_so_po_balance')
     def compute_advance_pre_rest(self):
         for one in self:
-            po_ids = self.invoice_line_ids.mapped('purchase_id')
+            po_ids = one.invoice_line_ids.mapped('purchase_id')
             advance_before_delivery_pre = 0
             real_advance_new = 0
             jianyi_advance =0
