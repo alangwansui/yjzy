@@ -116,23 +116,28 @@ class account_payment(models.Model):
             if self.state_1 == '40_approve':
                 if self.state == 'draft' and (
                         self.yjzy_payment_id and self.yjzy_payment_id.state == 'draft' or self.yjzy_payment_id.state_fkzl == '05_fkzl'):
-                    self.yjzy_payment_id.unlink()
-                    self.write({'state_1': '80_refused',
-                                'state': 'draft'
-                                })
                     tb_po_line_ids = self.tb_po_line_ids.filtered(lambda x: x.pre_payment_id == self)
                     for x in tb_po_line_ids:
                         x.pre_payment_id = False
                         x.state = 'creating'
+                    self.yjzy_payment_id.unlink()
+                    self.write({'state_1': '80_refused',
+                                'state': 'draft'
+                                })
+
                 else:
                     raise Warning('已经提交付款申请，无法拒绝！')
             else:
+                tb_po_line_ids = self.tb_po_line_ids.filtered(lambda x: x.pre_payment_id == self)
+                for x in tb_po_line_ids:
+                    x.pre_payment_id = False
+                    x.state = 'creating'
                 self.write({'state_1': '80_refused',
                             'state': 'draft'
                             })
 
         for tb in self:
-            tb.message_post_with_view('yjzy_extend.payment_template_refuse_reason',
+            tb.message_post_with_view('yjzy_extend.payment_before_delivery_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
