@@ -29,11 +29,13 @@ class wizard_prepayment_before_delivery(models.TransientModel):
                     one.tb_po_line_ids.state = 'creating'
                     one.po_id = tb_po_line_ids[0].po_id
                 else:
-                    raise Warning('已经不存在需要发货前付款')
+                    one.cancel_1()
             else:
                 one.po_id = False
 
 
+    def cancel_1(self):
+        return True
 
     def apply(self):
         yfsqd_obj = self.env['account.payment']
