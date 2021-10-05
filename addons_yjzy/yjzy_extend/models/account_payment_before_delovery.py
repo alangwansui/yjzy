@@ -25,18 +25,25 @@ class account_payment(models.Model):
         for one in self:
             tb_po_line_ids = one.tb_id.tb_po_line_ids.filtered(lambda x: x.tb_po_supplier == one.partner_id)
             one.tb_po_line_ids = tb_po_line_ids
-            tb_po_line_draft_ids = tb_po_line_ids.filtered(lambda x: x.state in ['draft'])
+            tb_po_line_draft_ids = tb_po_line_ids.filtered(lambda x: x.state in ['draft','creating'])
             if one.tb_id:
                 if len(tb_po_line_draft_ids) == 1:
                     one.tb_po_line_ids.state = 'creating'
                     one.po_id = tb_po_line_ids.po_id
                     one.pre_advance_id = tb_po_line_ids.pre_advance_id
+                    one.is_pre_advance_line = True
                 elif len(tb_po_line_draft_ids) > 1:
                     one.tb_po_line_ids[0].state = 'creating'
                     one.po_id = tb_po_line_ids[0].po_id
                     one.pre_advance_id = tb_po_line_ids[0].pre_advance_id
+                    one.is_pre_advance_line = True
                 else:
                     raise Warning('已经不存在需要发货前付款')
+            else:
+                one.tb_po_line_ids.state = 'draft'
+                one.po_id = False
+                one.pre_advance_id = False
+                one.is_pre_advance_line = False
 
             # po_ids = tb_po_line_ids.mapped('po_id')
             # if len(po_ids) == 1:
