@@ -55,6 +55,7 @@ class transport_purchase_order(models.Model):
     #注意合并后，采购合同不一样的同时，供应商也会不一样，所以预付的时候还要考虑供应商
     tb_id = fields.Many2one('transport.bill', u'出运单',ondelete='cascade')
     po_id = fields.Many2one('purchase.order',u'采购合同')
+    pre_payment_id = fields.Many2one('account.payment','预付款单')
     po_currency_id = fields.Many2one('res.currency','采购货币',default=lambda self: self.env.user.company_id.currency_id)
     po_tb_amount = fields.Monetary('出运采购金额',currency_field='po_currency_id')
     po_tb_percent = fields.Float('出运采购金额占出运总金额',compute=compute_po_tb_percent,store=True)

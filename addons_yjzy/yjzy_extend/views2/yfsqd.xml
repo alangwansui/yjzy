@@ -439,7 +439,27 @@
                         </group>
                     </group>
                     <notebook>
-
+                        <page string="发货前预付计划">
+                            <field name="tb_po_line_ids">
+                                <tree>
+                                    <field name="tb_id" invisible="1"/>
+                                    <field name="po_id" invisible="1"/>
+                                    <field name="po_currency_id" invisible="1"/>
+                                    <field name="po_tb_amount"/>
+                                    <field name="po_tb_percent" invisible="1"/>
+                                    <field name="po_po_tb_percent" invisible="1"/>
+                                    <field name="tb_po_amount"/>
+                                    <field name="po_supplier_percent" invisible="1"/>
+                                    <field name="po_amount"/>
+                                    <field name="pre_advance_total"/>
+                                    <field name="pre_advance_id" invisible="1"/>
+                                    <field name="real_advance_amount"/>
+                                    <field name="pre_payment_id"/>
+                                    <field name="tbrl_ids"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
                         <page string="预付认领日志"
                               attrs="{'invisible':[('advance_reconcile_order_line_ids_count','=',0),('aml_com_yfzk_ids_count','=',0)]}">
                             <group col="2">
@@ -506,24 +526,7 @@
 
 
                         <page groups="base.group_system">
-                            <field name="tb_po_line_ids">
-                                <tree>
-                                    <field name="tb_id"/>
-                                    <field name="po_id"/>
-                                    <field name="po_currency_id"/>
-                                    <field name="po_tb_amount"/>
-                                    <field name="po_tb_percent"/>
-                                    <field name="po_po_tb_percent"/>
-                                    <field name="tb_po_amount"/>
-                                    <field name="po_supplier_percent"/>
-                                    <field name="po_amount"/>
-                                    <field name="pre_advance_total"/>
-                                    <field name="pre_advance_id"/>
-                                    <field name="real_advance_amount"/>
-                                    <field name="tbrl_ids"/>
-                                    <field name="state"/>
-                                </tree>
-                            </field>
+
                             <group>
                                 <field name="prepayment_type"/>
                                 <field name="pre_advance_line_ids_count"/>

@@ -66,6 +66,7 @@ class account_payment(models.Model):
         for one in self.tb_po_line_ids:
             if one.state == 'creating':
                 one.state = 'approval'
+                one.pre_payment_id = self
 
         wizard_obj = self.env['wizard.prepayment.before.delivery']
         wizard_id = wizard_obj.with_context({'default_tb_po_line_ids': self.tb_po_line_ids.ids}).create({
