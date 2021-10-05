@@ -73,7 +73,7 @@ class account_payment(models.Model):
             'tb_id': self.tb_id.id,
             'partner_id': self.partner_id.id
         })
-        # wizard_id.onchange_tb_po_line()
+        wizard_id.onchange_tb_po_line()
         form_view = self.env.ref('yjzy_extend.wizard_prepayment_before_delivery_form')
         return {
             'name': '创建预付申请',
