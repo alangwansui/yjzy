@@ -66,10 +66,10 @@ class purchase_order(models.Model):
             one.real_advance_before_delivery_new = real_advance_before_delivery_new
 
     real_advance_new = fields.Monetary(u'实际预付金额', compute='compute_real_advance_new', currency_field='yjzy_currency_id',
-                                       store=True)
+                                       )
     real_advance_before_delivery_new = fields.Monetary(u'实际发货前金额', compute='compute_real_advance_before_delivery_new',
                                                        currency_field='yjzy_currency_id',
-                                                       store=True)
+                                                       )
 
 
 
