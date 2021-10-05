@@ -2826,7 +2826,7 @@ class Pre_Advance(models.Model):
     def compute_real_advance(self):
         for one in self:
             pre_advance_options = one.pre_advance_options
-            if pre_advance_options in ['advance', 'advance_in']:
+            if pre_advance_options:
                 payment_advance_ids = one.payment_advance_ids
                 real_advance = sum(x.amount for x in payment_advance_ids)
             else:
