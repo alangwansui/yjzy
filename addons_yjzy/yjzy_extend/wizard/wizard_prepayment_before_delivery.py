@@ -20,15 +20,20 @@ class wizard_prepayment_before_delivery(models.TransientModel):
     @api.onchange('tb_id')
     def onchange_tb_po_line(self):
         for one in self:
-            tb_po_line_ids = one.tb_po_line_ids.filtered(lambda x: x.state in ['draft'])
-            if len(tb_po_line_ids) == 1:
-                one.tb_po_line_ids.state = 'creating'
-                one.po_id = tb_po_line_ids.po_id
-            elif len(tb_po_line_ids) > 1:
-                one.tb_po_line_ids.state = 'creating'
-                one.po_id = tb_po_line_ids[0].po_id
+            if one.tb_id:
+                tb_po_line_ids = one.tb_po_line_ids.filtered(lambda x: x.state in ['draft'])
+                if len(tb_po_line_ids) == 1:
+                    one.tb_po_line_ids.state = 'creating'
+                    one.po_id = tb_po_line_ids.po_id
+                elif len(tb_po_line_ids) > 1:
+                    one.tb_po_line_ids.state = 'creating'
+                    one.po_id = tb_po_line_ids[0].po_id
+                else:
+                    raise Warning('已经不存在需要发货前付款')
             else:
-                raise Warning('已经不存在需要发货前付款')
+                one.po_id = False
+
+
 
     def apply(self):
         yfsqd_obj = self.env['account.payment']
