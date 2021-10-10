@@ -1119,6 +1119,21 @@
                                 <field name="note" class="oe_inline" placeholder="在销售设置中设置默认条款和条件…" invisible="1"/>
                                 <div class="oe_clear"/>
                             </page>
+                            <page string="订单数量明细">
+                                <field name="delivery_line_ids" readonly="1">
+                                    <tree>
+                                        <field name="product_id"/>
+                                        <field name="product_so_line_count" string="下单次数"/>
+                                        <field name="tb_line_count" string="发货次数"/>
+                                        <button type="object" name="open_bill_ids" icon="fa-archive"/>
+                                         <field name="qty_undelivered"/>
+                                        <field name="qty_delivered" string="已发货"/>
+                                        <field name="project_tb_qty"/>
+                                        <field name="can_project_tb_qty"/>
+                                    </tree>
+                                </field>
+
+                            </page>
 
                             <page string="其他信息">
                                 <group>

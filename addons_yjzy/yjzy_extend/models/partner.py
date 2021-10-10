@@ -866,8 +866,7 @@ class res_partner(models.Model):
                     war += '客户获取人不为空\n'
                 if not self.devloper_id:
                     war += '开发者不为空\n'
-                if not self.contract_suffix:
-                    war += '合同后缀不为空\n'
+
 
                 if not self.customer_purchase_in_china:
                     war += '客户在中国采购规模不为空\n'
@@ -925,7 +924,8 @@ class res_partner(models.Model):
                     war += '来源不为空\n'
                 if not self.supplier_info_from_uid:
                     war += '供应商获取人不为空\n'
-
+                if not self.contract_suffix:
+                    war += '合同后缀不为空\n'
                 if not self.supplier_export_total:
                     war += '供应商出口额不为空\n'
                 if not self.supplier_sale_total:

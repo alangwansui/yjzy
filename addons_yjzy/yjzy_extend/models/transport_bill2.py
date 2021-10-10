@@ -506,6 +506,7 @@ class transport_bill(models.Model):
             record.comb_ids = info['comb_lines']
 
 
+
 class tbl_comb(models.Model):
     _name = 'tbl.comb'
     _description = u'发运单明细的bom分解组合'
@@ -904,3 +905,4 @@ class tbl_hsname_all(models.Model):
     #         'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
     #         'target': 'current',
     #         'domain': [('yjzy_invoice_id', '=', self.id)]
+

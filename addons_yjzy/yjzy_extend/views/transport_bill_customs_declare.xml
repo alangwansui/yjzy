@@ -65,7 +65,6 @@
             <field name="model">tbl.hsname</field>
             <field name="arch" type="xml">
                 <tree string="报关hsname明细">
-
                     <field name="purchase_hs_id" string="采购对应" groups="base.group_system"/>
                     <button name="make_suppliser_hs" type="object" icon="fa-plus-circle"
                             attrs="{'invisible':[('purchase_hs_id','!=',False)]}"/>
@@ -302,11 +301,11 @@
                                                attrs="{'readonly':[('parent.sale_type','!=','proxy')],'column_invisible': [('parent.sale_type','!=','proxy')]}"/>
 
                                         <field name="price2" string="报关单价" readonly="1"
-                                               />
-<!--                                        attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"-->
+                                        />
+                                        <!--                                        attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"-->
                                         <field name="amount2" sum="小计" string="报关金额"
-                                              />
-<!--                                         attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"-->
+                                        />
+                                        <!--                                         attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"-->
                                         <field name="purchase_amount" sum="小计" string="原始采购金额"
                                                attrs="{'readonly':True,'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="purchase_amount2" sum="小计" string="实际采购额"
@@ -317,7 +316,6 @@
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
                                         <field name="out_qty" sum="小计" invisible="1"/>
                                         <field name="price" string="单价" invisible="1"/>
-
 
 
                                         <field name="hs_id2" invisible="1"/>
@@ -350,7 +348,8 @@
                                                attrs="{'column_invisible': [('parent.hs_fill','!=','packaging')]}"/>
                                         <field name="type" invisible="1"/>
                                         <field name="note" invisible="1"/>
-                                        <button name="open_form_view" type="object" icon="fa-arrows-v" groups="base.group_system"
+                                        <button name="open_form_view" type="object" icon="fa-arrows-v"
+                                                groups="base.group_system"
                                                 attrs="{'invisible':[('parent.state','not in',['draft','check']),('parent.is_editable','=',False)]}"/>
                                     </tree>
                                     <form>
@@ -397,6 +396,26 @@
                                     </form>
 
 
+                                </field>
+                            </page>
+                            <page string="合并后报关明细">
+                                <field name="tb_declare_line_ids"  attrs="{'readonly':[('locked','=',True),('is_editable','=',False)]}">
+                                    <tree editable="bottom">
+                                        <field name="tbl_hsname_id" group="base.group_system"/>
+                                        <field name="tb_id" group="base.group_system"/>
+                                        <field name="hs_id" invisible="1"/>
+                                        <field name="currency_id" invisible="1"/>
+                                        <field name="hs_en_name" invisible="1"/>
+                                        <field name="back_tax" invisible="1"/>
+                                        <field name="hs_id2"/>
+                                        <field name="out_qty2"/>
+                                        <field name="price2"/>
+                                        <field name="amount2"/>
+                                        <field name="source_area"/>
+                                        <field name="source_country_id" readonly="1"/>
+                                        <field name="partner_country_id"/>
+                                        <field name="keyword"/>
+                                    </tree>
                                 </field>
                             </page>
                             <page string="采购报关统计" invisible="1">

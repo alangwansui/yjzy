@@ -513,6 +513,7 @@
                     <field name="advice_advance_new" groups="base.group_system"/>
                     <field name="reconcile_order_line_count" invisible="1"/>
                     <field name="residual_times_out_in_new" groups="base.group_system"/>
+                    <field name="is_purchase_invoice_finish"/>
                     <field name="amount_total_signed" string="初始应付款" sum="Total"/>
                     <field name="amount_payment_org_done" string="已支付" sum="Totla"/>
                     <field name="amount_advance_org_done" string="已认领预付" sum="Total"/>

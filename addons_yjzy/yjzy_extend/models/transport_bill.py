@@ -387,7 +387,7 @@ class transport_bill(models.Model):
     #         })
 
     @api.depends('line_ids', 'line_ids.plan_qty', 'current_date_rate', 'line_ids.org_currency_sale_amount',
-                 'purchase_invoice_total_new','stage_id','second_state',
+                 'purchase_invoice_total_new','stage_id','second_state','state',
                  'sale_invoice_total_new', 'line_ids.org_currency_sale_amount_origin', 'hsname_ids',
                  'hsname_ids.amount', 'hsname_ids.actual_amount', 'current_date_rate',
                  'hsname_ids.purchase_amount2', 'hsname_ids.purchase_amount', 'line_ids.purchase_cost_new')
@@ -399,18 +399,20 @@ class transport_bill(models.Model):
             sale_invoice_total_new = one.sale_invoice_total_new
             purchase_invoice_total_new = one.purchase_invoice_total_new
             current_date_rate = one.current_date_rate
-            if one.line_ids:
-                org_sale_amount_new = sum(x.org_currency_sale_amount for x in one.line_ids)
-                org_purchase_amount_new = sum(x.purchase_cost_new for x in one.line_ids)
-                org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in one.line_ids)
+            line_ids = one.line_ids
+            hsname_ids = one.hsname_ids
+            if line_ids:
+                org_sale_amount_new = sum(x.org_currency_sale_amount for x in line_ids)
+                org_purchase_amount_new = sum(x.purchase_cost_new for x in line_ids)
+                org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in line_ids)
                 org_sale_amount_new_discount = org_sale_amount_new_origin - org_sale_amount_new
-                if one.hsname_ids:
-                    org_real_sale_amount_new = sum([x.amount for x in one.hsname_ids])
-                    org_hsname_actual_amount = sum([x.actual_amount for x in one.hsname_ids])
+                if hsname_ids:
+                    org_real_sale_amount_new = sum([x.amount for x in hsname_ids])
+                    org_hsname_actual_amount = sum([x.actual_amount for x in hsname_ids])
                     diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
 
-                    org_real_purchase_amount_new = sum([x.purchase_amount for x in one.hsname_ids])
-                    purchase_hsname_actual_cost_total = sum(x.purchase_amount2 for x in one.hsname_ids)
+                    org_real_purchase_amount_new = sum([x.purchase_amount for x in hsname_ids])
+                    purchase_hsname_actual_cost_total = sum(x.purchase_amount2 for x in hsname_ids)
                     diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
                     if one.company_id.is_current_date_rate:
                         real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
@@ -441,11 +443,11 @@ class transport_bill(models.Model):
                             one.third_currency_id) or 0
                     print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
             else:
-                org_sale_amount_new = 0
-                org_sale_amount_new_origin = 0
+                org_sale_amount_new = line_ids and sum(x.org_currency_sale_amount for x in line_ids) or 0
+                org_sale_amount_new_origin =line_ids and sum(x.org_currency_sale_amount_origin for x in line_ids) or 0
                 org_sale_amount_new_discount = 0
-                org_real_sale_amount_new = 0
-                org_hsname_actual_amount = 0
+                org_real_sale_amount_new = org_sale_amount_new
+                org_hsname_actual_amount = org_sale_amount_new
                 real_sale_amount_cny = 0
                 hsname_actual_amount_cny = 0
                 diff_real_sale_hsmame_actual_amount = 0
@@ -1046,7 +1048,7 @@ class transport_bill(models.Model):
     date_delivered_id_done = fields.Boolean('工厂发货日期日否完成', compute=compute_date_delivered_id_done,store=True)
 
     date_all_state = fields.Selection([('10_date_approving', u'日期审批中'),
-                                       ('20_no_date_out_in', u'发货日期待填'),
+                                       ('20_no_date_out_in', u'出运日期待填'),
                                        ('23_no_date_delivered', u'工厂发货日期待填'),
                                        ('25_no_date_ship', u'船期待填'),
                                        ('27_no_date_finish', u'客户交单日期待填'),

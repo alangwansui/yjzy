@@ -556,7 +556,7 @@ class OrderTrack(models.Model):
 
     time_contract_requested = fields.Integer('客户交期时限', compute=compute_time_contract_requested, store=True)
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
-    date_so_requested_new = fields.Date('最新计划交期',track_visibility='onchange',)
+    date_so_requested_new = fields.Datetime('最新计划交期',track_visibility='onchange',)
 
     @api.depends('date_so_requested_is_out_time','date_so_requested_new')
     def compute_requested_new_state(self):
@@ -1355,6 +1355,10 @@ class PlanCheck(models.Model):
     date_factory_return = fields.Date('工厂回传时间', index=True, track_visibility='onchange',
                                       related='po_id.date_factory_return', store=True)  # todo 填写后，自动写入po
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
+    date_po_planned_new = fields.Datetime('最新工厂计划交期',track_visibility='onchange',)
+
+    date_po_planned_change_date = fields.Date('交期更新日期')
+
     date_po_order = fields.Date('工厂下单日期', compute=compute_date_po_planned_order, store=True)
     plan_check_line = fields.One2many('plan.check.line', 'plan_check_id')
     is_on_time = fields.Boolean('是否准时完成')
@@ -1392,6 +1396,25 @@ class PlanCheck(models.Model):
                                      string='采购交单附件')
     plan_check_att_count = fields.Integer('附件数量', compute=compute_plan_check_att_count)
 
+    @api.onchange('date_po_planned_new')
+    def _onchange_date_po_planned_new(self):
+        self.date_po_planned_change_date = fields.date.today()
+
+    def create_date_po_planned_new(self):
+        form_view = self.env.ref('yjzy_extend.plan_check_date_po_planned_new_form').id
+        return ({
+            'name': u'填写新的供应商交期',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'plan.check',
+            'type': 'ir.actions.act_window',
+            'views': [(form_view, 'form')],
+            'res_id': self.id,
+            'target': 'new',
+            'context': {}
+
+        })
+
 
     #--14------
     @api.depends('so_id', 'so_id.amount_total')
@@ -1425,6 +1448,8 @@ class PlanCheck(models.Model):
                                                       ('20_in_time', '到期'), ('30_out_time', '已逾期'),
                                                       ('40_in_out_time', '到期及逾期')], u'工厂交期是否逾期',
                                                      compute=compute_date_po_planned_is_out_time, store=True)
+
+
     so_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
     company_currency_id = fields.Many2one('res.currency', default=lambda self: self.env.user.company_id.currency_id.id)
     so_po_return_state = fields.Selection([('un_return', '未回传'), ('part_return', '部分回传'), ('returned', '已回传')],
@@ -1467,7 +1492,7 @@ class PlanCheck(models.Model):
     #         return res
 
 
-    @api.onchange('supplier_delivery_date','purchase_invoice_date_finish')
+    @api.onchange('supplier_delivery_date','purchase_invoice_date_finish','order_track_id.date_ship')
     def onchange_supplier_delivery_date(self):
         strptime = datetime.strptime
         print('supplier_delivery_date_akiny',self.supplier_delivery_date)
@@ -1478,6 +1503,12 @@ class PlanCheck(models.Model):
         if self.supplier_delivery_date and self.purchase_invoice_date_finish:
             if strptime(self.supplier_delivery_date, DF) > strptime(self.purchase_invoice_date_finish, DF):
                 raise Warning('工厂实际发货日不允许大于供应商交单日')
+        if self.supplier_delivery_date and self.order_track_id.date_out_in:
+            if strptime(self.supplier_delivery_date, DF) > strptime(self.order_track_id.date_out_in, DF):
+                raise Warning('工厂发货日期不允许大于出运日期')
+        if self.supplier_delivery_date and self.order_track_id.date_ship:
+            if strptime(self.supplier_delivery_date, DF) > strptime(self.order_track_id.date_ship, DF):
+                raise Warning('工厂发货日期不允许大于船期')
 
     def open_self(self):
         form_view = self.env.ref('yjzy_extend.view_plan_check').id

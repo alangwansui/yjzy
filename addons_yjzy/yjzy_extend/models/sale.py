@@ -594,7 +594,7 @@ class sale_order(models.Model):
                                    ('wait_hexiao', u'待核销'), ('has_hexiao', u'已核销')],
                                   u'出运与核销状态')
 
-    sale_purchase_percent = fields.Float('采购销售比',digits=(2,2),compute=compute_sale_purchase_percent,store=True)
+    sale_purchase_percent = fields.Float('采购销售比',digits=(2,2),compute=compute_sale_purchase_percent,store=True,group_operator=False)
 
     #14.0——————————————————
 
@@ -781,12 +781,12 @@ class sale_order(models.Model):
     def _get_sale_amount(self):
         if self.company_id.is_current_date_rate:
             amount_total2 = self.amount_total * self.current_date_rate
-            if self.incoterm_code == 'FOB':
-                amount_total2 += self.fee_outer * self.current_date_rate
+            # if self.incoterm_code == 'FOB':
+            #     amount_total2 += self.fee_outer * self.current_date_rate
         else:
             amount_total2 = self.currency_id.compute(self.amount_total, self.third_currency_id)
-            if self.incoterm_code == 'FOB':
-                amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
+            # if self.incoterm_code == 'FOB':
+            #     amount_total2 += self.outer_currency_id.compute(self.fee_outer, self.third_currency_id)
 
         return amount_total2
 

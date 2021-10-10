@@ -32,6 +32,7 @@ from . import transport_bill
 from . import transport_bill2
 from . import transport_bill3
 from . import transport_bill4
+from . import transport_bill_declare_line
 
 from . import transport_bill_line
 from . import transport_pack_line
@@ -96,3 +97,4 @@ from . import account_payment_before_delovery
 from . import transport_bill_advance_before_delivery
 from . import account_invoice_purchase_per
 from . import purchase_advance_compute
+from . import sale_delivery_line

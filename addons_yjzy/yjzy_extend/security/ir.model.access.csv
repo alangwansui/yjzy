@@ -62,7 +62,7 @@ access_tb_po_line,access_tb_po_line,model_tb_po_line,base.group_user,1,1,1,1
 access_tb_po_real_line,access_tb_po_real_line,model_tb_po_real_line,base.group_user,1,1,1,1
 access_account_invoice_purchases,access_account_invoice_purchases,model_account_invoice_purchases,base.group_user,1,1,1,1
 
-
+access_tb_declare_line,access_tb_declare_line,model_tb_declare_line,base.group_user,1,1,1,1
 
 
 

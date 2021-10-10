@@ -69,14 +69,14 @@ class account_invoice(models.Model):
         for one in self:
             if one.state == 'open':
                 if one.date_deadline:
-                    residual_times = strptime(one.date_deadline, DF) - today
+                    residual_times = today -strptime(one.date_deadline, DF)
                     one.residual_times = residual_times.days
                     one.residual_times_new = residual_times.days
                 else:
                     one.residual_times = -999
                     one.residual_times_new = -999
                 if one.date_due:
-                    residual_times_out_in = strptime(one.date_due, DF) - today    # 参考
+                    residual_times_out_in = today - strptime(one.date_due, DF)    # 参考
                     one.residual_times_out_in = residual_times_out_in.days
                     one.residual_times_out_in_new = residual_times_out_in.days
                 else:
@@ -1844,6 +1844,7 @@ class account_invoice(models.Model):
         if state_draft >= 1:
             raise Warning('非确认账单不允许创建付款申请')
 
+
         sfk_type = 'yfhxd'
         domain = [('code', '=', 'yfdrl'), ('company_id', '=', self.env.user.company_id.id)]
         name = self.env['ir.sequence'].next_by_code('sfk.type.%s' % sfk_type)
@@ -1857,6 +1858,8 @@ class account_invoice(models.Model):
         for one in self:
             if one.amount_payment_can_approve_all == 0:
                 raise Warning('可申请付款金额为0，不允许提交！')
+            if one.is_purchase_invoice_finish == False and one.invoice_attribute_all_in_one == '120':
+                raise Warning('供应商是否交单未勾选，请检查，并勾选他！')
             for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选  剩余应付金额！=0的额外账单
                 invoice_dic.append(x.id)
             print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
@@ -2724,7 +2727,7 @@ class account_invoice_line(models.Model):
                 one.advice_advance_amount = advice_advance_amount
                 one.advice_advance_amount_1 = advice_advance_amount_1
     #发货前的预付是要全部认领的。在是预付的金额*这次出运/总采购金额
-    @api.depends('purchase_id', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
+    @api.depends('invoice_line_ids', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
                  'so_id','so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
     def compute_original_so_po_amount(self):
         for one in self:
