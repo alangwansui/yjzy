@@ -412,7 +412,7 @@ class sale_order(models.Model):
     sale_currency_id = fields.Many2one('res.currency', related='currency_id', string=u'交易货币', store=True)
     product_manager_id = fields.Many2one('res.users', u'产品经理')
     incoterm_code = fields.Char(u'贸易术语', related='incoterm.code', readonly=True)
-    cost_id = fields.Many2one('sale.cost', u'成本单', copy=False)
+    # cost_id = fields.Many2one('sale.cost', u'成本单', copy=False)
 
     advance_account_id = fields.Many2one('account.account', u'预收认领单')
     advance_currency_id = fields.Many2one('res.currency', u'预收币种', related='advance_account_id.currency_id')

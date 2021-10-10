@@ -10,7 +10,7 @@ class transport_qingguan_line(models.Model):
     _rec_name = 'product_id'
 
 
-    @api.depends()
+    @api.depends('qty','sub_total','sub_total_origin')
     def compute_price(self):
         for one in self:
             if one.qty > 0:

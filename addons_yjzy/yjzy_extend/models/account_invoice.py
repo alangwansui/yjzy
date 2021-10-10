@@ -61,8 +61,7 @@ class account_invoice(models.Model):
         for one in self:
             one.purchase_date_finish_att_count = len(one.purchase_date_finish_att)
 
-    @api.depends('date_deadline', 'date_ship', 'date_finish', 'date_invoice', 'date_out_in', 'date_due', 'date',
-                 'residual_times')
+    @api.depends('date_deadline', 'date_ship', 'date_finish', 'date_invoice', 'date_out_in', 'date_due', 'date',)
     def compute_times(self):
         today = datetime.today()
         strptime = datetime.strptime
@@ -85,7 +84,7 @@ class account_invoice(models.Model):
             else:
                 continue
 
-    @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount', 'tax_line_ids.amount_rounding',
+    @api.depends('invoice_line_ids_origin.price_total', 'invoice_line_ids_add.price_total',
                  'currency_id', 'company_id', 'date_invoice', 'type')
     def compute_amount(self):
         for one in self:
@@ -777,10 +776,7 @@ class account_invoice(models.Model):
     tenyale_name = fields.Char(u'天宇编号', default=lambda self: self._default_tenyale_name())
     is_manual = fields.Boolean('是否手动创建', default=False)
 
-    @api.depends('invoice_line_ids', 'invoice_line_ids.advice_advance_amount',
-                 'invoice_line_ids.advice_advance_amount_1', 'amount_advance_org_done',
-                 'amount_payment_can_approve_all',
-                 'invoice_line_ids.rest_advance_so_po_balance')
+    # @api.depends('invoice_line_ids', 'amount_advance_org_done','amount_payment_can_approve_all')
     def compute_advance_pre_rest_new(self):
         for one in self:
             po_ids = one.invoice_line_ids.mapped('purchase_id')
@@ -814,6 +810,42 @@ class account_invoice(models.Model):
             one.amount_payment_can_approve_all_1_new = amount_payment_can_approve_all_1#可申请支付金额
             one.rest_advance_so_po_balance_new = rest_advance_so_po_balance #总剩余未认领预付金额
             one.advice_advance_new = advice_advance < rest_advance_so_po_balance and advice_advance or rest_advance_so_po_balance
+
+    # @api.depends('invoice_line_ids', 'price_total', 'so_id', 'so_id.amount_total', 'so_id.real_advance',
+    #              'so_id.balance_new', 'invoice_id', 'invoice_id.type')
+    # def compute_original_so_po_amount(self):
+    #     for one in self:
+    #         if one.invoice_id.type == 'in_invoice':
+    #             po_ids = one.invoice_line_ids.mapped('purchase_id')
+    #             rest_advance_so_po_balance = 0
+    #             real_advance = 0
+    #             original_so_po_amount = 0
+    #             for po in po_ids:
+    #                 rest_advance_so_po_balance += po.balance_new
+    #                 real_advance += po.real_advance
+    #                 original_so_po_amount += po.amount_total
+    #             proportion_tb = original_so_po_amount != 0 and one.price_total / original_so_po_amount or 0
+    #             advice_advance_amount = proportion_tb * real_advance
+    #             advice_advance_amount_1 = proportion_tb * rest_advance_so_po_balance
+    #             one.original_so_po_amount = original_so_po_amount
+    #             one.rest_advance_so_po_balance = rest_advance_so_po_balance
+    #             one.proportion_tb = proportion_tb
+    #             one.advice_advance_amount = advice_advance_amount
+    #             one.advice_advance_amount_1 = advice_advance_amount_1
+    #
+    #         if one.invoice_id.type == 'out_invoice':
+    #             original_so_po_amount = one.so_id.amount_total
+    #             real_advance = one.so_id.real_advance
+    #             rest_advance_so_po_balance = one.so_id.balance_new
+    #             proportion_tb = original_so_po_amount != 0 and one.price_total / original_so_po_amount or 0
+    #             advice_advance_amount = proportion_tb * real_advance
+    #             advice_advance_amount_1 = proportion_tb * rest_advance_so_po_balance
+    #
+    #             one.original_so_po_amount = original_so_po_amount
+    #             one.rest_advance_so_po_balance = rest_advance_so_po_balance
+    #             one.proportion_tb = proportion_tb
+    #             one.advice_advance_amount = advice_advance_amount
+    #             one.advice_advance_amount_1 = advice_advance_amount_1
 
     advance_pre = fields.Monetary('建议认领预收付总金额', currency_field='currency_id', compute=compute_advance_pre_rest,
                                   store=True)
@@ -2698,7 +2730,7 @@ class account_invoice_line(models.Model):
 
     @api.depends('purchase_id', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
                  'so_id', 'so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
-    def _compute_original_so_po_amount(self):
+    def compute_original_so_po_amount(self):
         for one in self:
             if one.invoice_id.type == 'in_invoice':
                 original_so_po_amount = one.purchase_id.amount_total
@@ -2727,41 +2759,7 @@ class account_invoice_line(models.Model):
                 one.advice_advance_amount = advice_advance_amount
                 one.advice_advance_amount_1 = advice_advance_amount_1
     #发货前的预付是要全部认领的。在是预付的金额*这次出运/总采购金额
-    @api.depends('invoice_line_ids', 'purchase_id.amount_total', 'purchase_id.real_advance', 'purchase_id.balance_new',
-                 'so_id','so_id.amount_total', 'so_id.real_advance', 'so_id.balance_new', 'invoice_id', 'invoice_id.type')
-    def compute_original_so_po_amount(self):
-        for one in self:
-            if one.invoice_id.type == 'in_invoice':
-                po_ids = one.invoice_line_ids.mapped('purchase_id')
-                rest_advance_so_po_balance = 0
-                real_advance = 0
-                original_so_po_amount = 0
-                for po in po_ids:
-                    rest_advance_so_po_balance += po.balance_new
-                    real_advance += po.real_advance
-                    original_so_po_amount += po.amount_total
-                proportion_tb = original_so_po_amount != 0 and one.price_total / original_so_po_amount or 0
-                advice_advance_amount = proportion_tb * real_advance
-                advice_advance_amount_1 = proportion_tb * rest_advance_so_po_balance
-                one.original_so_po_amount = original_so_po_amount
-                one.rest_advance_so_po_balance = rest_advance_so_po_balance
-                one.proportion_tb = proportion_tb
-                one.advice_advance_amount = advice_advance_amount
-                one.advice_advance_amount_1 = advice_advance_amount_1
 
-            if one.invoice_id.type == 'out_invoice':
-                original_so_po_amount = one.so_id.amount_total
-                real_advance = one.so_id.real_advance
-                rest_advance_so_po_balance = one.so_id.balance_new
-                proportion_tb = original_so_po_amount != 0 and one.price_total / original_so_po_amount or 0
-                advice_advance_amount = proportion_tb * real_advance
-                advice_advance_amount_1 = proportion_tb * rest_advance_so_po_balance
-
-                one.original_so_po_amount = original_so_po_amount
-                one.rest_advance_so_po_balance = rest_advance_so_po_balance
-                one.proportion_tb = proportion_tb
-                one.advice_advance_amount = advice_advance_amount
-                one.advice_advance_amount_1 = advice_advance_amount_1
 
     original_so_po_amount = fields.Monetary('原始订单金额', currency_field='currency_id',
                                             compute=compute_original_so_po_amount)
