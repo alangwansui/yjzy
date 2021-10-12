@@ -122,7 +122,7 @@
         <field name="name">order.track.tree</field>
         <field name="model">order.track</field>
         <field name="arch" type="xml">
-            <tree string="计划" create="false" default_order="date_so_requested,date_all_state" class="o_list_view_scroll"
+            <tree string="计划" create="false" default_order="date_so_requested_is_out_time,date_so_requested,date_all_state" class="o_list_view_scroll"
                   decoration-danger="error_state == True">
                 <field name="type" groups="base.group_system"/>
                 <!--            <field name="date_deadline"/>-->
@@ -927,10 +927,10 @@
                     <button name="create_activity_plan_date_ship" type="object" string="test"
                             groups="base.group_system"/>
                     <button name="create_plan" type="object" string="test1" groups="base.group_system"/>
-                    <button name="open_activity_id_date_out_in" type="object" string="完成进仓日"
+                    <button name="open_activity_id_date_out_in" type="object" string="完成出运日"
                             groups="base.group_system"/>
                     <field name="order_track_new_order_state" widget="statusbar" nolabel="1" statusbar_visible=" "/>
-                </header>
+                </header>期
                 <sheet>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
                            attrs="{'invisible':[('type','!=','new_order_track')]}"
@@ -1138,16 +1138,16 @@
 
                                 <th width="14%">
                                     <span style="color:red"
-                                          attrs="{'invisible':[('plan_date_out_in_error','=',False)]}">进仓日期
+                                          attrs="{'invisible':[('plan_date_out_in_error','=',False)]}">出运日期
                                     </span>
-                                    <span attrs="{'invisible':[('plan_date_out_in_error','=',True)]}">进仓日期</span>
+                                    <span attrs="{'invisible':[('plan_date_out_in_error','=',True)]}">出运日期</span>
                                 </th>
 
                                 <th width="8%">
                                     <span style="color:red" attrs="{'invisible':[('plan_date_ship_error','=',False)]}">
-                                        出运船日期
+                                        船期
                                     </span>
-                                    <span attrs="{'invisible':[('plan_date_ship_error','=',True)]}">出运船日期</span>
+                                    <span attrs="{'invisible':[('plan_date_ship_error','=',True)]}">船期</span>
                                 </th>
                                 <th width="8%">
                                     <span style="color:red"

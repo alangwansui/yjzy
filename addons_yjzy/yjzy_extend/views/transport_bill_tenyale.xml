@@ -745,10 +745,10 @@
                                         <field name="dlr_qty" groups="base.group_system" invisible="1"/>
                                         <field name="qty1stage" groups="base.group_system" invisible="1"/>
                                         <field name="org_currency_sale_amount_origin" string="出运原金额"/>
-                                        <field name="org_currency_sale_amount" sum="销售" string="出运销售金额"/>
+                                        <field name="org_currency_sale_amount" sum="销售" string="出运销售金额" invisible="1"/>
 
                                         <field name="sale_amount" sum="销售" groups="base.group_system" invisible="1"/>
-                                        <field name="back_tax"/>
+
                                         <field name="purchase_cost" sum="采购" string="出运采购金额"/>
                                         <field name="purchase_cost_new" sum="采购" string="出运采购金额:new"
                                                groups="base.group_system"/>

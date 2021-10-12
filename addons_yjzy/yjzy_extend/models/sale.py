@@ -1276,8 +1276,8 @@ class sale_order(models.Model):
             raise Warning('非待核销合同无法核销！')
         if self.hexiao_type == 'abnormal' and self.hexiao_comment == False:
             raise Warning('异常核销，请填写备注！')
-        if self.purchase_delivery_status == False:
-            raise Warning('采购合同还有未完成收货的，请核查！')
+        # if self.purchase_delivery_status == False:
+        #     raise Warning('采购合同还有未完成收货的，请核查！')
         stage_id = self._stage_find(domain=[('code', '=', '090')])
         self.stage_id = stage_id
         self.state = 'verification'
@@ -1303,7 +1303,7 @@ class sale_order(models.Model):
         if self.purchase_delivery_status == False:
             raise Warning('采购合同还有未完成收货的，请核查！')
         self.state = 'verification'
-        self.x_wkf_state = '199'
+        # self.x_wkf_state = '199'
         self.hx_date = fields.date.today()
 
     def action_verification1(self):

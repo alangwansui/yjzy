@@ -26,7 +26,7 @@
 
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
                         <button name="open_wizard_reconcile_invoice" type="object" string="创建应收认领" groups="sale.hegui_all"
-                               attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','!=','posted'),('state_1','!=','50_posted')]}"/>
+                               attrs="{'invisible':['|','|',('advance_balance_total','=',0),('state','not in',['posted','reconciled']),('state_1','!=','50_posted')]}"/>
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
 
                 </header>
