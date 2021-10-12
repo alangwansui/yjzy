@@ -1668,6 +1668,9 @@ class account_reconcile_order(models.Model):
                     raise Warning('请填写收款单账号')
                 if not self.fk_journal_id:
                     raise Warning('请填写付款银行')
+                for one in self.invoice_ids:
+                    if one.is_purchase_invoice_finish == False and one.invoice_attribute_all_in_one == '120':
+                        raise Warning('供应商是否交单未勾选，请检查，并勾选他！')
             stage_id = self._stage_find(domain=[('code', '=', '040')])
             self.write({'stage_id': stage_id.id,
                         'state': 'posted',

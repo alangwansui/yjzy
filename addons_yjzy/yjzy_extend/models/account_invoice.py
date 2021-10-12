@@ -1890,8 +1890,6 @@ class account_invoice(models.Model):
         for one in self:
             if one.amount_payment_can_approve_all == 0:
                 raise Warning('可申请付款金额为0，不允许提交！')
-            if one.is_purchase_invoice_finish == False and one.invoice_attribute_all_in_one == '120':
-                raise Warning('供应商是否交单未勾选，请检查，并勾选他！')
             for x in one.yjzy_invoice_wait_payment_ids:  # 参考M2M的自动多选  剩余应付金额！=0的额外账单
                 invoice_dic.append(x.id)
             print('amount_payment_can_approve_all_akiny', one.amount_payment_can_approve_all)
