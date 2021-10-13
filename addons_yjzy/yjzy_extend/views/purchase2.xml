@@ -386,6 +386,7 @@
                                     </templates>
                                 </kanban>
                             </field>
+                                <field name="real_advance_new" string="实际预付金额新"/>
                                 <field name="real_advance" invisible="0" string="实际预付金额"/>
                                 <field name="balance" string="实际预付余额"/>
                                 <field name="can_confirm_by_so" readonly="0" invisible="1"/>
@@ -585,12 +586,26 @@
                                 </group>
                             </page>
                             <page string="预付款单">
-                                <group>
+
                                     <field readonly="1" name="yjzy_payment_ids" widget="many2many"
                                            domain="[('sfk_type','=','yfsqd')]"
                                            context="{'tree_view_ref':'yjzy_extend.view_yfsqd_tree',  'form_view_ref':'yjzy_extend.view_yfsqd_form',  'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_partner_type': 'supplier'}">
+                                     <tree string="预付申请单" decoration-info="state == 'draft'"
+                  decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="payment_date" string="申请日期"/>
+                <field name="yjzy_payment_id" string="付款单" invisible="1"/>
+                <field name="currency_id" attrs="{}" invisible="1" required="1"/>
+                <field name="po_id" string="采购合同"/>
+                <field name="amount" string="申请金额"/>
+                <field name="balance" attrs="{}" invisible="1" readonly="1"/>
+                <field name="prepayment_type"/>
+                <field name="fault_comments"/>
+                <field name="state" groups="base.group_system"/>
+            </tree>
                                     </field>
-                                </group>
+
                             </page>
                             <page string="审批记录">
                                 <group>

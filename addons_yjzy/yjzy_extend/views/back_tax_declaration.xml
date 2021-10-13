@@ -2,20 +2,21 @@
 <odoo>
     <data>
         <record id="view_back_tax_declaration_search" model="ir.ui.view">
-        <field name="name">back.tax.declaration.search</field>
-        <field name="model">back.tax.declaration</field>
-        <field name="arch" type="xml">
-            <search string="Back Tax Declaration">
-                <field name="name" filter_domain="['|', ('name','ilike',self),('declaration_title','ilike',self),('tb_contract_code','ilike',self)]"
-                       string="模糊查询"/>
-                <field name="tb_contract_code" string="出运合同号"/>
-                <group expand="1" string="Group By">
-                    <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
-                </group>
+            <field name="name">back.tax.declaration.search</field>
+            <field name="model">back.tax.declaration</field>
+            <field name="arch" type="xml">
+                <search string="Back Tax Declaration">
+                    <field name="name"
+                           filter_domain="['|', ('name','ilike',self),('declaration_title','ilike',self),('tb_contract_code','ilike',self)]"
+                           string="模糊查询"/>
+                    <field name="tb_contract_code" string="出运合同号"/>
+                    <group expand="1" string="Group By">
+                        <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
 
-            </search>
-        </field>
-    </record>
+                </search>
+            </field>
+        </record>
 
         <record id="view_back_tax_declaration_tree" model="ir.ui.view">
             <field name="name">back.tax.declaration.tree</field>
@@ -28,14 +29,14 @@
                     <field name="payment_amount"/>
                     <field name="payment_balance"/>
                     <field name="create_date" string="创建日期"/>
-                    <field name="invoice_amount_no_630" invisible="1"/>
+                    <field name="invoice_amount_no_630"/>
                     <field name="invoice_residual_no_630"/>
                     <field name="invoice_amount_630"/>
                     <field name="invoice_amount_all" invisible="1"/>
                     <field name="reconcile_amount" invisible="1"/>
                     <field name="declaration_amount_all" string="本次申报金额"/>
                     <field name="invoice_residual_all" string="剩余未收金额"/>
-                    <field name="declaration_amount_all_residual_new" invisible="1" />
+                    <field name="declaration_amount_all_residual_new" invisible="1"/>
                     <field name="tuishuirld_id" invisible="1"/>
                 </tree>
             </field>
@@ -51,14 +52,14 @@
                     <field name="payment_amount"/>
                     <field name="payment_balance"/>
                     <field name="create_date" string="创建日期"/>
-                    <field name="invoice_amount_no_630" />
+                    <field name="invoice_amount_no_630"/>
                     <field name="invoice_residual_no_630" invisible="1"/>
                     <field name="invoice_amount_630"/>
                     <field name="invoice_amount_all" invisible="1"/>
                     <field name="reconcile_amount" invisible="1"/>
                     <field name="declaration_amount_all" string="本次申报金额"/>
-                    <field name="invoice_residual_all" string="剩余未收金额"/>
-                    <field name="declaration_amount_all_residual_new" invisible="1" />
+                    <field name="invoice_residual_all" string="调节后未收退税"/>
+                    <field name="declaration_amount_all_residual_new" invisible="1"/>
                     <field name="tuishuirld_id" invisible="1"/>
                 </tree>
             </field>
@@ -69,25 +70,27 @@
             <field name="arch" type="xml">
                 <form string="退税申报表">
                     <header>
-                        <button name="action_submit" type="object" states="draft" string="提交审批" />
-                        <button name="action_confirm" string="确认申报" type="object" states="approval" groups="sales_team.group_manager"
+                        <button name="action_submit" type="object" states="draft" string="提交审批"/>
+                        <button name="action_confirm" string="确认申报" type="object" states="approval"
+                                groups="sales_team.group_manager"
                                 confirm="确定提交申报。确定后，将无法修改！"/>
-                        <button name="create_other_invoice" type="object" string="调节" groups="base.group_system" />
-                        <button name="create_adjustment_invoice" type="object" string="调节2" groups="base.group_system"  />
-                        <button name="create_out_fund_invoice" type="object" string="创建反向认领" groups="base.group_system"/>
-                        <button name="create_tuishuirld" type="object" string="创建申报认领" groups="base.group_system" />
-                        <button name="%(back_tax_refuse_wizard_action)d"  states="approval"  string="拒绝" type="action"  groups="sales_team.group_manager"/>
+                        <button name="create_other_invoice" type="object" string="调节" groups="base.group_system"/>
+                        <button name="create_adjustment_invoice" type="object" string="调节2" groups="base.group_system"/>
+                        <button name="create_out_fund_invoice" type="object" string="创建反向认领"
+                                groups="base.group_system"/>
+                        <button name="create_tuishuirld" type="object" string="创建申报认领" groups="base.group_system"/>
+                        <button name="%(back_tax_refuse_wizard_action)d" states="approval" string="拒绝" type="action"
+                                groups="sales_team.group_manager"/>
                         <button name="open_wizard_back_tax_declaration" string="添加应收退税" type="object"
                                 attrs="{'invisible':[('state','!=','draft')]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
-                        <div class="oe_form_box_info oe_text_center"
-                       >
-                        <span>
-                            申报金额不允许大于系统应收退税金额！
-                        </span>
-                    </div>
+                        <div class="oe_form_box_info oe_text_center">
+                            <span>
+                                申报金额不允许大于系统应收退税金额！
+                            </span>
+                        </div>
                         <group>
 
                             <group>
@@ -95,26 +98,28 @@
                                 <field name="declaration_title" attrs="{'readonly':[('state','in',['done','paid'])]}"/>
                                 <field name="declaration_date" attrs="{'readonly':[('state','in',['done','paid'])]}"/>
 
-                                <field name="invoice_amount_no_630"/>
-                                <field name="invoice_amount_630"/>
-                                 <field name="invoice_amount_all"/>
 
-<!--                                <field name="invoice_residual_no_630"/>-->
-<!--                                <field name="invoice_residual_630"/>-->
-                                <field name="invoice_residual_all" string="调节后未收退税"/>
+                                <field name="invoice_amount_630" invisible="1"/>
+                                <field name="invoice_amount_all" invisible="1"/>
+
+                                <!--                                <field name="invoice_residual_no_630"/>-->
+                                <!--                                <field name="invoice_residual_630"/>-->
+                                <field name="invoice_amount_no_630"/>
 
                                 <field name="declaration_amount_all"/>
                                 <field name="diff_tax_amount"/>
+                                <field name="invoice_residual_all" string="调节后未收退税"/>
                                 <field name="declaration_amount_all_residual_new" string="剩余未收金额"
-                                       attrs="{'invisible':[('state','not in',['done','paid'])]}"/>
+                                       attrs="{'invisible':[('state','not in',['done','paid'])]}" invisible="1"/>
                                 <field name="create_uid" string="创建者" invisible="1"/>
                                 <field name="create_date" string="创建日期" invisible="1"/>
                             </group>
                             <group>
-<!--                                <field name="payment_amount"/>-->
-<!--                                <field name="payment_balance"/>-->
-<!--                                <field name="tuishuirld_id" string="退税申报账单" context="{'form_view_ref':'yjzy_extend.view_account_tuishuirld_form'}"/>-->
-                                <field name="back_tax_all_in_one_invoice_id" context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
+                                <!--                                <field name="payment_amount"/>-->
+                                <!--                                <field name="payment_balance"/>-->
+                                <!--                                <field name="tuishuirld_id" string="退税申报账单" context="{'form_view_ref':'yjzy_extend.view_account_tuishuirld_form'}"/>-->
+                                <field name="back_tax_all_in_one_invoice_id"
+                                       context="{'form_view_ref':'yjzy_extend.view_account_invoice_new_form_in_one'}"/>
                                 <field name="out_refund_invoice_id"/>
                             </group>
 
@@ -123,22 +128,23 @@
                             <page string="应收退税申报明细">
                                 <button name="open_wizard_back_tax_declaration" string="批量添加应收退税" class="highlight"
                                         type="object" attrs="{'invisible':[('state','in',['done','paid'])]}"/>
-                                <field name="btd_line_ids"  attrs="{'readonly':[('state','in',['done','paid'])]}">
-                                    <tree create="false" editable="bottom" decoration-danger="is_adjustment == True" default_order="line_name">
-                                        <field name="line_name"/>
+                                <field name="btd_line_ids" attrs="{'readonly':[('state','in',['done','paid'])]}">
+                                    <tree create="false" editable="bottom" decoration-danger="is_adjustment == True"
+                                          default_order="line_name">
+                                        <field name="line_name" invisible="1"/>
                                         <field name="tenyale_name" readonly="1"/>
                                         <field name="invoice_id" string="退税账单"/>
                                         <field name="invoice_attribute_all_in_one" string="账单属性"/>
-                                        <field name="back_tax_type" string="退税调节属性"/>
+                                        <field name="back_tax_type" string="退税调节属性" invisible="1"/>
                                         <field name="invoice_currency_id" invisible="1"/>
-                                        <field name="invoice_amount_total" string="原始应收退税"/>
-                                        <field name="invoice_residual_total" string="剩余应收退税"/>
-                                        <field name="declaration_amount" string="本次申报金额"/>
-                                        <field name="diff_tax"/>
-                                        <field name="diff_origin_tax"/>
-                                        <field name="declaration_amount_residual"
+                                        <field name="invoice_amount_total" string="原始应收退税" sum="小计"/>
+                                        <field name="invoice_residual_total" string="剩余应收退税" sum="小计"/>
+                                        <field name="declaration_amount" string="本次申报金额" sum="小计"/>
+                                        <field name="diff_tax" sum="小计"/>
+                                        <field name="diff_origin_tax" sum="小计"/>
+                                        <field name="declaration_amount_residual" sum="小计"
                                                attrs="{'column_invisible':[('parent.state','not in',['done','paid'])]}"/>
-                                        <field name="is_adjustment"/>
+                                        <field name="is_adjustment" readonly="1" invisible="1"/>
                                         <field name="comments"/>
                                     </tree>
                                 </field>
@@ -179,7 +185,7 @@
             <field name="res_model">back.tax.declaration</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_group_by_state':1}</field>
-               <field name="view_ids" eval="[(5, 0, 0),
+            <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_back_tax_declaration_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_back_tax_declaration_form')}),
                               ]"/>
@@ -194,7 +200,7 @@
             <field name="res_model">back.tax.declaration</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_group_by_state':1}</field>
-             <field name="view_ids" eval="[(5, 0, 0),
+            <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.view_back_tax_declaration_tree_db')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_back_tax_declaration_form')}),
                               ]"/>

@@ -183,9 +183,11 @@ class account_payment(models.Model):
                 print('hexiao_payment_ids_akiny', hexiao_payment_ids)
 
                 advance_balance_total = one.amount - advance_total - advance_total_2
+                print('advance_balance_total_akiny',advance_balance_total)
                 if advance_balance_total == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
                     # one.test_reconcile()
+                print('advance_balance_total_akiny', advance_balance_total)
                 if advance_balance_total != 0 and one.state_1 == '60_done':
                     one.state_1 = '50_posted'
                     # one.write({'state': 'reconciled'})
