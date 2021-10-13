@@ -70,7 +70,7 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="预收认领单" edit="false" create="false" decoration-info="state == 'draft'"
+            <tree string="预收认领单" edit="false" create="false" decoration-info="state == 'draft'" decoration-danger="so_no_sent_amount_new &lt;= advance_balance_total"
                   decoration-muted="state == 'cancel'">
                 <field name="partner_id" string="客户"/>
                 <field name="name" invisible="1"/>
@@ -82,6 +82,8 @@
                         attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
                 <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
+                <field name="so_id_currency_id" invisible="1"/>
+                <field name="so_no_sent_amount_new" string="未发货销售金额"/>
                 <field name="advance_renling_total" string="正常认领金额"/>
                 <field name="advance_hexiao_total" string="核销认领金额"/>
                 <field name="advance_total" string="总认领金额"/>

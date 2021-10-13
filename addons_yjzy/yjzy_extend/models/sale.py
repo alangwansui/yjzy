@@ -485,8 +485,8 @@ class sale_order(models.Model):
         ('verifying', u'待核销'),
         ('verification', u'核销完成'),
     ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
-    no_sent_amount = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_no_sent_amount)
-    no_sent_amount_new = fields.Monetary(u'未发货的金额',currency_field='company_currency_id', compute=compute_no_sent_amount_new, store=True)
+    no_sent_amount = fields.Monetary(u'未发货的金额',currency_field='currency_id', compute=compute_no_sent_amount)
+    no_sent_amount_new = fields.Monetary(u'未发货的金额',currency_field='currency_id', compute=compute_no_sent_amount_new, store=True)
     no_sent_qty = fields.Float(u'未出运数量', compute=compute_no_sent_amount, store=True)
     sent_qty = fields.Float(u'已出运数量', compute=compute_no_sent_amount, store=True)
     all_qty = fields.Float(u'原始总数', compute=compute_no_sent_amount, store=True)

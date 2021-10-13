@@ -42,7 +42,7 @@
                          <field name="new_btd_id" attrs="{'invisible':[('renling_type','not in',['new_back_tax'])]}"
                                 domain="[('state','=','done')]"
                                />
-                        <field name="back_tax_invoice_amount"/>
+                        <field name="back_tax_invoice_amount" attrs="{'invisible':[('renling_type','not in',['new_back_tax'])]}"/>
 <!--                        <field name="back_tax_all_in_one_invoice_residual" attrs="{'invisible':[('renling_type','not in',['new_back_tax'])]}"/>-->
 <!--                        <field name="amount_tuishuirdl_id" attrs="{'invisible':[('renling_type','not in',['new_back_tax'])]}"/>-->
 

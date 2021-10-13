@@ -125,7 +125,7 @@ class wizard_renling(models.TransientModel):
 
     renling_type = fields.Selection([('yshxd', '应收认领'),
                                      ('ysrld', '预收认领'),
-                                     ('back_tax', '退税认领'),
+                                     # ('back_tax', '退税认领'),
                                      ('new_back_tax',u'新退税认领'),
                                      ('purchase_add_invoice','增加采购应收认领'),
                                      ('other_payment', '其他认领')

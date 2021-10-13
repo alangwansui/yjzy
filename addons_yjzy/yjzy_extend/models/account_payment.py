@@ -498,6 +498,13 @@ class account_payment(models.Model):
             one.can_approve_amount = can_approve_amount
             # one.amount_payment_org_auto = amount_payment_org_auto
 
+    @api.depends('so_id','so_id.no_sent_amount_new')
+    def compute_so_no_sent_amount_new(self):
+        for one in self:
+            so_id = one.so_id
+            so_no_sent_amount_new = so_id.no_sent_amount_new
+            one.so_no_sent_amount_new = so_no_sent_amount_new
+
     @api.depends('currency_id', 'currency_id.name')
     def compute_currency_id_name(self):
         for one in self:
@@ -510,6 +517,7 @@ class account_payment(models.Model):
                                          store=True)
     can_approve_amount = fields.Monetary('可申请金额', currency_field='po_id_currency_id', compute=compute_delivery_amount)
     # amount_payment_org_auto = fields.Monetary('支付总金额',currency_field='po_id_currency_id', compute=compute_delivery_amount)
+
 
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
@@ -753,6 +761,12 @@ class account_payment(models.Model):
                                                related='partner_id.property_payment_term_id')
     sale_payment_term_id = fields.Many2one('account.payment.term', u'销售单付款条款', related='so_id.payment_term_id')
 
+
+
+            # one.amount_payment_org_auto = amount_payment_org_auto
+    so_no_sent_amount_new = fields.Monetary('未发货销售金额', currency_field='so_id_currency_id',
+                                            compute=compute_so_no_sent_amount_new,
+                                            store=True)
     so_pre_advance = fields.Monetary(u'应收预收款', currency_field='so_id_currency_id', related='so_id.pre_advance')
     so_real_advance = fields.Monetary(u'预收金额', currency_field='so_id_currency_id', related='so_id.real_advance')
 

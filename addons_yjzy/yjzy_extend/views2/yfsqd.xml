@@ -46,7 +46,7 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="预付申请单" decoration-info="state == 'draft'" class="o_list_view_scroll" default_order="state_1"
+            <tree string="预付申请单" decoration-info="state == 'draft'" decoration-danger="un_delivery_amount &lt;= advance_balance_total" class="o_list_view_scroll" default_order="state_1"
                   decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="partner_id"/>
                 <field name="name" invisible="1"/>
@@ -58,6 +58,7 @@
                         attrs="{'invisible':[('advance_reconcile_order_count','=',0)]}"/>
                 <field name="advance_reconcile_order_count" invisible="1"/>
                 <field name="advance_balance_total" string="未认领金额"/>
+                <field name="un_delivery_amount" string="未发货金额"/>
                 <field name="advance_hexiao_total" string="核销认领金额"/>
                 <field name="advance_renling_total" string="正常认领金额"/>
                 <field name="advance_total" string="总认领金额"/>
