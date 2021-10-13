@@ -184,12 +184,12 @@ class account_payment(models.Model):
 
                 advance_balance_total = one.amount - advance_total - advance_total_2
                 print('advance_balance_total_akiny',advance_balance_total)
-                if float_compare(advance_balance_total,0.0) == 0 and one.state_1 == '50_posted':
+                if float_compare(advance_balance_total,0.00,precision_digits=2) == 0 and one.state_1 == '50_posted':
                 # if advance_balance_total == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
                     # one.test_reconcile()
                 print('advance_balance_total_akiny', advance_balance_total)
-                if float_compare(advance_balance_total,0.0) != 0 and one.state_1 == '60_done':
+                if float_compare(advance_balance_total,0.00,precision_digits=2) != 0 and one.state_1 == '60_done':
                 # if advance_balance_total != 0 and one.state_1 == '60_done':
                     one.state_1 = '50_posted'
                     # one.write({'state': 'reconciled'})
