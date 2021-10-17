@@ -26,8 +26,6 @@
         </record>
 
 
-
-
         <record id="new_purchase_order_tree" model="ir.ui.view">
             <field name="name">purchase.order.tree</field>
             <field name="model">purchase.order</field>
@@ -65,7 +63,7 @@
             </field>
         </record>
 
- <record id="view_purchase_order_sale_filter" model="ir.ui.view">
+        <record id="view_purchase_order_sale_filter" model="ir.ui.view">
             <field name="name">purchase.order.list.new.select</field>
             <field name="model">purchase.order</field>
             <field name="arch" type="xml">
@@ -81,9 +79,11 @@
                     <filter name="approve" string="审批完成" domain="[('state', '=', 'approve')]"/>
 
                     <group expand="0" string="Group By">
-                        <filter string="销售合同" domain="[]" name="group_source_so_id" context="{'group_by':'source_so_id'}"/>
+                        <filter string="销售合同" domain="[]" name="group_source_so_id"
+                                context="{'group_by':'source_so_id'}"/>
                         <filter string="状态" domain="[]" name="group_by_state_1" context="{'group_by':'so_id_state_1'}"/>
-                        <filter string="stage" domain="[]" name="group_by_so_stage" context="{'group_by':'so_id_stage'}"/>
+                        <filter string="stage" domain="[]" name="group_by_so_stage"
+                                context="{'group_by':'so_id_stage'}"/>
                         <filter string="供应商" domain="[]" context="{'group_by':'partner_id'}"/>
                         <filter string="客户" domain="[]" context="{'group_by':'customer_id'}"/>
                         <filter string="交期" domain="[]" context="{'group_by':'date_planned'}"/>
@@ -142,7 +142,7 @@
                     <field name="sale_assistant_id" invisible="1"/>
                     <field name="purchaser_date" invisible="1"/>
                     <field name="so_id_state" string="销售审批状态" invisible="1"/>
-                    <field name="gongsi_id"  invisible="1" string="采购主体"/>
+                    <field name="gongsi_id" invisible="1" string="采购主体"/>
                     <field name="supplierinfo_ids" widget="many2many_tags" invisible="1"/>
                     <field name="invoice_status"
                            invisible="1"/><!--invisible="not context.get('show_purchase', True)"-->
@@ -153,7 +153,6 @@
                 </tree>
             </field>
         </record>
-
 
 
         <record id="new_purchase_order_from" model="ir.ui.view">
@@ -334,58 +333,59 @@
 
                                 <field name="yjzy_currency_id" invisible="1"/>
                                 <field name="pre_advance" invisible="0" string="建议预付金额"/>
-                                 <div colspan="2" style="padding-left:10px;padding-right:10px" attrs="{'invisible':[('pre_advance_line_count','=',0)]}">
-                                <table style="width:100%">
-                                    <tbody>
-                                        <tr>
-                                            <th style="width:25%">
-                                                <span>预付属性</span>
-                                            </th>
-                                            <th style="width:35%">
-                                                <span>计划应预付</span>
-                                            </th>
-                                            <th style="width:45%">
-                                                <span>实际总预付</span>
-                                            </th>
+                                <div colspan="2" style="padding-left:10px;padding-right:10px"
+                                     attrs="{'invisible':[('pre_advance_line_count','=',0)]}">
+                                    <table style="width:100%">
+                                        <tbody>
+                                            <tr>
+                                                <th style="width:25%">
+                                                    <span>预付属性</span>
+                                                </th>
+                                                <th style="width:35%">
+                                                    <span>计划应预付</span>
+                                                </th>
+                                                <th style="width:45%">
+                                                    <span>实际总预付</span>
+                                                </th>
 
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <field name="pre_advance_line" string="预付明细" nolabel="1" colspan="2">
-                                <!--                                    <tree>-->
-                                <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
-                                <!--                                        <field name="real_advance" string="Real Collect Advance"/>-->
-                                <!--                                    </tree>-->
-                                <kanban class="o_kanban_mobile" sample="1">
-                                    <field name="pre_advance"/>
-                                    <field name="real_advance"/>
-                                    <field name="currency_id"/>
-                                    <field name="payment_advance_currency_id"/>
-                                    <field name="pre_advance_options"/>
-                                    <templates>
-                                        <t t-name="kanban-box" style="height:20px">
-                                            <div style="width:100%">
-                                                <table style="width:100%">
-                                                    <tbody>
-                                                        <tr>
-                                                             <td style="width:25%">
-                                                                <field name="pre_advance_options"/>
-                                                            </td>
-                                                            <td style="width:35%">
-                                                                <field name="pre_advance" widget="monetary"/>
-                                                            </td>
-                                                            <td style="width:40%">
-                                                                <field name="real_advance" widget="monetary"/>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </t>
-                                    </templates>
-                                </kanban>
-                            </field>
+                                    <!--                                    <tree>-->
+                                    <!--                                        <field name="pre_advance" string="Expected Collect Advance"/>-->
+                                    <!--                                        <field name="real_advance" string="Real Collect Advance"/>-->
+                                    <!--                                    </tree>-->
+                                    <kanban class="o_kanban_mobile" sample="1">
+                                        <field name="pre_advance"/>
+                                        <field name="real_advance"/>
+                                        <field name="currency_id"/>
+                                        <field name="payment_advance_currency_id"/>
+                                        <field name="pre_advance_options"/>
+                                        <templates>
+                                            <t t-name="kanban-box" style="height:20px">
+                                                <div style="width:100%">
+                                                    <table style="width:100%">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="width:25%">
+                                                                    <field name="pre_advance_options"/>
+                                                                </td>
+                                                                <td style="width:35%">
+                                                                    <field name="pre_advance" widget="monetary"/>
+                                                                </td>
+                                                                <td style="width:40%">
+                                                                    <field name="real_advance" widget="monetary"/>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                </field>
                                 <field name="real_advance_new" string="实际预付金额新"/>
                                 <field name="real_advance" invisible="0" string="实际预付金额"/>
                                 <field name="balance" string="实际预付余额"/>
@@ -587,24 +587,24 @@
                             </page>
                             <page string="预付款单">
 
-                                    <field readonly="1" name="yjzy_payment_ids" widget="many2many"
-                                           domain="[('sfk_type','=','yfsqd')]"
-                                           context="{'tree_view_ref':'yjzy_extend.view_yfsqd_tree',  'form_view_ref':'yjzy_extend.view_yfsqd_form',  'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_partner_type': 'supplier'}">
-                                     <tree string="预付申请单" decoration-info="state == 'draft'"
-                  decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
-                <field name="name"/>
-                <field name="partner_id"/>
-                <field name="payment_date" string="申请日期"/>
-                <field name="yjzy_payment_id" string="付款单" invisible="1"/>
-                <field name="currency_id" attrs="{}" invisible="1" required="1"/>
-                <field name="po_id" string="采购合同"/>
-                <field name="amount" string="申请金额"/>
-                <field name="balance" attrs="{}" invisible="1" readonly="1"/>
-                <field name="prepayment_type"/>
-                <field name="fault_comments"/>
-                <field name="state" groups="base.group_system"/>
-            </tree>
-                                    </field>
+                                <field readonly="1" name="yjzy_payment_ids" widget="many2many"
+                                       domain="[('sfk_type','=','yfsqd')]"
+                                       context="{'tree_view_ref':'yjzy_extend.view_yfsqd_tree',  'form_view_ref':'yjzy_extend.view_yfsqd_form',  'default_sfk_type': 'yfsqd', 'default_payment_type': 'outbound', 'default_partner_type': 'supplier'}">
+                                    <tree string="预付申请单" decoration-info="state == 'draft'"
+                                          decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="payment_date" string="申请日期"/>
+                                        <field name="yjzy_payment_id" string="付款单" invisible="1"/>
+                                        <field name="currency_id" attrs="{}" invisible="1" required="1"/>
+                                        <field name="po_id" string="采购合同"/>
+                                        <field name="amount" string="申请金额"/>
+                                        <field name="balance" attrs="{}" invisible="1" readonly="1"/>
+                                        <field name="prepayment_type"/>
+                                        <field name="fault_comments"/>
+                                        <field name="state" groups="base.group_system"/>
+                                    </tree>
+                                </field>
 
                             </page>
                             <page string="审批记录">
@@ -625,6 +625,7 @@
                             </page>
                             <page string="管理员信息" groups="base.group_system">
                                 <group>
+                                    <field name="so_id_state_1"/>
                                     <field name="pre_advance_line_count"/>
                                     <field name="company_id" groups="base.group_system" options="{'no_create': True}"
                                            invisible="0"/>
