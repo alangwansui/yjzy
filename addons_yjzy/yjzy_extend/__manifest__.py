@@ -123,7 +123,7 @@
         'views/account_invoice_rzhi.xml',
 
         'views/product_packaging.xml',
-
+        'views/crm_lead_views.xml',
         'views/config_setting.xml',
         'views/hr_expense.xml',
         'views/hr_expense_new.xml',

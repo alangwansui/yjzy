@@ -579,7 +579,7 @@ class OrderTrack(models.Model):
                         date_so_requested_new_state = '20'
 
                     else:
-                        date_so_requested_new_state = '已计划新交期且已到期'
+                        date_so_requested_new_state = '30'
                 one.date_so_requested_new_state = date_so_requested_new_state
 
 
