@@ -338,7 +338,7 @@ class purchase_order(models.Model):
 
     # akiny
     so_id_state = fields.Selection('源销售合同状态', related='source_so_id.state')
-    so_id_state_1 = fields.Selection(Sale_Selection, u'源销售合同状态', compute='compute_so_id_state_1', store=True)
+    so_id_state_1 = fields.Selection(Sale_Selection,compute='compute_so_id_state_1', string='源销售合同状态',  store=True)
     so_id_stage = fields.Many2one('sale.order.stage',related='source_so_id.stage_id',store=True)
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
     so_currentcy_id = fields.Many2one('res.currency', '销售合同币种', related='source_so_id.currency_id')

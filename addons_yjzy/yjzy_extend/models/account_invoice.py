@@ -38,15 +38,17 @@ class AccountInvoiceStage(models.Model):
 class account_invoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.depends('payment_term_id', 'date_due', 'date_ship', 'date_finish', 'date_invoice')
+    @api.depends('payment_term_id', 'payment_term_id.invoice_date_deadline_field','date_due','supplier_delivery_date', 'date_ship', 'date_finish', 'date_invoice')
     def compute_date_deadline(self):
         strptime = datetime.strptime
         for one in self:
+            one._onchange_payment_term_date_invoice()
             if one.date_due and one.date_invoice and one.payment_term_id.invoice_date_deadline_field:
                 dump_date = getattr(one, one.payment_term_id.invoice_date_deadline_field)
                 print('dump_date_akiny', dump_date,one.payment_term_id.invoice_date_deadline_field)
                 if not dump_date:
                     continue
+                one._onchange_payment_term_date_invoice()
                 diff = strptime(dump_date, DF) - strptime(one.date_invoice, DF)
                 one.date_deadline = (strptime(one.date_due, DF) + diff).strftime(DF)
                 one.date_deadline_new = (strptime(one.date_due, DF) + diff).strftime(DF)
@@ -65,7 +67,9 @@ class account_invoice(models.Model):
     def compute_times(self):
         today = datetime.today()
         strptime = datetime.strptime
+
         for one in self:
+            one._onchange_payment_term_date_invoice()
             if one.state == 'open':
                 if one.date_deadline:
                     residual_times = today -strptime(one.date_deadline, DF)
