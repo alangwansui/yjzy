@@ -1699,6 +1699,11 @@ class account_reconcile_order(models.Model):
                 # if self.state_1 not in ['manager_approval','advance_approval','advance_approval_yshxd', 'manager_approval_yshxd', 'manager_approval_all']:
                 #     raise Warning('非可审批状态，不允许审批！')
                 self.action_done_new_stage()
+                for line in self.line_do_ids:
+                    if line.yjzy_payment_id:
+                        line.yjzy_payment_id.compute_advance_balance_total()
+                    else:
+                        continue
                 # self.action_done_new() #生成的应付认领单过账
                 self.write({'approve_date': fields.date.today(),
                             'approve_uid': self.env.user.id
