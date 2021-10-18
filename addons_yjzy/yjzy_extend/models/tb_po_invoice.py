@@ -212,10 +212,12 @@ class tb_po_invoice(models.Model):
 
             yjzy_invoice_id = one.yjzy_invoice_id
             manual_currency_id = one.manual_currency_id
+            manual_currency_id_yjzy = one.manual_currency_id_yjzy
             if yjzy_invoice_id:
                 one.currency_id = yjzy_invoice_id and yjzy_invoice_id[0].currency_id
             else:
                 one.currency_id = manual_currency_id
+                one.currency_id_yjzy = manual_currency_id_yjzy
 
     @api.depends('yjzy_tb_po_invoice', 'yjzy_tb_po_invoice.price_total',
                  'yjzy_tb_po_invoice.invoice_normal_ids_residual', 'yjzy_tb_po_invoice.partner_id')
@@ -321,7 +323,7 @@ class tb_po_invoice(models.Model):
 
     invoice_partner_yjzy = fields.Char(u'对应的应收付账单对象', related='yjzy_tb_po_invoice.invoice_partner')
     name_title_yjzy = fields.Char(u'对应的应收付账账单描述', related='yjzy_tb_po_invoice.name_title')
-    other_invoice_amount_yjzy = fields.Monetary('对应的金额', currency_field='currency_id',
+    other_invoice_amount_yjzy = fields.Monetary('对应的金额', currency_field='tb_currency_id_yjzy',
                                                 related='yjzy_tb_po_invoice.other_invoice_amount')
 
     tb_po_other_line_ids = fields.One2many('extra.invoice.line', 'tb_po_other_id', u'关联明细')  # 上下级的其他应收应付对应的明细
@@ -425,8 +427,9 @@ class tb_po_invoice(models.Model):
     yjzy_invoice_id = fields.Many2one('account.invoice', '关联账单')
     yjzy_invoice_back_tax_id = fields.Many2one('account.invoice', u'关联退税账单')
     currency_id = fields.Many2one('res.currency', '货币', compute=compute_currency_id)  # default=_default_currency_id
+    tb_currency_id_yjzy = fields.Many2one('res.currency', '货币', compute=compute_currency_id)  # default=_default_currency_id
     manual_currency_id = fields.Many2one('res.currency', '货币', default=_default_currency_id)
-
+    manual_currency_id_yjzy = fields.Many2one('res.currency', '货币', default=_default_currency_id)
     invoice_other_payment_in_ids = fields.One2many('account.invoice', 'tb_po_invoice_id', '其他应收账单',
                                                    domain=[('type', '=', 'out_invoice'),
                                                            ('yjzy_type_1', 'in', ['sale', 'other_payment_sale']),

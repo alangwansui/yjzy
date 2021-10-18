@@ -156,7 +156,9 @@
                                 <field name="name_title_yjzy" string="账单对象"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 <field name="currency_id_yjzy" invisible="1"
-                                       attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                       attrs="{'readonly':[('state','!=','10_draf   t')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
+                                <field name="manual_currency_id_yjzy"/>
+
                                 <field name="other_invoice_amount_yjzy" string="金额"
                                        attrs="{'readonly':[('state','!=','10_draft')],'invisible':[('is_yjzy_tb_po_invoice','=',False)]}"/>
                                 <field name="price_total_yjzy_parent" string="金额合计" invisible="1"
