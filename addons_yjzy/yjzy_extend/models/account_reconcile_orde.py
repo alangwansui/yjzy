@@ -1766,7 +1766,10 @@ class account_reconcile_order(models.Model):
             raise Warning('预收认领金额为0，无法提交！')
         if self.invoice_attribute_all_in_one != '640':
             for one in self.line_no_ids:
-                if one.amount_payment_can_approve_all >= 0 and  one.amount_payment_can_approve_all < one.amount_payment_org:
+                # if one.amount_payment_can_approve_all >= 0 and  one.amount_payment_can_approve_all < one.amount_payment_org:
+                print('amount_payment_org_akiny',one.payment_currency_id.compute(one.amount_payment_org,one.invoice_currency_id))
+                if one.amount_payment_can_approve_all >= 0 and one.amount_payment_can_approve_all < one.payment_currency_id.compute(one.amount_payment_org,one.invoice_currency_id):
+
                     raise Warning('收款的认领金额大于可认领的应收,请检查')
         self.action_manager_approve_stage()  # 完成当前的应收的审批过账
         #如果是退税，如果有退款退税，则执行。退款退税和未完成认领的余额的核销

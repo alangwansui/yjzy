@@ -64,6 +64,7 @@
                         <filter string="预收付类型分组" name="group_by_advance_type" domain="[]" context="{'group_by':'advance_type'}"/>
                         <filter string="付款对象分组" name="group_by_pay_to" domain="[]" context="{'group_by':'pay_to'}"/>
                         <filter string="付款指令状态分组" name="group_by_state_fkzl" domain="[]" context="{'group_by':'state_fkzl'}"/>
+                        <filter string="按采购合同分组" name="group_by_po_id" domain="[]" context="{'group_by':'po_id'}"/>
                     </group>
                 </search>
             </field>

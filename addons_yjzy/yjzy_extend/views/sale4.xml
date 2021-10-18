@@ -1126,6 +1126,8 @@
                                         <field name="product_so_line_count" string="下单次数"/>
                                         <field name="tb_line_count" string="发货次数"/>
                                         <button type="object" name="open_bill_ids" icon="fa-archive"/>
+                                        <field name="product_uom_qty" readonly="1" string="订单数量"/>
+
                                          <field name="qty_undelivered"/>
                                         <field name="qty_delivered" string="已发货"/>
                                         <field name="project_tb_qty"/>

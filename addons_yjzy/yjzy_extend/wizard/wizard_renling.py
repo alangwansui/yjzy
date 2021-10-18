@@ -359,9 +359,9 @@ class wizard_renling(models.TransientModel):
                 'target': 'new',
                 'context': context,
             }
-        for one in self.invoice_ids:
-            if one.currency_id != self.currency_id:
-                raise Warning('选择的账单和收款单币种不一致！')
+        # for one in self.invoice_ids:
+        #     if one.currency_id != self.currency_id:
+        #         raise Warning('选择的账单和收款单币种不一致！')
         if len(self.invoice_ids.mapped('currency_id')) > 1:
             raise Warning('不同币种的账单，不能同时认领！')
 
