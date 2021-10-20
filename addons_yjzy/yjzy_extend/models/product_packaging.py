@@ -57,6 +57,7 @@ class product_packaging(models.Model):
     weight4product = fields.Float(u'包含产品的重量', digits=dp.get_precision('Stock Weight'),)
     thick = fields.Float(u'厚度')
     customer_ref = fields.Char('客户型号',related='product_id.customer_ref',store=True)
+    customer_id = fields.Many2one('res.partner',related='product_id.customer_id',store=True,string='客户')
 
     @api.onchange('type_id')
     def onchange_pachage_type(self):
