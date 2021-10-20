@@ -26,6 +26,7 @@ class packaging_type(models.Model):
     min_default = fields.Boolean(u'默认小包装')
 
 
+
     @api.constrains('height', 'width', 'length')
     def check_size(self):
         if self.height < 0:
@@ -55,6 +56,7 @@ class product_packaging(models.Model):
     size = fields.Selection([(1, u'大'), (2, u'中'), (3, u'小')], u'型号', default=1)
     weight4product = fields.Float(u'包含产品的重量', digits=dp.get_precision('Stock Weight'),)
     thick = fields.Float(u'厚度')
+    customer_ref = fields.Char('客户型号',related='product_id.customer_ref',store=True)
 
     @api.onchange('type_id')
     def onchange_pachage_type(self):

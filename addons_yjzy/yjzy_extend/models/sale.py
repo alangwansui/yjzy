@@ -24,8 +24,8 @@ Sale_Selection = [('draft', '草稿'),
                   ('manager_approval', u'待总经理特批'),
                   ('approve', u'审批完成待出运'),
                   ('sale', '开始出运'),
-                  ('abnormal', u'异常核销'),
-                  ('verifying', u'正常核销'),
+                  ('abnormal', u'异常待核销'),
+                  ('verifying', u'正常待核销'),
                   ('verification', u'核销完成'), ]
 
 
@@ -1237,7 +1237,7 @@ class sale_order(models.Model):
 
             one.stage_id = stage_id
 
-    # 增加state:异常合同，将待核销的二级分组的异常核销进入state的异常合同
+    # 增加state:异常合同，将待核销的二级分组的异常核销进入state的异常合同 取消
     def update_hexiaotype_doing_type_new(self):
         for one in self:
             print('---', one)
@@ -1247,8 +1247,7 @@ class sale_order(models.Model):
             requested_date = one.requested_date
             # 未发货，开始发货，待核销，已核销
             if one.state in ('sale', 'done', 'verifying'):
-                if (
-                        one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0) and requested_date and requested_date < (
+                if (one.no_sent_amount_new != 0 or one.purchase_no_deliver_amount_new != 0) and requested_date and requested_date < (
                         today - relativedelta(days=180)).strftime('%Y-%m-%d 00:00:00'):
                     state = 'abnormal'
                     hexiao_type = 'abnormal'
@@ -1267,7 +1266,7 @@ class sale_order(models.Model):
                             state = 'abnormal'
             one.hexiao_type = hexiao_type
             one.state = state
-
+    #定稿
     def action_verification(self):
         user = self.env.user
         if not user.has_group('sale.hegui_all') or not user.has_group('sales_team.group_manager'):
