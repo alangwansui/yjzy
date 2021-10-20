@@ -7,7 +7,7 @@
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
             <tree string="日常收款单" decoration-info="state == 'draft'" create="false"
-                  default_order="first_post_date desc" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
+                  default_order="state_1,first_post_date desc" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
                 <field name="name"/>
                 <field name="partner_id" invisible="1"/>
                 <field name="payment_date" string="收款日期" invisible="1"/>
