@@ -2675,6 +2675,26 @@ class account_invoice(models.Model):
             for x in one.invoice_line_ids:
                 x.compute_original_so_po_amount()
 
+    def open_account_reconcile_order(self):
+        self.ensure_one()
+        if self.invoice_attribute_all_in_one == '120':
+            tree_view = self.env.ref('yjzy_extend.account_yfhxd_tree_view_new')
+            form_view = self.env.ref('yjzy_extend.account_yfhxd_form_view_new')
+        if self.invoice_attribute_all_in_one == '110':
+            tree_view = self.env.ref('yjzy_extend.account_yshxd_tree_view_new')
+            form_view = self.env.ref('yjzy_extend.account_yshxd_form_view_new')
+
+        return {
+            'name': u'认领单',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.reconcile.order',
+            'type': 'ir.actions.act_window',
+            'views': [(tree_view.id, 'tree'), (form_view.id, 'form')],
+            'domain': [('invoice_ids', 'in', self.id)],
+            'target': 'new'
+        }
+
 
 class account_invoice_line(models.Model):
     _inherit = 'account.invoice.line'

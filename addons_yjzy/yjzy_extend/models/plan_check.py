@@ -110,13 +110,13 @@ class OrderTrack(models.Model):
                     if finish_percent >= 100:
                         finish_percent = 100
                     one.finish_percent = finish_percent
-                    print('finish_percent_akiny',finish_percent)
+                    print('finish_percent_akiny', finish_percent)
 
     def compute_finish_percent_supplier(self):
         for one in self:
             if one.type == 'order_track':
                 strptime = datetime.strptime
-                today = datetime.today()-relativedelta(hours=-8)
+                today = datetime.today() - relativedelta(hours=-8)
                 time_supplier_requested = one.time_supplier_requested
                 earliest_date_po_order = one.earliest_date_po_order
                 print('earliest_date_po_order_ainy', earliest_date_po_order)
@@ -131,7 +131,7 @@ class OrderTrack(models.Model):
         for one in self:
             if one.type == 'order_track':
                 strptime = datetime.strptime
-                today = datetime.today()-relativedelta(hours=-8)
+                today = datetime.today() - relativedelta(hours=-8)
                 time_supplier_requested = one.time_supplier_requested
                 hegui_date = one.hegui_date
                 print('earliest_date_po_order_ainy', hegui_date)
@@ -166,7 +166,7 @@ class OrderTrack(models.Model):
         for one in self:
             num = 0
             for x in one.plan_check_line_ids:
-                if x.state in ['35_advance_finish','40_finish', '50_time_out_finish']:
+                if x.state in ['35_advance_finish', '40_finish', '50_time_out_finish']:
                     num += 1
             one.check_finish_number = num
 
@@ -198,8 +198,6 @@ class OrderTrack(models.Model):
                 one.so_all_qty = so_all_qty
                 one.sent_percent = so_all_qty != 0 and (so_sent_qty / so_all_qty) * 100 or 0.0
 
-
-
     @api.depends('tb_purchase_invoice_ids', 'tb_purchase_invoice_ids.currency_id')
     def compute_purchase_back_invoice_currency_id(self):
         for one in self:
@@ -225,14 +223,13 @@ class OrderTrack(models.Model):
             if one.type == 'new_order_track':
                 if one.time_draft_order and one.time_sign_pi and one.time_sent_pi and one.time_receive_pi and one.hegui_date and len(
                         one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.date_factory_return != False)) or (one.hegui_date and len(
-                        one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.date_factory_return != False))):
+                    one.plan_check_ids.filtered(lambda x: x.date_factory_return != False)) or (one.hegui_date and len(
+                    one.plan_check_ids) == len(one.plan_check_ids.filtered(lambda x: x.date_factory_return != False))):
                     order_track_new_order_state = '20_done'
                 else:
                     order_track_new_order_state = '10_doing'
             elif one.type == 'order_track':
-                if  one.sent_amount_percent >=100 or one.so_id_state == 'verification':
+                if one.sent_amount_percent >= 100 or one.so_id_state == 'verification':
                     # (one.date_so_contract and one.latest_date_po_planned and one.date_so_requested and len(
                     #     one.plan_check_line_ids.filtered(
                     #         lambda x: x.state in ['35_advance_finish', '40_finish', '50_time_out_finish'])) == len(
@@ -241,17 +238,19 @@ class OrderTrack(models.Model):
                 else:
                     order_track_new_order_state = '10_doing'
             else:
-                if one.date_out_in and one.date_ship and one.date_customer_finish and  len(
+                if one.date_out_in and one.date_ship and one.date_customer_finish and len(
                         one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.supplier_delivery_date != False)) and len(
-                        one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.purchase_invoice_date_finish != False)) and one.second_state == '60':
+                    one.plan_check_ids.filtered(lambda x: x.supplier_delivery_date != False)) and len(
+                    one.plan_check_ids) == len(
+                    one.plan_check_ids.filtered(
+                        lambda x: x.purchase_invoice_date_finish != False)) and one.second_state == '60':
                     order_track_new_order_state = '20_done'
-                elif one.date_out_in and one.date_ship and one.date_customer_finish and  len(
+                elif one.date_out_in and one.date_ship and one.date_customer_finish and len(
                         one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.supplier_delivery_date != False)) and len(
-                        one.plan_check_ids) == len(
-                        one.plan_check_ids.filtered(lambda x: x.purchase_invoice_date_finish != False)) and one.second_state != '60':
+                    one.plan_check_ids.filtered(lambda x: x.supplier_delivery_date != False)) and len(
+                    one.plan_check_ids) == len(
+                    one.plan_check_ids.filtered(
+                        lambda x: x.purchase_invoice_date_finish != False)) and one.second_state != '60':
                     order_track_new_order_state = '15_receivable_payment'
                 else:
                     order_track_new_order_state = '10_doing'
@@ -283,7 +282,7 @@ class OrderTrack(models.Model):
         strptime = datetime.strptime
         for one in self:
             if one.type == 'transport_track':
-                plan_date_out_in_error=False
+                plan_date_out_in_error = False
                 plan_date_ship_error = False
                 plan_date_customer_finish_error = False
                 plan_date_out_in = one.plan_date_out_in
@@ -292,11 +291,15 @@ class OrderTrack(models.Model):
                 date_out_in = one.date_out_in
                 date_ship = one.date_ship
                 date_customer_finish = one.date_customer_finish
-                if not date_out_in and  plan_date_out_in and  strptime(plan_date_out_in, DF) < datetime.today()-relativedelta(hours=-8):
+                if not date_out_in and plan_date_out_in and strptime(plan_date_out_in,
+                                                                     DF) < datetime.today() - relativedelta(hours=-8):
                     plan_date_out_in_error = True
-                if not date_ship and plan_date_ship and  strptime(plan_date_ship, DF) < datetime.today()-relativedelta(hours=-8):
+                if not date_ship and plan_date_ship and strptime(plan_date_ship, DF) < datetime.today() - relativedelta(
+                        hours=-8):
                     plan_date_ship_error = True
-                if not date_customer_finish and plan_date_customer_finish and strptime(plan_date_customer_finish, DF) < datetime.today()-relativedelta(hours=-8):
+                if not date_customer_finish and plan_date_customer_finish and strptime(plan_date_customer_finish,
+                                                                                       DF) < datetime.today() - relativedelta(
+                    hours=-8):
                     plan_date_customer_finish_error = True
                 one.plan_date_out_in_error = plan_date_out_in_error
                 one.plan_date_ship_error = plan_date_ship_error
@@ -354,7 +357,8 @@ class OrderTrack(models.Model):
     def compute_so_cmount_total(self):
         for one in self:
             one.so_amount_total = one.so_id.amount_total
-    #14.0修改
+
+    # 14.0修改
     @api.depends('date_so_requested')
     def compute_date_so_requested_is_out_time(self):
         for one in self:
@@ -369,7 +373,7 @@ class OrderTrack(models.Model):
                 print('time_today_requested_akiny', today_1, date_so_requested, time_today_requested)
                 if time_today_requested > 10:
                     date_so_requested_is_out_time = '10_undue'
-                elif time_today_requested <= 10 and time_today_requested > 0:
+                elif 10 >= time_today_requested > 0:
                     date_so_requested_is_out_time = '15_10day'
 
                 # elif time_today_requested == 0:
@@ -387,29 +391,31 @@ class OrderTrack(models.Model):
                 so_all_qty = one.so_all_qty
                 so_no_sent_qty = one.so_no_sent_qty
                 if so_amount_total != 0:
-                    sent_amount_percent = so_amount_total != 0 and (so_amount_total - so_no_sent_amount_new) / so_amount_total * 100
+                    sent_amount_percent = so_amount_total != 0 and (
+                            so_amount_total - so_no_sent_amount_new) / so_amount_total * 100
                 else:
                     sent_amount_percent = so_all_qty != 0 and (so_all_qty - so_no_sent_qty) / so_all_qty * 100 or 0.0
                 one.sent_amount_percent = sent_amount_percent
             else:
                 one.sent_amount_percent = 0
 
-    error_state = fields.Boolean('是否有问题',compute=compute_error_state)
+    error_state = fields.Boolean('是否有问题', compute=compute_error_state)
 
-    order_track_transport = fields.Many2one('order.track','出运跟踪')
-    order_track_transport_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
-                                                   related='order_track_transport.order_track_new_order_state',store=True)
-    order_track_transport_is_date_out_in = fields.Boolean('进仓日是否已确认', related='order_track_transport.is_date_out_in', store=True)
-
+    order_track_transport = fields.Many2one('order.track', '出运跟踪')
+    order_track_transport_state = fields.Selection(
+        [('10_doing', '跟踪进行时候'), ('15_receivable_payment', '等待应收付完成'), ('20_done', '已完成')], '下单前状态',
+        related='order_track_transport.order_track_new_order_state', store=True)
+    order_track_transport_is_date_out_in = fields.Boolean('进仓日是否已确认', related='order_track_transport.is_date_out_in',
+                                                          store=True)
 
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('order.track'))
     category_ids = fields.Many2many(
         'order.track.category', 'order_track_category_rel', 'track_id', 'category_id',
         string='Tags', store=True)
 
-    order_track_new_order_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], u'下单前状态',
-                                                   default='10_doing') #compute=compute_order_track_state,
-
+    order_track_new_order_state = fields.Selection(
+        [('10_doing', '跟踪进行时候'), ('15_receivable_payment', '等待应收付完成'), ('20_done', '已完成')], u'下单前状态',
+        default='10_doing')  # compute=compute_order_track_state,
 
     sale_state_1 = fields.Selection(Sale_Selection, u'审批流程', compute=compure_sale_state_1, store=True)  # 费用审批流程
     planning_integrity = fields.Selection(
@@ -424,28 +430,25 @@ class OrderTrack(models.Model):
     type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type')
 
-    order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
-    order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number,help=u'已经计划的并且完成的数量')
-    order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number, help=u'已经计划的并且到期的数量')
-    order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number, help=u'已经到期的计划并且完成的数量')
-    order_track_time_out_finish_number = fields.Char('超时完成计划数',compute=compute_order_track_number, help=u'超时完成的数量')
-
-
+    order_track_plan_number = fields.Char('计划数', compute=compute_order_track_number)
+    order_track_finish_number = fields.Char('计划完成数', compute=compute_order_track_number, help=u'已经计划的并且完成的数量')
+    order_track_due_number = fields.Char('计划到期数', compute=compute_order_track_number, help=u'已经计划的并且到期的数量')
+    order_track_due_finish_number = fields.Char('到期计划完成数', compute=compute_order_track_number, help=u'已经到期的计划并且完成的数量')
+    order_track_time_out_finish_number = fields.Char('超时完成计划数', compute=compute_order_track_number, help=u'超时完成的数量')
 
     so_id = fields.Many2one('sale.order', '销售合同', ondelete='cascade')
-    so_po_return_state = fields.Selection([('un_return','未回传'),('part_return','部分回传'),('returned','已回传')],
-                                       '工厂回传状态',related='so_id.po_return_state',store=True)
-    partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id,store=True,readonly=1)
-    user_id = fields.Many2one('res.users','责任人',related='partner_id.user_id',store=True,readonly=1)
-    currency_id = fields.Many2one('res.currency','货币',related='so_id.currency_id',strore=True)
+    so_po_return_state = fields.Selection([('un_return', '未回传'), ('part_return', '部分回传'), ('returned', '已回传')],
+                                          '工厂回传状态', related='so_id.po_return_state', store=True)
+    partner_id = fields.Many2one('res.partner', '客户', compute=compute_partner_id, store=True, readonly=1)
+    user_id = fields.Many2one('res.users', '责任人', related='partner_id.user_id', store=True, readonly=1)
+    currency_id = fields.Many2one('res.currency', '货币', related='so_id.currency_id', strore=True)
 
-
-
-    so_amount_total = fields.Monetary('销售金额',currency_field='currency_id',compute=compute_so_cmount_total,store=True) #related='so_id.amount_total',
-    so_no_sent_amount_new= fields.Monetary('未发货金额',currency_field='currency_id', related='so_id.no_sent_amount_new',store=True)
+    so_amount_total = fields.Monetary('销售金额', currency_field='currency_id', compute=compute_so_cmount_total,
+                                      store=True)  # related='so_id.amount_total',
+    so_no_sent_amount_new = fields.Monetary('未发货金额', currency_field='currency_id', related='so_id.no_sent_amount_new',
+                                            store=True)
 
     sent_amount_percent = fields.Float('出运进度', compute=compute_so_amount, store=True)
-
 
     so_sent_qty = fields.Float('已出运数', compute=compute_so_qty, store=True)
 
@@ -468,11 +471,12 @@ class OrderTrack(models.Model):
         ('abnormal', u'异常'),
         ('verifying', u'待核销'),
         ('verification', u'核销完成'),
-    ], string='Status', readonly=True, copy=False, index=True, related='so_id.state',store=True)
+    ], string='Status', readonly=True, copy=False, index=True, related='so_id.state', store=True)
 
     tb_id = fields.Many2one('transport.bill', '出运合同', ondelete='cascade')
-    currency_id_tb = fields.Many2one('res.currency',related='tb_id.currency_id',store=True)
-    tb_org_sale_amount_new = fields.Monetary('出运金额',currency_field='currency_id_tb', related='tb_id.org_sale_amount_new' ,store=True)
+    currency_id_tb = fields.Many2one('res.currency', related='tb_id.currency_id', store=True)
+    tb_org_sale_amount_new = fields.Monetary('出运金额', currency_field='currency_id_tb',
+                                             related='tb_id.org_sale_amount_new', store=True)
     tb_purchase_invoice_ids = fields.One2many('account.invoice', 'order_track_id', '应付账单',
                                               domain=[('yjzy_type', '=', 'purchase')])
     purchase_back_invoice_currency_id = fields.Many2one('res.currency',
@@ -486,35 +490,36 @@ class OrderTrack(models.Model):
                                                related='tb_id.purchase_invoice_balance_new', store=True)
     back_tax_invoice_balance = fields.Monetary('主退税剩余金额', currency_field='purchase_back_invoice_currency_id',
                                                related='tb_id.back_tax_invoice_balance_new', store=True)
-    fzzc_back_tax_invoice_residual_total_new = fields.Monetary('费转增采退税合计剩余金额', currency_field='purchase_back_invoice_currency_id',
-                                               related='tb_id.fzzc_back_tax_invoice_residual_total_new', store=True)
-    zc_invoice_profile_residual_total_new = fields.Monetary('增采净剩余金额',
+    fzzc_back_tax_invoice_residual_total_new = fields.Monetary('费转增采退税合计剩余金额',
                                                                currency_field='purchase_back_invoice_currency_id',
-                                                               related='tb_id.zc_invoice_profile_residual_total_new',
+                                                               related='tb_id.fzzc_back_tax_invoice_residual_total_new',
                                                                store=True)
-
+    zc_invoice_profile_residual_total_new = fields.Monetary('增采净剩余金额',
+                                                            currency_field='purchase_back_invoice_currency_id',
+                                                            related='tb_id.zc_invoice_profile_residual_total_new',
+                                                            store=True)
 
     date_all_state = fields.Selection([('10_date_approving', u'日期审批中'),
                                        ('20_no_date_out_in', u'发货日期待填'),
                                        ('23_no_date_delivered', u'工厂发货日期待填'),
-                                       ('25_no_date_ship',u'船期待填'),
+                                       ('25_no_date_ship', u'船期待填'),
                                        ('27_no_date_finish', u'客户交单日期待填'),
                                        ('30_un_done', u'所有日期都已填未完成应收付款'),
                                        ('40_done', u'时间都已填未完成应收付款'),
                                        ('50_payable_done', u'应收付完成')
                                        ], '所有日期状态', related='tb_id.date_all_state', store=True)
-    second_state = fields.Selection([('09',u'...'),
-                                     ('10',u'正常待确认'),
-                                     ('20',u'异常待确认'),
-                                     ('30',u'收付均未清'),
-                                     ('40',u'已收未付清'),
-                                     ('50','已付未收清'),
-                                     ('60',u'正常待核销'),
-                                     ('70','应收付异常')],'二级状态', related='tb_id.second_state',)
+    second_state = fields.Selection([('09', u'...'),
+                                     ('10', u'正常待确认'),
+                                     ('20', u'异常待确认'),
+                                     ('30', u'收付均未清'),
+                                     ('40', u'已收未付清'),
+                                     ('50', '已付未收清'),
+                                     ('60', u'正常待核销'),
+                                     ('70', '应收付异常')], '二级状态', related='tb_id.second_state', )
 
     date_out_in = fields.Date('进仓日期', related='tb_id.date_out_in', store=True)
     plan_date_out_in = fields.Date('计划进仓日')
-    plan_date_out_in_error = fields.Boolean('进仓日是否超期',compute=compute_date_error)
+    plan_date_out_in_error = fields.Boolean('进仓日是否超期', compute=compute_date_error)
     plan_date_out_in_activity = fields.Many2one('mail.activity', '进仓日计划活动')
     is_date_out_in = fields.Boolean('进仓日是否已确认', related='tb_id.is_date_out_in', store=True)
     date_in = fields.Date('入库日期', related='tb_id.date_in', store=True)
@@ -525,10 +530,9 @@ class OrderTrack(models.Model):
     plan_date_ship_activity = fields.Many2one('mail.activity', '出运船计划活动')
     # activity_ids = fields.One2many('mail.activity','order_track_id','计划活动')
 
-    date_customer_finish = fields.Date('客户交单日期', related='tb_id.date_customer_finish',store=True)
+    date_customer_finish = fields.Date('客户交单日期', related='tb_id.date_customer_finish', store=True)
     plan_date_customer_finish = fields.Date('计划客户交单日', )
     plan_date_customer_finish_error = fields.Boolean('客户交单是否超期', compute=compute_date_error)
-
 
     plan_date_customer_finish_activity = fields.Many2one('mail.activity', '客户交单计划活动')
 
@@ -546,19 +550,17 @@ class OrderTrack(models.Model):
     date_so_contract = fields.Date('客户下单日期', related='so_id.contract_date', store=True)
     date_so_requested = fields.Datetime('客户交期', related='so_id.requested_date', store=True)
 
-
-
-    #14.0
-    date_so_requested_is_out_time = fields.Selection([('10_undue','未到期'),('15_10day','距离交期小于等于10天'),
-                                                      ('20_in_time','到期'),('30_out_time','已逾期'),
-                                                      ('40_in_out_time','到期及逾期')],u'客户交期是否逾期',
-                                                     compute=compute_date_so_requested_is_out_time,store=True)
+    # 14.0
+    date_so_requested_is_out_time = fields.Selection([('10_undue', '未到期'), ('15_10day', '距离交期小于等于10天'),
+                                                      ('20_in_time', '到期'), ('30_out_time', '已逾期'),
+                                                      ('40_in_out_time', '到期及逾期')], u'客户交期是否逾期',
+                                                     compute=compute_date_so_requested_is_out_time, store=True)
 
     time_contract_requested = fields.Integer('客户交期时限', compute=compute_time_contract_requested, store=True)
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)
-    date_so_requested_new = fields.Datetime('最新计划交期',track_visibility='onchange',)
+    date_so_requested_new = fields.Datetime('最新计划交期', track_visibility='onchange', )
 
-    @api.depends('date_so_requested_is_out_time','date_so_requested_new')
+    @api.depends('date_so_requested_is_out_time', 'date_so_requested_new')
     def compute_requested_new_state(self):
         for one in self:
             date_so_requested_is_out_time = one.date_so_requested_is_out_time
@@ -573,20 +575,21 @@ class OrderTrack(models.Model):
                     date_so_requested_new_1 = "%s" % (strptime(date_so_requested_new, '%Y-%m-%d 00:00:00'))  # akiny 参考
                     today_1 = "%s" % (strftime(today, '%Y-%m-%d 00:00:00'))  # akiny 参考
                     time_today_requested = (strptime(date_so_requested_new_1, DATETIME_FORMAT) - strptime(today_1,
-                                                                                                    DATETIME_FORMAT)).days  # akiny 参考
+                                                                                                          DATETIME_FORMAT)).days  # akiny 参考
                     print('time_today_requested_akiny', today_1, date_so_requested_new_1, time_today_requested)
-                    if time_today_requested > 0 :
+                    if time_today_requested > 0:
                         date_so_requested_new_state = '20'
 
                     else:
                         date_so_requested_new_state = '30'
                 one.date_so_requested_new_state = date_so_requested_new_state
 
+    date_so_requested_new_state = fields.Selection([('10', '未计划新交期'),
+                                                    ('20', '已计划新交期且未到期'),
+                                                    ('30', '已计划新交期且已到期'),
+                                                    ], 'requested_new_state', compute=compute_requested_new_state,
+                                                   store=True)
 
-    date_so_requested_new_state = fields.Selection([('10','未计划新交期'),
-                                                    ('20','已计划新交期且未到期'),
-                                                    ('30','已计划新交期且已到期'),
-                                                    ],'requested_new_state',compute=compute_requested_new_state,store=True)
     def create_date_so_requested_new(self):
         form_view = self.env.ref('yjzy_extend.order_track_form_purchase_order_date_so').id
         return ({
@@ -602,10 +605,9 @@ class OrderTrack(models.Model):
 
         })
 
-
     date_so_requested_change_date = fields.Date('交期更新日期')
 
-    #--------
+    # --------
 
     earliest_date_po_order = fields.Date('最早供应商下单时间', compute=compute_earliest_date_po_order, store=True)
     latest_date_po_planned = fields.Date('最迟供应商交单时间', compute=compute_latest_date_po_planned, store=True)
@@ -626,8 +628,8 @@ class OrderTrack(models.Model):
     comments_order_track = fields.Text('备注日志', track_visibility='onchange')
     comments_order_track_date = fields.Date('备注日期', track_visibility='onchange')
     comments_transport_track = fields.Text('备注日志', track_visibility='onchange')
-    comments_transport_track_date = fields.Date('备注日期',track_visibility='onchange')
-    can_delete = fields.Boolean('允许删除',default=False)
+    comments_transport_track_date = fields.Date('备注日期', track_visibility='onchange')
+    can_delete = fields.Boolean('允许删除', default=False)
 
     @api.multi
     def action_save_test(self):
@@ -640,7 +642,7 @@ class OrderTrack(models.Model):
     def _onchange_date_so_requested_new(self):
         self.date_so_requested_change_date = fields.date.today()
 
-    @api.onchange('date_out_in','date_ship','date_customer_finish')
+    @api.onchange('date_out_in', 'date_ship', 'date_customer_finish')
     def onchange_date_transport(self):
         date_out_in = self.date_out_in
         date_ship = self.date_ship
@@ -654,7 +656,6 @@ class OrderTrack(models.Model):
         if date_ship and date_customer_finish:
             if date_ship > date_customer_finish:
                 raise Warning('客户交单日期不小于出运船日期')
-
 
     def unlink(self):
         for one in self:
@@ -675,16 +676,15 @@ class OrderTrack(models.Model):
         if self.type == 'new_order_track':
             strptime = datetime.strptime
             for one in self.plan_check_ids:
-                if one.date_factory_return :
+                if one.date_factory_return:
                     if one.date_factory_return < self.time_sign_pi:
                         raise Warning('工厂回签时间不早于客户PI回签时间')
                     if one.date_factory_return < self.hegui_date:
                         raise Warning('工厂回签时间不早于合规审批时间')
-                    if strptime(one.date_factory_return, DF) > datetime.today()-relativedelta(hours=-8):
+                    if strptime(one.date_factory_return, DF) > datetime.today() - relativedelta(hours=-8):
                         raise Warning('工厂回签日期不可大于当日')
 
-
-    @api.onchange('time_receive_pi','time_sent_pi','time_sign_pi')
+    @api.onchange('time_receive_pi', 'time_sent_pi', 'time_sign_pi')
     def onchange_time_receive_pi(self):
         strptime = datetime.strptime
         print('time_akiiny', self.time_receive_pi, self.time_sent_pi)
@@ -697,9 +697,8 @@ class OrderTrack(models.Model):
         if self.time_sent_pi and self.time_sign_pi:
             if self.time_sent_pi > self.time_sign_pi:
                 raise Warning('填写的日期顺序不正确，请检查!')
-        if strptime(self.time_sign_pi, DF) > datetime.today()-relativedelta(hours=-8):
+        if strptime(self.time_sign_pi, DF) > datetime.today() - relativedelta(hours=-8):
             raise Warning('客户PI回签日期不可大于当日')
-
 
     # def write(self,vals):
     #     if self.time_receive_pi and self.time_sent_pi:
@@ -712,7 +711,6 @@ class OrderTrack(models.Model):
     #         if self.time_sent_pi > self.time_sign_pi:
     #             raise Warning('填写的日期顺序不正确，请检查!')
     #     return super(OrderTrack, self).write(vals)
-
 
     # @api.onchange('time_sign_pi')
     # def onchange_time_sign_pi(self):
@@ -763,7 +761,7 @@ class OrderTrack(models.Model):
                 'res_model_id': res_model_id.id,
                 'res_id': self.id,
                 'dd': plan_date,
-                'date_deadline':plan_date,
+                'date_deadline': plan_date,
                 'order_track_id': self.id,
                 'reminder_ids': [(6, 0, alarm_dic)],
             })
@@ -919,7 +917,7 @@ class OrderTrack(models.Model):
             'type': self.type,
         })
         form_view = self.env.ref('yjzy_extend.wizard_plan_check_form')
-        print('wzcomments_akiny',wzcomments)
+        print('wzcomments_akiny', wzcomments)
         return {
             'name': u'查看',
             'view_type': 'form',
@@ -929,7 +927,7 @@ class OrderTrack(models.Model):
             'views': [(form_view.id, 'form')],
             'res_id': wzcomments.id,
             'target': 'new',
-            'context':{'check_type':'order_track'}
+            'context': {'check_type': 'order_track'}
         }
 
     def compute_planning_integrity(self):
@@ -1196,15 +1194,12 @@ class OrderTrack(models.Model):
             'target': 'new'
         }
 
-
     # def line_order_track_transport(self):
     #     order_track_obj = self.env['order.track']
     #     order_track_order = order_track_obj.search([('type', '=', 'transport_track'), ('so_id', 'in', self.so_ids.ids)])
     #     tb_line_obj = self.env['transport.bill.line']
     #
     #     for one in self:
-
-
 
 
 class PlanCheck(models.Model):
@@ -1304,9 +1299,11 @@ class PlanCheck(models.Model):
             total_lines = len(one.plan_check_line)
             plan_number = len(one.plan_check_line.filtered(lambda x: x.date_deadline != False))
             finish_number = len(one.plan_check_line.filtered(lambda x: x.date_finish != False))
-            due_number = len(one.plan_check_line.filtered(lambda x: x.state in ['30_time_out_planning','40_finish','50_time_out_finish'] ))#已到期
-            finish_due_number = len(one.plan_check_line.filtered(lambda  x: x.state in ['40_finish','50_time_out_finish']))#已到期
-            time_out_finish_number = len(one.plan_check_line.filtered(lambda  x: x.state == '50_time_out_finish'))
+            due_number = len(one.plan_check_line.filtered(
+                lambda x: x.state in ['30_time_out_planning', '40_finish', '50_time_out_finish']))  # 已到期
+            finish_due_number = len(
+                one.plan_check_line.filtered(lambda x: x.state in ['40_finish', '50_time_out_finish']))  # 已到期
+            time_out_finish_number = len(one.plan_check_line.filtered(lambda x: x.state == '50_time_out_finish'))
 
             order_track_plan_number = '%s/%s' % (plan_number, total_lines)
             order_track_finish_number = '%s/%s' % (finish_number, plan_number)
@@ -1314,14 +1311,13 @@ class PlanCheck(models.Model):
             order_track_due_finish_number = '%s/%s' % (finish_due_number, due_number)
             order_time_out_finish_number = '%s' % (time_out_finish_number)
 
-
             one.order_track_plan_number = order_track_plan_number
             one.order_track_finish_number = order_track_finish_number
             one.order_track_due_number = order_track_due_number
             one.order_track_due_finish_number = order_track_due_finish_number
             one.order_track_time_out_finish_number = order_time_out_finish_number
 
-    @api.depends('supplier_delivery_date','order_track_id','order_track_id.approve_date')
+    @api.depends('supplier_delivery_date', 'order_track_id', 'order_track_id.approve_date')
     def compute_is_supplier_delivery_date_earlier_approve_date(self):
         for one in self:
             supplier_delivery_date = one.supplier_delivery_date
@@ -1334,28 +1330,29 @@ class PlanCheck(models.Model):
                     is_supplier_delivery_date_earlier_approve_date = False
             one.is_supplier_delivery_date_earlier_approve_date = is_supplier_delivery_date_earlier_approve_date
 
-            print('is_supplier_delivery_date_earlier_approve_date_akiny',one.is_supplier_delivery_date_earlier_approve_date)
+            print('is_supplier_delivery_date_earlier_approve_date_akiny',
+                  one.is_supplier_delivery_date_earlier_approve_date)
 
-    order_track_plan_number = fields.Char('计划数',compute=compute_order_track_number)
-    order_track_finish_number = fields.Char('计划完成数',compute=compute_order_track_number)
-    order_track_due_number = fields.Char('计划到期数',compute=compute_order_track_number)
-    order_track_due_finish_number = fields.Char('到期计划完成数',compute=compute_order_track_number)
-    order_track_time_out_finish_number = fields.Char('超时完成计划数',compute=compute_order_track_number)
+    order_track_plan_number = fields.Char('计划数', compute=compute_order_track_number)
+    order_track_finish_number = fields.Char('计划完成数', compute=compute_order_track_number)
+    order_track_due_number = fields.Char('计划到期数', compute=compute_order_track_number)
+    order_track_due_finish_number = fields.Char('到期计划完成数', compute=compute_order_track_number)
+    order_track_time_out_finish_number = fields.Char('超时完成计划数', compute=compute_order_track_number)
 
-    type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'),('transport_track', '出运单跟踪')],
+    type = fields.Selection([('new_order_track', '新订单下单前跟踪'), ('order_track', '订单跟踪'), ('transport_track', '出运单跟踪')],
                             'type', related='order_track_id.type')
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
     # plan_check_ids = fields.One2many('plan.check','so_id')
     so_id = fields.Many2one('sale.order', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', '采购合同', ondelete='cascade')
-    so_contract_code = fields.Char('销售合同号',related='so_id.contract_code',store=True)
-    po_contract_code = fields.Char('采购合同号',related='po_id.contract_code',store=True)
+    so_contract_code = fields.Char('销售合同号', related='so_id.contract_code', store=True)
+    po_contract_code = fields.Char('采购合同号', related='po_id.contract_code', store=True)
 
     date_factory_return = fields.Date('工厂回传时间', index=True, track_visibility='onchange',
                                       related='po_id.date_factory_return', store=True)  # todo 填写后，自动写入po
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
-    date_po_planned_new = fields.Datetime('最新工厂计划交期',track_visibility='onchange',)
+    date_po_planned_new = fields.Datetime('最新工厂计划交期', track_visibility='onchange', )
 
     date_po_planned_change_date = fields.Date('交期更新日期')
 
@@ -1371,14 +1368,14 @@ class PlanCheck(models.Model):
     tb_id = fields.Many2one('transport.bill', '出运合同')
     purchase_invoice_id = fields.Many2one('account.invoice', '采购账单')
 
-    supplier_delivery_date = fields.Date('工厂实际发货日期',related='purchase_invoice_id.supplier_delivery_date', store=True)
-    is_supplier_delivery_date_earlier_approve_date = fields.Boolean('工厂实际发货日期是否早于合规审批',compute=compute_is_supplier_delivery_date_earlier_approve_date,store=True)
-
-
-
+    supplier_delivery_date = fields.Date('工厂实际发货日期', related='purchase_invoice_id.supplier_delivery_date', store=True)
+    is_supplier_delivery_date_earlier_approve_date = fields.Boolean('工厂实际发货日期是否早于合规审批',
+                                                                    compute=compute_is_supplier_delivery_date_earlier_approve_date,
+                                                                    store=True)
 
     purchase_invoice_date_finish = fields.Date('供应商交单时间', related='purchase_invoice_id.date_finish', store=True)
-    is_purchase_invoice_finish = fields.Boolean('供应商是否交单',related='purchase_invoice_id.is_purchase_invoice_finish',store=True)
+    is_purchase_invoice_finish = fields.Boolean('供应商是否交单', related='purchase_invoice_id.is_purchase_invoice_finish',
+                                                store=True)
 
     company_id = fields.Many2one('res.company', '公司', compute=compute_company_id, store=True)
 
@@ -1415,8 +1412,7 @@ class PlanCheck(models.Model):
 
         })
 
-
-    #--14------
+    # --14------
     @api.depends('so_id', 'so_id.amount_total')
     def compute_so_cmount_total(self):
         for one in self:
@@ -1430,13 +1426,12 @@ class PlanCheck(models.Model):
             today = (datetime.today() - relativedelta(hours=-8)).strftime(
                 '%Y-%m-%d')
             if one.date_po_planned:
-                date_po_planned = one.date_po_planned # akiny 参考
-                today_1 =  today # akiny 参考
-                time_today_requested = (strptime(date_po_planned,DF) - strptime(today_1,DF)).days # akiny 参考
-
+                date_po_planned = one.date_po_planned  # akiny 参考
+                today_1 = today  # akiny 参考
+                time_today_requested = (strptime(date_po_planned, DF) - strptime(today_1, DF)).days  # akiny 参考
                 if time_today_requested > 10:
                     date_po_planned_is_out_time = '10_undue'
-                elif time_today_requested <= 10 and time_today_requested > 0:
+                elif 10 >= time_today_requested > 0:
                     date_po_planned_is_out_time = '15_10day'
 
                 # elif time_today_requested == 0:
@@ -1444,24 +1439,23 @@ class PlanCheck(models.Model):
                 else:
                     date_po_planned_is_out_time = '40_in_out_time'
                 one.date_po_planned_is_out_time = date_po_planned_is_out_time
-    date_po_planned_is_out_time = fields.Selection([('10_undue', '未到期'), ('15_10day', '距离交期小于等于10天'),
-                                                      ('20_in_time', '到期'), ('30_out_time', '已逾期'),
-                                                      ('40_in_out_time', '到期及逾期')], u'工厂交期是否逾期',
-                                                     compute=compute_date_po_planned_is_out_time, store=True)
 
+    date_po_planned_is_out_time = fields.Selection([('10_undue', '未到期'), ('15_10day', '距离交期小于等于10天'),
+                                                    ('20_in_time', '到期'), ('30_out_time', '已逾期'),
+                                                    ('40_in_out_time', '到期及逾期')], u'工厂交期是否逾期',
+                                                   compute=compute_date_po_planned_is_out_time, store=True)
 
     so_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
     company_currency_id = fields.Many2one('res.currency', default=lambda self: self.env.user.company_id.currency_id.id)
     so_po_return_state = fields.Selection([('un_return', '未回传'), ('part_return', '部分回传'), ('returned', '已回传')],
                                           '工厂回传状态', related='so_id.po_return_state', store=True)
-    so_amount_total = fields.Monetary('销售金额', currency_field='so_currency_id', compute=compute_so_cmount_total, store=True)
+    so_amount_total = fields.Monetary('销售金额', currency_field='so_currency_id', compute=compute_so_cmount_total,
+                                      store=True)
     order_track_id_state = fields.Selection(
         [('10_doing', '跟踪进行时候'), ('15_receivable_payment', '等待应收付完成'), ('20_done', '已完成')], '下单前状态',
         related='order_track_id.order_track_new_order_state', store=True)
 
-    is_supplier_delivery_date_done = fields.Boolean('工厂发货日期是否已填写',default=False)
-
-
+    is_supplier_delivery_date_done = fields.Boolean('工厂发货日期是否已填写', default=False)
 
     def confirm_supplier_delivered_date(self):
         for one in self:
@@ -1470,6 +1464,7 @@ class PlanCheck(models.Model):
                 one.purchase_invoice_id.date = one.supplier_delivery_date
                 one.purchase_invoice_id.date_invoice = one.supplier_delivery_date
                 one.is_supplier_delivery_date_done = True
+
     # @api.multi
     # def write(self, vals):
     #     res = super(PlanCheck, self).write(vals)
@@ -1491,14 +1486,15 @@ class PlanCheck(models.Model):
     #             self.sync_data2invoice()
     #         return res
 
-
-    @api.onchange('supplier_delivery_date','purchase_invoice_date_finish','order_track_id.date_ship')
+    @api.onchange('supplier_delivery_date', 'purchase_invoice_date_finish', 'order_track_id.date_ship')
     def onchange_supplier_delivery_date(self):
         strptime = datetime.strptime
-        print('supplier_delivery_date_akiny',self.supplier_delivery_date)
-        if self.supplier_delivery_date and strptime(self.supplier_delivery_date, DF) > datetime.today()-relativedelta(hours=-8):
+        print('supplier_delivery_date_akiny', self.supplier_delivery_date)
+        if self.supplier_delivery_date and strptime(self.supplier_delivery_date, DF) > datetime.today() - relativedelta(
+                hours=-8):
             raise Warning('工厂实际发货日不大于今天')
-        if self.purchase_invoice_date_finish and strptime(self.purchase_invoice_date_finish, DF) > datetime.today()-relativedelta(hours=-8):
+        if self.purchase_invoice_date_finish and strptime(self.purchase_invoice_date_finish,
+                                                          DF) > datetime.today() - relativedelta(hours=-8):
             raise Warning('供应商交单时间不大于今天')
         if self.supplier_delivery_date and self.purchase_invoice_date_finish:
             if strptime(self.supplier_delivery_date, DF) > strptime(self.purchase_invoice_date_finish, DF):
@@ -1522,8 +1518,6 @@ class PlanCheck(models.Model):
             'res_id': self.id,
             'target': 'new'
         }
-
-
 
     def compute_planning_integrity(self):
         for one in self:
@@ -1654,8 +1648,8 @@ class PlanCheckLine(models.Model):
     @api.depends('date_finish', 'date_deadline')
     def compute_state(self):
         strptime = datetime.strptime
-        now = datetime.now()-relativedelta(hours=-8)
-        print('now_akiny',now)
+        now = datetime.now() - relativedelta(hours=-8)
+        print('now_akiny', now)
         for one in self:
             if not one.date_deadline:
                 state = '10_un_planning'
@@ -1694,8 +1688,8 @@ class PlanCheckLine(models.Model):
         strptime = datetime.strptime
         for one in self:
             if one.date_deadline and not one.date_finish:
-                remaining_time = strptime(one.date_deadline, DF) - (datetime.today()-relativedelta(hours=-8))
-                one.remaining_time = remaining_time.days+1
+                remaining_time = strptime(one.date_deadline, DF) - (datetime.today() - relativedelta(hours=-8))
+                one.remaining_time = remaining_time.days + 1
             else:
                 one.remaining_time = -999
 
@@ -1703,33 +1697,32 @@ class PlanCheckLine(models.Model):
         for one in self:
             one.plan_check_line_att_count = len(one.plan_check_line_att)
 
-    @api.depends('po_id', 'po_id.date_planned',)
+    @api.depends('po_id', 'po_id.date_planned', )
     def compute_date_po_planned_order(self):
         for one in self:
             one.date_po_planned = one.po_id.date_planned
 
-
-
-
     display_name = fields.Char(u'显示名称', compute=compute_display_name)
     sequence = fields.Integer('Sequence', default=10)
     order_track_id = fields.Many2one('order.track', '计划跟踪', ondelete='cascade')
-    order_track_id_state = fields.Selection([('10_doing', '跟踪进行时候'),('15_receivable_payment','等待应收付完成'), ('20_done', '已完成')], '下单前状态',
-                                            related='order_track_id.order_track_new_order_state',store=True) #compute=compute_order_track_state,
+    order_track_id_state = fields.Selection(
+        [('10_doing', '跟踪进行时候'), ('15_receivable_payment', '等待应收付完成'), ('20_done', '已完成')], '下单前状态',
+        related='order_track_id.order_track_new_order_state', store=True)  # compute=compute_order_track_state,
 
     plan_check_id = fields.Many2one('plan.check', '计划检查', ondelete='cascade')
     po_id = fields.Many2one('purchase.order', related='plan_check_id.po_id', store=True)
-    supplier_id = fields.Many2one('res.partner',related='po_id.partner_id' ,string='供应商')
+    supplier_id = fields.Many2one('res.partner', related='po_id.partner_id', string='供应商')
     date_order = fields.Datetime('供应商下单时间', related='po_id.date_order', store=True)
     date_po_planned = fields.Date('工厂交期', compute=compute_date_po_planned_order, store=True)
 
-    po_contract_code = fields.Char('采购合同号',related='po_id.contract_code')
+    po_contract_code = fields.Char('采购合同号', related='po_id.contract_code')
     company_id = fields.Many2one('res.company', '公司', related='po_id.company_id')
     date_finish = fields.Date('检查点完成时间', )
     date_deadline = fields.Date('检查点计划时间', index=True, required=False, )
 
     state = fields.Selection(
-        [('10_un_planning', '未计划'), ('20_planning', '计划中'), ('30_time_out_planning', '已到期'),('35_advance_finish','提前完成'), ('40_finish', '正常完成'),
+        [('10_un_planning', '未计划'), ('20_planning', '计划中'), ('30_time_out_planning', '已到期'),
+         ('35_advance_finish', '提前完成'), ('40_finish', '正常完成'),
          ('50_time_out_finish', '超时完成')], '状态', default='10_un_planning',
         compute=compute_state, store=True)
     is_on_time = fields.Boolean('是否准时完成')
@@ -1737,17 +1730,15 @@ class PlanCheckLine(models.Model):
     # activity_date_deadline =  fields.Date('检查点计划时间', related='activity_id.date_deadline' )
     # activity_date_finish = fields.Date('检查点计划时间', related='activity_id.date_finish')
     activity_type_1_id = fields.Many2one('mail.activity.type', '检查类型')
-    activity_type_1_id_name = fields.Char('检查类型',related='activity_type_1_id.name',store=True)
-    activity_type_1_id_sequence = fields.Integer('Sequence', related='activity_type_1_id.sequence',store=True)
+    activity_type_1_id_name = fields.Char('检查类型', related='activity_type_1_id.name', store=True)
+    activity_type_1_id_sequence = fields.Integer('Sequence', related='activity_type_1_id.sequence', store=True)
     comments_line = fields.Text('工厂检查明细备注', track_visibility='onchange')
-    comments_line_date = fields.Date('工厂检查备注日期',track_visibility='onchange')
+    comments_line_date = fields.Date('工厂检查备注日期', track_visibility='onchange')
     remaining_time = fields.Integer('剩余时间', compute=compute_remaining_time, )
     attachment = fields.Many2many('ir.attachment', string='附件')
     plan_check_line_att = fields.One2many('order.track.attachment', 'plan_check_line_id',
                                           string='检查点附件')
     plan_check_line_att_count = fields.Integer('附件数量', compute=compute_plan_check_line_att_count)
-
-
 
     def open_self(self):
         form_view = self.env.ref('yjzy_extend.view_plan_check_line').id

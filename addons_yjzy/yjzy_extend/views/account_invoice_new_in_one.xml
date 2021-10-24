@@ -101,8 +101,21 @@
                                     context="{}" attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">
                                 <field string="额外账单" name="yjzy_invoice_count" widget="statinfo"/>
                             </button>
+                            <button type="object" name="open_account_reconcile_order" class="oe_stat_button"
+                                    icon="fa-truck" string="应收认领单"  attrs="{'invisible':[('type','!=','out_invoice')]}"
+                                    context="{}" >
+                            </button>
+                            <button type="object" name="open_account_reconcile_order" class="oe_stat_button"
+                                    icon="fa-truck" string="应付认领单"  attrs="{'invisible':[('type','!=','in_invoice')]}"
+                                    context="{}" >
+                            </button>
                             <field name="is_editable"  widget="boolean_toggle" groups="sales_team.group_manager"/>
                         </div>
+
+
+
+
+
                         <!--                        <div class="oe_button_box" name="button_box">-->
                         <!--                             <button type="object" name="open_other_payment_reconcile_order_ids" class="oe_stat_button" icon="fa-truck" context="{}"-->
                         <!--                                     attrs="{'invisible':[('yjzy_invoice_count','=',0)]}">-->

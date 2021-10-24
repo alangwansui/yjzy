@@ -324,7 +324,7 @@ class transport_bill(models.Model):
         other_cost = 0.0
         if self.company_id.is_current_date_rate:
             other_cost = self.fee_inner + self.fee_rmb1 + self.fee_rmb2 + (
-                        self.fee_outer + self.fee_export_insurance + self.fee_other) * current_date_rate
+                    self.fee_outer + self.fee_export_insurance + self.fee_other) * current_date_rate
         else:
             other_cost = sum([self.fee_inner, self.fee_rmb1, self.fee_rmb2,
                               self.outer_currency_id.compute(self.fee_outer, self.company_currency_id),
@@ -387,7 +387,7 @@ class transport_bill(models.Model):
     #         })
 
     @api.depends('line_ids', 'line_ids.plan_qty', 'current_date_rate', 'line_ids.org_currency_sale_amount',
-                 'purchase_invoice_total_new','stage_id','second_state','state',
+                 'purchase_invoice_total_new', 'stage_id', 'second_state', 'state',
                  'sale_invoice_total_new', 'line_ids.org_currency_sale_amount_origin', 'hsname_ids',
                  'hsname_ids.amount', 'hsname_ids.actual_amount', 'current_date_rate',
                  'hsname_ids.purchase_amount2', 'hsname_ids.purchase_amount', 'line_ids.purchase_cost_new')
@@ -444,7 +444,7 @@ class transport_bill(models.Model):
                     print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
             else:
                 org_sale_amount_new = line_ids and sum(x.org_currency_sale_amount for x in line_ids) or 0
-                org_sale_amount_new_origin =line_ids and sum(x.org_currency_sale_amount_origin for x in line_ids) or 0
+                org_sale_amount_new_origin = line_ids and sum(x.org_currency_sale_amount_origin for x in line_ids) or 0
                 org_sale_amount_new_discount = 0
                 org_real_sale_amount_new = org_sale_amount_new
                 org_hsname_actual_amount = org_sale_amount_new
@@ -591,7 +591,7 @@ class transport_bill(models.Model):
     #         one.date_all_state = date_all_state
 
     @api.depends('all_invoice_ids', 'all_invoice_ids.state', 'date_out_in', 'date_in', 'date_ship',
-                 'date_customer_finish','date_delivered_id_done')
+                 'date_customer_finish', 'date_delivered_id_done')
     def compute_date_all_state(self):
         for one in self:
             all_invoice_ids = one.all_invoice_ids
@@ -604,7 +604,7 @@ class transport_bill(models.Model):
                     date_all_state = '23_no_date_delivered'
                 elif one.date_ship == False and one.date_out_in != False and one.date_delivered_id_done != False:
                     date_all_state = '25_no_date_ship'
-                elif one.date_customer_finish == False and  one.date_ship != False and one.date_out_in != False and one.date_delivered_id_done != False:
+                elif one.date_customer_finish == False and one.date_ship != False and one.date_out_in != False and one.date_delivered_id_done != False:
                     date_all_state = '27_no_date_finish'
                 else:
                     # if one.date_out_in != False and one.date_ship != False and one.date_customer_finish != False and one.date_delivered_id_done == True:
@@ -708,7 +708,7 @@ class transport_bill(models.Model):
             sale_invoice_id = one.sale_invoice_id
             if not back_tax_invoice_id:
                 if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in (
-                'draft', 'cancel'):
+                        'draft', 'cancel'):
                     if all([x.state == 'paid' for x in line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid':
                         invoice_paid_state = 'a_paid'
                     else:
@@ -726,7 +726,7 @@ class transport_bill(models.Model):
                     one.invoice_paid_state = 'e'
             else:
                 if line_purchase_invoice_count > 0 and sale_invoice_id and sale_invoice_id.state not in (
-                'draft', 'cancel') and back_tax_invoice_id not in ('draft', 'cancel'):
+                        'draft', 'cancel') and back_tax_invoice_id not in ('draft', 'cancel'):
                     if all([x.state == 'paid' for x in
                             line_purchase_invoice_ids]) and sale_invoice_id.state == 'paid' and back_tax_invoice_id.state == 'paid':
                         invoice_paid_state = 'a_paid'
@@ -1041,11 +1041,9 @@ class transport_bill(models.Model):
                                                    ('done', u'已审核')], '供应商交单日审批状态', default='draft',
                                                   compute=compute_date_purchase_finish_state)
 
-    date_purchase_finish_is_done = fields.Boolean('供应商交单是否完成', compute=compute_date_purchase_finish_is_done,store = True)
+    date_purchase_finish_is_done = fields.Boolean('供应商交单是否完成', compute=compute_date_purchase_finish_is_done, store=True)
 
-
-
-    date_delivered_id_done = fields.Boolean('工厂发货日期日否完成', compute=compute_date_delivered_id_done,store=True)
+    date_delivered_id_done = fields.Boolean('工厂发货日期日否完成', compute=compute_date_delivered_id_done, store=True)
 
     date_all_state = fields.Selection([('10_date_approving', u'日期审批中'),
                                        ('20_no_date_out_in', u'出运日期待填'),
@@ -1094,20 +1092,22 @@ class transport_bill(models.Model):
     incoterm_code = fields.Char('贸易术语', related='incoterm.code', readonly=True)
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info)
 
-    org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all', track_visibility='always')
-    org_sale_amount_new_origin = fields.Monetary('原销售金额',  currency_field='sale_currency_id',
-                                                 compute=amount_all,store=True)  # 13ok
-    org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info)    # ok
-    org_sale_amount_new = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=amount_all,store=True)  # 13ok 这个是对line_ids的出运统计
+    org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all',
+                                                   track_visibility='always')
+    org_sale_amount_new_origin = fields.Monetary('原销售金额', currency_field='sale_currency_id',
+                                                 compute=amount_all, store=True)  # 13ok
+    org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info)  # ok
+    org_sale_amount_new = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=amount_all,
+                                          store=True)  # 13ok 这个是对line_ids的出运统计
 
     org_hsname_actual_amount = fields.Monetary('实际出运金额', currency_field='sale_currency_id',
-                                               compute=amount_all,store=True)  # 这个是对汇总后的实际出运金额的统计
-    org_real_sale_amount_new = fields.Monetary('原始出运金额',  currency_field='sale_currency_id',
-                                               compute=amount_all,store=True)  # 这个是对汇总后的原始出运金额的统计if
+                                               compute=amount_all, store=True)  # 这个是对汇总后的实际出运金额的统计
+    org_real_sale_amount_new = fields.Monetary('原始出运金额', currency_field='sale_currency_id',
+                                               compute=amount_all, store=True)  # 这个是对汇总后的原始出运金额的统计if
     hsname_actual_amount_cny = fields.Monetary('实际人名币销售金额', currency_field='third_currency_id', compute=amount_all)
     real_sale_amount_cny = fields.Monetary('原始人名币销售金额', currency_field='third_currency_id', compute=amount_all)  # 13ok
-    diff_real_sale_hsmame_actual_amount = fields.Monetary('出运账单和实际差额',  currency_field='sale_currency_id',
-                                                          compute=amount_all,store=True)  # 原始出运和实际出运的差额
+    diff_real_sale_hsmame_actual_amount = fields.Monetary('出运账单和实际差额', currency_field='sale_currency_id',
+                                                          compute=amount_all, store=True)  # 原始出运和实际出运的差额
 
     org_real_purchase_amount_new = fields.Monetary('原始采购金额', currency_field='third_currency_id', compute=amount_all,
                                                    store=True)  # 13ok
@@ -1270,7 +1270,7 @@ class transport_bill(models.Model):
     purchase_invoice_ids = fields.One2many('account.invoice', 'bill_id', '采购发票',
                                            domain=[('yjzy_type', '=', 'purchase')])
     purchase_invoice_ids_new = fields.One2many('account.invoice', 'bill_id', '采购发票_new',
-                                           domain=[('invoice_attribute_all_in_one', '=', '120')])
+                                               domain=[('invoice_attribute_all_in_one', '=', '120')])
 
     purchase_invoice_ids2 = fields.One2many('account.invoice', string='采购发票2',
                                             compute=compute_info)  # 顯示供應商的交單日期,这个以后再斟酌一下
@@ -2471,7 +2471,7 @@ class transport_bill(models.Model):
         print('===write need==', need)
         if need and date_out_in:
             if self.state not in (
-            'approve', 'confirmed', 'delivered', 'invoiced',  'finish_add_purchase', 'verifying', 'done'):
+                    'approve', 'confirmed', 'delivered', 'invoiced', 'finish_add_purchase', 'verifying', 'done'):
                 raise Warning('非执行中的出运单，不允许填写日期')
             else:
                 # 730 填写日期后，自动发货和生成账单，等待审批完成后过账

@@ -181,7 +181,7 @@ class sale_order(models.Model):
             "view_mode": 'tree,form',
             'res_model': 'purchase.order',
             'type': 'ir.actions.act_window',
-            'views':[(tree_view.id,'tree'),(form_view.id,'form')],
+            'views': [(tree_view.id, 'tree'), (form_view.id,'form')],
             'domain': [('id', '=', [x.id for x in self.po_ids])],
         }
 

@@ -348,6 +348,21 @@
                                 <field name="description_baoguan"/>
 
                             </page>
+                            <page string="出运销售合同">
+                                <field name="so_ids" readonly="1">
+                                    <tree>
+                                        <field name="contract_code" string="合同号"/>
+                                        <field name="amount_total" sum="Total Tax Included" widget="monetary" string="销售金额"/>
+                                        <field name="purchase_amount_total_new" string="采购金额" sum="小计"/>
+                                        <field name="no_sent_amount_new" string="未发货销售" sum="小计"/>
+                                        <field name="purchase_no_deliver_amount_new" string="未发货采购" sum="小计"/>
+                                        <field name="all_qty"/>
+                                        <field name="sent_qty"/>
+                                        <field name="no_sent_qty"/>
+
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="明细批次" attrs="{'readonly': [('locked','=',True)]}" name="pcmx" groups="base.group_system">
                                 <field name="tbl_lot_ids">
                                     <tree string="明细批次">
@@ -545,9 +560,7 @@
                                     <field name="qingguan_description"/>
                                 </group>
                             </page>
-                            <page string="销售订单" groups="base.group_system">
-                                <field name="so_ids"/>
-                            </page>
+
                             <page string="采购订单" groups="base.group_system">
                                 <field name="po_ids"/>
                             </page>
