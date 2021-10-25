@@ -386,6 +386,9 @@ class account_payment(models.Model):
         if default_sfk_type == 'reconcile_tuishui':
             journal_domain = [('code', '=', 'hxfy'), ('company_id', '=', self.env.user.company_id.id)]
             self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
+        if default_sfk_type == 'reconcile_rcskd':
+            journal_domain = [('code', '=', 'hxfy'), ('company_id', '=', self.env.user.company_id.id)]
+            self.journal_id = self.env['account.journal'].search(journal_domain, limit=1)
         print('============', journal_domain)
 
 
@@ -548,7 +551,7 @@ class account_payment(models.Model):
                 if rec.sfk_type == 'jiehui':
                     sequence_code = 'account.payment.jiehui'
 
-            #不重新计算明细
+            # 不重新计算明细
             if not rec.name:
                 rec.name = self.env['ir.sequence'].with_context(ir_sequence_date=rec.payment_date).next_by_code(sequence_code)
             if not rec.name and rec.payment_type != 'transfer':

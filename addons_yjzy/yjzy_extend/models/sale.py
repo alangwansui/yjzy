@@ -491,7 +491,6 @@ class sale_order(models.Model):
     sent_qty = fields.Float(u'已出运数量', compute=compute_no_sent_amount_new, store=True)
     all_qty = fields.Float(u'原始总数', compute=compute_no_sent_amount_new, store=True)
 
-
     purchase_no_deliver_amount = fields.Monetary('未发货的采购金额', currency_field='company_currency_id',compute=compute_info)
     purchase_no_deliver_amount_new = fields.Monetary('未发货的采购金额', currency_field='company_currency_id',compute='compute_purchase_no_deliver_amount_new',
                                                   store=True)

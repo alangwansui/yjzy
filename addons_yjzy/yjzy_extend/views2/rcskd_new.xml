@@ -40,6 +40,9 @@
                             attrs="{'invisible':[('state_1','not in',['50_posted']),('amount','!=','balance')]}" groups="akiny.akiny_res_group_chuna"/>
                     <button name="action_draft_new" class="oe_highlight" string="重置草稿" type="object"
                             attrs="{'invisible':[('state_1','not in',['80_refused'])]}"/>
+                    <button name="create_rcskd_reconcile" type="object" string="创建核销" groups="sales_team.group_manager"
+                            attrs="{'invisible':['|',('state_1','!=','50_posted'),('balance','=',0)]}"/>
+
                     <field name="state_1" widget="statusbar" statusbar_visible=" "/>
                 </header>
                 <header groups="base.group_system" invisible="context.get('is_open')">
@@ -183,6 +186,7 @@
                             <field name="balance" string="未认领金额" attrs="{'invisible':[('state_1','not in',['40_approve','50_posted','60_done'])]}"/>
                             <field name="payment_date" string="收款日期" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="company_id"/>
+                            <field name="move_name" attrs="{'invisible':['|', ('sfk_type', '!=', 'rcskd'), ('state', '!=', 'canceled')]}"/>
                             <field name="fault_comments"/>
 
                         </group>
@@ -403,6 +407,7 @@
 
                         <page string="管理页" groups="base.group_system">
                             <group>
+
                                 <field name="currency_id_name"/>
                                 <field name="sfk_type"/>
                                 <field name="gongsi_id"/>

@@ -554,7 +554,7 @@
                             <field name="po_id" readonly="1"/>
                             <field name="check_on_time" invisible="1"/>
                             <field name="tb_id" invisible="1"/>
-                            <field name="supplier_delivery_date"/>
+                            <field name="supplier_delivery_date" readonly="1"/>
                             <field name="comments" readonly="1"/>
                             <button name="open_wizard_comments" type="object" icon="fa-commenting-o"/>
                             <button name="open_planning_integrity" type="object" string="检查点计划登记"
@@ -564,7 +564,7 @@
                     <notebook colspan="1">
                         <page string="General Information" attrs="{'invisible':[('type','!=','order_track')]}">
                             <field name="plan_check_line">
-                                <tree>
+                                <tree create="false" delete="false">
                                     <field name="activity_type_1_id" readonly="1"/>
                                     <button name="open_activity_id_plan" class="akiny_text_right" type="object"
                                             icon="fa-archive" attrs="{'invisible':[('plan_check_id','=',False)]}"/>

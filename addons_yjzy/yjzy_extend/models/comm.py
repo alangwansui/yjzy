@@ -22,7 +22,7 @@ sfk_type = [
     ('reconcile_yingshou', u'应收核销'),
     ('reconcile_tuishui', u'退税核销'),
     ('reconcile_yingfu', u'应付核销'),
-
+    ('reconcile_rcskd', u'收款单核销'),
 ]
 
 invoice_attribute_all_in_one = [

@@ -718,10 +718,11 @@ class account_payment(models.Model):
 
     tba_id = fields.Many2one('transport.bill.account', u'出运报关金额')
     line_ids = fields.One2many('account.payment.item', 'payment_id', u'付款明细')
-    ###invoice_ids = fields.fk_jouMany2many('account.invoice', compute=compute_invoice_ids)
+    # invoice_ids = fields.fk_jouMany2many('account.invoice', compute=compute_invoice_ids)
     diff_account_id = fields.Many2one('account.account', u'差异科目')
     diff_amount = fields.Monetary(u'差异金额', currency_field='currency_id')
     yjzy_payment_id = fields.Many2one('account.payment', u'选择收款单')
+    rcskd_reconcile_payment_id = fields.Many2one('account.payment', u'日常收款单核销')
 
     # yjzy_advance_payment_id = fields.Many2one('account.payment', u'预收认领单')#给最后核销生成的payment作为核销参考
     yjzy_payment_currency_id = fields.Many2one('res.currency', related='yjzy_payment_id.currency_id')
@@ -763,7 +764,7 @@ class account_payment(models.Model):
 
 
 
-            # one.amount_payment_org_auto = amount_payment_org_auto
+    # one.amount_payment_org_auto = amount_payment_org_auto
     so_no_sent_amount_new = fields.Monetary('未发货销售金额', currency_field='so_id_currency_id',
                                             compute=compute_so_no_sent_amount_new,
                                             store=True)
@@ -782,7 +783,7 @@ class account_payment(models.Model):
     payment_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领和预付申请')
 
     payment_hexiao_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'核销申请单',
-                                         domain=[('sfk_type', 'in', ['reconcile_ysrld', 'reconcile_yfsqd'])])
+                                         domain=[('sfk_type', 'in', ['reconcile_ysrld', 'reconcile_yfsqd'])])# 预收预付的核销
     payment_hexiao_ids_count = fields.Integer('未完成预收认领和预付申请数量', compute=compute_payment_no_done_ids_count)
 
     payment_no_done_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'未完成预收认领和预付申请',
@@ -1781,9 +1782,8 @@ class account_payment(models.Model):
                 new_advance_payment_id = self.yjzy_payment_id.id
                 print('new_advance_payment_id_akiny', new_advance_payment_id)
             plan_invoice_id = self.invoice_log_id.id
-        if self.sfk_type in ['reconcile_ysrld', 'reconcile_yfsqd']:  # 1225
+        if self.sfk_type in ['reconcile_ysrld', 'reconcile_yfsqd', 'reconcile_rcskd']:  # 1225,1025
             new_advance_payment_id = self.yjzy_payment_id.id
-
         if self.sfk_type in ['reconcile_yingshou', 'reconcile_yingfu']:  # 1225
             plan_invoice_id = self.invoice_log_id.id
         res.update({
