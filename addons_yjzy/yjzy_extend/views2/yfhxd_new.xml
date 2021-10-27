@@ -649,7 +649,8 @@
                        groups="base.group_system"/>
                 <field name="amount_total" invisible="1"/>
                 <field name="currency_id" attrs="{}" invisible="1"/>
-                <field name="state"/>
+                <field name="state_1"/>
+                <field name="state" groups="base.group_system"/>
             </tree>
         </field>
     </record>

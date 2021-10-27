@@ -150,16 +150,22 @@ class res_partner(models.Model):
             one.payment_amount_total = payment_amount_total
 
     @api.depends('po_approve_ids', 'po_approve_ids.purchaser_date', 'po_approve_ids.amount_total',
-                 'po_approve_ids.state', 'po_approve_ids.no_deliver_amount_new')
+                 'po_approve_ids.state')
     def compute_po_amount_total(self):
         for one in self:
             po_approve_ids = one.po_approve_ids  # .filtered(lambda x: x.company_id  == self.env.user.company_id)
             po_amount_total = sum(x.amount_total for x in po_approve_ids)
-            po_no_sent_amount_total = sum(x.no_deliver_amount_new for x in po_approve_ids)
-            print('po_no_sent_amount_total', po_approve_ids, po_amount_total)
             one.po_amount_total = po_amount_total
-            one.po_no_sent_amount_total = po_no_sent_amount_total
+
             one.po_amount_total_no_store = po_amount_total
+
+    @api.depends('po_purchase_ids.no_deliver_amount_new', 'po_purchase_ids', 'po_purchase_ids.state',
+                 'po_purchase_ids.amount_total',)
+    def compute_po_no_sent_amount_total(self):
+        for one in self:
+            po_purchase_ids = one.po_purchase_ids
+            po_no_sent_amount_total = sum(x.no_deliver_amount_new for x in po_purchase_ids)
+            one.po_no_sent_amount_total = po_no_sent_amount_total
             one.po_no_sent_amount_total_no_store = po_no_sent_amount_total
 
     @api.depends('po_tb_line_ids', 'po_tb_line_ids.purchase_cost_new', 'po_tb_line_ids.bill_id.state')
@@ -228,7 +234,7 @@ class res_partner(models.Model):
                                              ('state', 'in',
                                               ['to approve', 'purchase'])])
     po_purchase_ids = fields.One2many('purchase.order', 'partner_id', '所有采购合同',
-                                      domain=[('state', 'in', ['purchase', 'to_approve'])])
+                                      domain=[('state', 'in', ['purchase', 'to approve'])])
     # 出运合同明细，先创建明细的供应商字段，来自批次号
     po_tb_line_ids = fields.One2many('transport.bill.line', 'supplier_id', '今年出运合同明细',
                                      domain=[('bill_id.approve_date', '!=', False),
@@ -239,9 +245,9 @@ class res_partner(models.Model):
                                                'done', 'paid'])])
 
     po_amount_total = fields.Float('今年审批完成采购金额', compute=compute_po_amount_total, store=True)
-    po_no_sent_amount_total = fields.Float('未发货余额', compute=compute_po_amount_total, store=True)
+    po_no_sent_amount_total = fields.Float('未发货余额', compute=compute_po_no_sent_amount_total, store=True)
     po_amount_total_no_store = fields.Float('今年审批完成采购金额', compute=compute_po_amount_total)
-    po_no_sent_amount_total_no_store = fields.Float('未发货余额', compute=compute_po_amount_total)
+    po_no_sent_amount_total_no_store = fields.Float('未发货余额', compute=compute_po_no_sent_amount_total)
     tb_approve_po_amount_total = fields.Float('今年审批完成出运采购金额', compute=compute_tb_approve_po_amount_total, store=True)
     tb_approve_po_amount_total_no_store = fields.Float('今年审批完成出运采购金额', compute=compute_tb_approve_po_amount_total)
     # 新增

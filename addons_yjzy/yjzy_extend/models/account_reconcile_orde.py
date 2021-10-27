@@ -871,7 +871,7 @@ class account_reconcile_order(models.Model):
                 'views': [(tree_view, 'tree'), (form_view, 'form')],
                 'target': 'new',
                 'type': 'ir.actions.act_window',
-                'domain': [('no_deliver_amount_new', '!=', 0), ('state', 'in', ['purchase', 'to_approve']),
+                'domain': [('no_deliver_amount_new', '!=', 0), ('state', 'in', ['purchase', 'to approve']),
                            ('partner_id', '=', self.partner_id.id)]
                 }
 
