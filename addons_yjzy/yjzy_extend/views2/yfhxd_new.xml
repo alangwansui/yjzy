@@ -28,7 +28,8 @@
                 <field name="amount_payment_can_approve_all" string="最新可申请应付款"
                        invisible="1"/><!--attrs="{'column_invisible':[('parent.state','=','done')]}"-->
                 <field name="amount_payment_org" string="付款金额" invisible="context.get('advance')" sum="小计"/>
-                 <field name="amount_advance_org_compute" string="预付认领金额" invisible="not context.get('advance')" sum="小计"/>
+                <field name="amount_advance_org_compute" string="预付认领金额" invisible="not context.get('advance')"
+                       sum="小计"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="state_1" string="状态" invisible="1" groups="base.group_system"/>
 
@@ -1108,6 +1109,18 @@
                                    attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
                                    ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
 
+                            <label name="supplier_advance_amount_hxd_line_approval" string="总未发货金额"
+                                   attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}"/>
+                            <div class="oe_row"
+                                 attrs="{'invisible':['|',('operation_wizard','not in',['10','30']),
+                                   ('invoice_attribute','in',['other_payment','expense_po','other_po'])]}">
+                                <button type="object" name="open_po_no_received" class="btn-xxs btn-link mb2"
+                                        target="new">
+                                    <field name="supplier_no_received_amount"/>
+                                </button>
+                            </div>
+
 
                         </group>
 
@@ -1155,8 +1168,8 @@
                             </field>
                             <label name="amount_total_org_new" string="本次申请金额"/>
                             <div class="oe_row">
-                                 <field name="amount_total_org_new" string="本次申请金额"
-                                   attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
+                                <field name="amount_total_org_new" string="本次申请金额"
+                                       attrs="{'invisible':[('operation_wizard','not in',['03','20'])]}"/>
 
                                 <span style="margin-left:2px">占原始比例：</span>
                                 <field name="amount_total_org_new_percent"/>
@@ -1168,7 +1181,7 @@
 
                             <!--    </div>-->
                         </group>
-<!--                        <group attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),('operation_wizard','not in',['03','20',25])]}">-->
+                        <!--                        <group attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),('operation_wizard','not in',['03','20',25])]}">-->
                         <group attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}">
                             <!--                                <div  colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03'])]}" style="width:100%">-->
                             <!--                            <span colspan="2" attrs="{'invisible':[('operation_wizard','not in',['03','20',25])]}"-->
@@ -1189,10 +1202,10 @@
                                     </tbody>
                                 </table>
                             </div>
-<!--                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1" -->
-<!--                                   attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),-->
-<!--                             ('operation_wizard','not in',['03','20',25])]}">-->
-            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1"
+                            <!--                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1" -->
+                            <!--                                   attrs="{'invisible':['|',('supplier_advance_payment_ids_count','=',0),-->
+                            <!--                             ('operation_wizard','not in',['03','20',25])]}">-->
+                            <field name="account_payment_state_ids" nolabel="1" mode="kanban" readonly="1"
                                    attrs="{'invisible':[
                              ('operation_wizard','not in',['03','20',25])]}">
 
