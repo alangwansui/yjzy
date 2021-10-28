@@ -34,6 +34,7 @@ class wizard_so2po(models.TransientModel):
             if partner.contract_suffix:
                 contract_code = '%s-%s' % (
                     source_so_id.contract_code, partner.contract_suffix)
+                print('contract_code_akiny',contract_code)
             else:
                 raise Warning('供应商合同后缀未填写！')
             po = po_obj.create({

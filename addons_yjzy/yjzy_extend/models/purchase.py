@@ -302,7 +302,6 @@ class purchase_order(models.Model):
     pre_advance_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance,
                                   help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
     pre_advance_before_delivery = fields.Monetary(u'计划发货前金额', currency_field='currency_id', compute=compute_pre_advance,
-
                                           help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
 
     pre_advance_line = fields.One2many('pre.advance', 'po_id')
