@@ -28,7 +28,8 @@ class wizard_so2po(models.TransientModel):
         pol_obj = self.env['purchase.order.line']
 
         dic_partner_lines = self._prepare_po_datas()
-        purchase_orders = po_obj.browse()
+        purchase_orders = po_obj.sudo().browse()
+        print('purchase_orders_akiny',purchase_orders)
         for partner, lines in dic_partner_lines.items():
 
             source_so_id = self.so_id
