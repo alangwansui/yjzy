@@ -188,7 +188,7 @@ class sale_order(models.Model):
 
     # 13ok
     @api.one
-    @api.depends('po_ids_new.no_deliver_amount_new', 'po_ids_new','state','state_1')
+    @api.depends('po_ids_new.no_deliver_amount_new', 'po_ids_new', 'state', 'stage_id')
     def compute_purchase_no_deliver_amount_new(self):
         for one in self:
             if one.state != 'verification':
@@ -1287,6 +1287,7 @@ class sale_order(models.Model):
         self.balance_new = 0
         for one in self.po_ids_new:
             one.stage_id = one._stage_find(domain=[('code', '=', '060')])
+            one.purchase_no_deliver_amount_new = 0
 
 
 

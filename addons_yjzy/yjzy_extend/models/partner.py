@@ -159,7 +159,7 @@ class res_partner(models.Model):
 
             one.po_amount_total_no_store = po_amount_total
 
-    @api.depends('po_purchase_ids.no_deliver_amount_new', 'po_purchase_ids', 'po_purchase_ids.state',
+    @api.depends('po_purchase_ids.no_deliver_amount_new', 'po_purchase_ids', 'po_purchase_ids.state', 'po_purchase_ids.stage_id',
                  'po_purchase_ids.amount_total',)
     def compute_po_no_sent_amount_total(self):
         for one in self:
