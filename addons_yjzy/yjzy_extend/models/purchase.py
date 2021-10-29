@@ -132,9 +132,9 @@ class purchase_order(models.Model):
             one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
             one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
-    @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id','source_so_id.stage_id',
+    @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id', 'source_so_id.stage_id',
                  'order_line.product_qty', 'order_line', 'order_line.sol_id.price_total', 'order_line.sol_id',
-                 'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit','stage_id')
+                 'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit', 'so_id_state_1')
     def compute_no_deliver_amount(self):
         for one in self:
             if one.so_id_state_1 and one.so_id_state_1 not in ['draft','cancel','refused','submit','sales_approve','manager_approval']:
@@ -230,7 +230,7 @@ class purchase_order(models.Model):
         'purchase.order.stage',
         default=_default_purchase_order_stage, copy=False)
 
-    state_1 = fields.Selection(Purchase_Selection, u'审批流程', default='draft', index=True, related='stage_id.state', store=True,
+    state_1 = fields.Selection(Purchase_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
                                track_visibility='onchange')  # 费用审批流程
 
     balance = fields.Monetary(u'预付余额', compute=compute_info, currency_field='yjzy_currency_id')
