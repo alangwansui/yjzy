@@ -502,7 +502,7 @@ class account_reconcile_order(models.Model):
                 one.invoice_attribute_all_in_one = invoice_attribute_all_in_one
                 one.payment_log_ids = invoice_id.payment_log_ids
 
-    @api.depends('partner_id', 'partner_id.po_purchase_ids')
+    @api.depends('partner_id', 'partner_id.po_purchase_ids', 'po_purchase_ids.no_deliver_amount_new')
     def compute_supplier_no_received_amount(self):
         for one in self:
             po_purchase_ids = one.partner_id.po_purchase_ids.filtered(
