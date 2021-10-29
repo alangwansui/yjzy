@@ -16,7 +16,8 @@ class wizard_so2po(models.TransientModel):
             # 采购数 + 总预留数 <= 销售数
             if line.qty + line.sol_id.qty_pre_all > line.sol_id.product_uom_qty:
                 raise Warning('产品%s 采购数%s + 总预留数%s  超过了 销售数%s' %
-                              (line.product_id.default_code, line.qty, line.sol_id.qty_pre_all, line.sol_id.product_uom_qty))
+                              (line.product_id.default_code, line.qty, line.sol_id.qty_pre_all,
+                               line.sol_id.product_uom_qty))
             if not line.supplier_id:
                 raise Warning(u'供应商必填')
 
@@ -34,7 +35,7 @@ class wizard_so2po(models.TransientModel):
             if partner.contract_suffix:
                 contract_code = '%s-%s' % (
                     source_so_id.contract_code, partner.contract_suffix)
-                print('contract_code_akiny',contract_code)
+                print('contract_code_akiny', contract_code)
             else:
                 raise Warning('供应商合同后缀未填写！')
             po = po_obj.create({
@@ -63,7 +64,9 @@ class wizard_so2po(models.TransientModel):
             po.onchange_partner_id()
             po.create_lots()
             po.action_sale_reserve()
+            print('po_akiny', po)
             purchase_orders |= po
+            print('purchase_orders_akiny', purchase_orders)
 
         form_view = self.env.ref('yjzy_extend.new_purchase_order_from')
         tree_view = self.env.ref('yjzy_extend.new_purchase_order_tree')
