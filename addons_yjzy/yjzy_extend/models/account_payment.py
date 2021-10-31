@@ -2889,7 +2889,7 @@ class Pre_Advance(models.Model):
     tbl_ids = fields.One2many('tb.po.line', 'pre_advance_id', u'出运采购合并')
 
     @api.depends('pre_advance_step')
-    def pre_advance_step_selection(self):
+    def compute_pre_advance_step_selection(self):
         for one in self:
             pre_advance_step = one.pre_advance_step
             if pre_advance_step == 1:

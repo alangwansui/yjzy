@@ -1740,11 +1740,11 @@ class account_reconcile_order(models.Model):
         if self.sfk_type == 'yshxd':
             # if self.state_1 not in ['draft','manager_approval', 'manager_approval_yshxd','draft_yshxd','account_approval_yshxd', 'manager_approval_all']:
             #     raise Warning('非可审批状态，不允许审批！')
-            if self.invoice_attribute_all_in_one == '640':
-                self.back_tax_declaration_id.back_tax_all_in_one_invoice_id.action_invoice_open()
-                self.back_tax_declaration_id.out_refund_invoice_id.action_invoice_open()
-                for one in self.back_tax_declaration_id.btd_line_ids:
-                    one.invoice_id.back_tax_assign_outstanding_credit()
+            # if self.invoice_attribute_all_in_one == '640':
+            #     # self.back_tax_declaration_id.back_tax_all_in_one_invoice_id.action_invoice_open()
+            #     # self.back_tax_declaration_id.out_refund_invoice_id.action_invoice_open()
+            #     # for one in self.back_tax_declaration_id.btd_line_ids:
+            #     #     one.invoice_id.back_tax_assign_outstanding_credit()
             print('sfk_type_____111', self.sfk_type)
             if not self.yjzy_payment_id and self.hxd_type_new in ['20', '25']:
                 raise Warning('没有对应的收款单，请检查！')
