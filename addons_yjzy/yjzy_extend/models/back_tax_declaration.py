@@ -616,7 +616,6 @@ class DeclareDeclaration(models.Model):
             })]
         })
         self.out_refund_invoice_id = out_refund_invoice
-
         # create_back_tax_all_in_one_invoice
         invoice_tenyale_name = 'tenyale_invoice'
         tenyale_name = self.env['ir.sequence'].next_by_code('account.invoice.%s' % invoice_tenyale_name)
@@ -647,14 +646,16 @@ class DeclareDeclaration(models.Model):
             })]
         })
         self.back_tax_all_in_one_invoice_id = back_tax_all_in_one_invoice
+
         back_tax_all_in_one_invoice.back_tax_declaration_out_refund_invoice_id = out_refund_invoice
-        out_refund_invoice.action_invoice_open()    #认领的时候过账
+
+        # out_refund_invoice.action_invoice_open()    #认领的时候过账
         # line_ids = self.btd_line_ids.filtered(lambda x: x.invoice_residual_total > 0)
         for one in self.btd_line_ids:
             one.back_tax_all_in_one_invoice = back_tax_all_in_one_invoice
             one.invoice_id.yjzy_invoice_id = out_refund_invoice
-            one.invoice_id.back_tax_assign_outstanding_credit() #认领的时候过账
-        back_tax_all_in_one_invoice.action_invoice_open()
+            # one.invoice_id.back_tax_assign_outstanding_credit() #认领的时候过账
+
 
             # 730 创建后直接过账
 
