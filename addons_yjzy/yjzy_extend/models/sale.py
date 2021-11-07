@@ -167,10 +167,10 @@ class sale_order(models.Model):
     @api.depends('po_ids_new.amount_total', 'po_ids_new')
     def compute_purchase_amount_total_new(self):
         for one in self:
-            if one.state != 'verification':
-                print('total', one)
-                purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
-                one.purchase_amount_total_new = purchase_amount_total
+
+            print('total', one)
+            purchase_amount_total = sum(one.po_ids_new.mapped('amount_total'))
+            one.purchase_amount_total_new = purchase_amount_total
 
     # 13ok
     @api.depends('order_line.qty_delivered','order_line.product_uom_qty','order_line')
