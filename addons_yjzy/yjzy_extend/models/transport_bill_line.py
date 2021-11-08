@@ -148,7 +148,7 @@ class transport_bill_line(models.Model):
     name = fields.Char(u'说明', compute=compute_name, store=True)
     bill_id = fields.Many2one('transport.bill', u'发运单', ondelete='cascade', required=True)
     include_tax = fields.Boolean(related='bill_id.include_tax')
-    state = fields.Selection(related='bill_id.state')
+    state = fields.Selection(related='bill_id.state', store=True)
     sol_id = fields.Many2one('sale.order.line', u'销售明细', )
     po_id = fields.Many2one('purchase.order', related='sol_id.po_id')
     # rest_tb_qty = fields.Float(related='sol_id.rest_tb_qty')
