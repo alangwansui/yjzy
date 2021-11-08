@@ -1080,17 +1080,17 @@ class transport_bill(models.Model):
     org_sale_amount = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=compute_info)
 
     org_sale_amount_new_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='amount_all',
-                                                   track_visibility='always')
+                                                   track_visibility='always',)
     org_sale_amount_new_origin = fields.Monetary('原销售金额', currency_field='sale_currency_id',
-                                                 compute=amount_all, store=True)  # 13ok
+                                                 compute=amount_all, store=True,track_visibility='onchange')  # 13ok
     org_real_sale_amount = fields.Monetary('实际销售金额', currency_field='sale_currency_id', compute=compute_info)  # ok
-    org_sale_amount_new = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=amount_all,
+    org_sale_amount_new = fields.Monetary('销售金额', currency_field='sale_currency_id', compute=amount_all, track_visibility='onchange',
                                           store=True)  # 13ok 这个是对line_ids的出运统计
 
     org_hsname_actual_amount = fields.Monetary('实际出运金额', currency_field='sale_currency_id',
-                                               compute=amount_all, store=True)  # 这个是对汇总后的实际出运金额的统计
+                                               compute=amount_all, store=True, track_visibility='onchange')  # 这个是对汇总后的实际出运金额的统计
     org_real_sale_amount_new = fields.Monetary('原始出运金额', currency_field='sale_currency_id',
-                                               compute=amount_all, store=True)  # 这个是对汇总后的原始出运金额的统计if
+                                               compute=amount_all, store=True, track_visibility='onchange')  # 这个是对汇总后的原始出运金额的统计if
     hsname_actual_amount_cny = fields.Monetary('实际人名币销售金额', currency_field='third_currency_id', compute=amount_all)
     real_sale_amount_cny = fields.Monetary('原始人名币销售金额', currency_field='third_currency_id', compute=amount_all)  # 13ok
     diff_real_sale_hsmame_actual_amount = fields.Monetary('出运账单和实际差额', currency_field='sale_currency_id',
