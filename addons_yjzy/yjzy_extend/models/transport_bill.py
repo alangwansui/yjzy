@@ -405,55 +405,56 @@ class transport_bill(models.Model):
             org_purchase_amount_new = sum(x.purchase_cost_new for x in line_ids)
             org_sale_amount_new_origin = sum(x.org_currency_sale_amount_origin for x in line_ids)
             org_sale_amount_new_discount = org_sale_amount_new_origin - org_sale_amount_new
-            if hsname_ids:
-                org_real_sale_amount_new = sum([x.amount for x in hsname_ids])
-                org_hsname_actual_amount = sum([x.actual_amount for x in hsname_ids])
-                diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
+            if line_ids:
+                if hsname_ids:
+                    org_real_sale_amount_new = sum([x.amount for x in hsname_ids])
+                    org_hsname_actual_amount = sum([x.actual_amount for x in hsname_ids])
+                    diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
 
-                org_real_purchase_amount_new = sum([x.purchase_amount for x in hsname_ids])
-                purchase_hsname_actual_cost_total = sum(x.purchase_amount2 for x in hsname_ids)
-                diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
-                if one.company_id.is_current_date_rate:
-                    real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
-                    hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
+                    org_real_purchase_amount_new = sum([x.purchase_amount for x in hsname_ids])
+                    purchase_hsname_actual_cost_total = sum(x.purchase_amount2 for x in hsname_ids)
+                    diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
+                    if one.company_id.is_current_date_rate:
+                        real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
+                        hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
+                    else:
+                        real_sale_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
+                            org_real_sale_amount_new,
+                            one.third_currency_id) or 0
+                        hsname_actual_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
+                            org_hsname_actual_amount,
+                            one.third_currency_id) or 0
                 else:
-                    real_sale_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
-                        org_real_sale_amount_new,
-                        one.third_currency_id) or 0
-                    hsname_actual_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
-                        org_hsname_actual_amount,
-                        one.third_currency_id) or 0
-            else:
-                org_real_sale_amount_new = org_sale_amount_new
-                org_hsname_actual_amount = org_sale_amount_new
-                diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
-                org_real_purchase_amount_new = org_purchase_amount_new
-                purchase_hsname_actual_cost_total = org_purchase_amount_new
-                diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
-                if one.company_id.is_current_date_rate:
-                    real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
-                    hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
-                else:
-                    real_sale_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
-                        org_real_sale_amount_new,
-                        one.third_currency_id) or 0
-                    hsname_actual_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
-                        org_hsname_actual_amount,
-                        one.third_currency_id) or 0
-                print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
+                    org_real_sale_amount_new = org_sale_amount_new
+                    org_hsname_actual_amount = org_sale_amount_new
+                    diff_real_sale_hsmame_actual_amount = sale_invoice_total_new - org_hsname_actual_amount
+                    org_real_purchase_amount_new = org_purchase_amount_new
+                    purchase_hsname_actual_cost_total = org_purchase_amount_new
+                    diff_real_purchase_hsname_actual_amount = purchase_invoice_total_new - purchase_hsname_actual_cost_total
+                    if one.company_id.is_current_date_rate:
+                        real_sale_amount_cny = org_real_sale_amount_new * current_date_rate
+                        hsname_actual_amount_cny = org_hsname_actual_amount * current_date_rate
+                    else:
+                        real_sale_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
+                            org_real_sale_amount_new,
+                            one.third_currency_id) or 0
+                        hsname_actual_amount_cny = one.third_currency_id and one.sale_currency_id.compute(
+                            org_hsname_actual_amount,
+                            one.third_currency_id) or 0
+                    print('diff_real_sale_hsmame_actual_amount_akiny', diff_real_sale_hsmame_actual_amount)
 
-            one.diff_real_sale_hsmame_actual_amount = diff_real_sale_hsmame_actual_amount
-            one.org_sale_amount_new_origin = org_sale_amount_new_origin
-            one.org_sale_amount_new = org_sale_amount_new
-            one.org_hsname_actual_amount = org_hsname_actual_amount
-            one.org_real_sale_amount_new = org_real_sale_amount_new
-            one.real_sale_amount_cny = real_sale_amount_cny
-            one.hsname_actual_amount_cny = hsname_actual_amount_cny
-            one.org_sale_amount_new_discount = org_sale_amount_new_discount
+                one.diff_real_sale_hsmame_actual_amount = diff_real_sale_hsmame_actual_amount
+                one.org_sale_amount_new_origin = org_sale_amount_new_origin
+                one.org_sale_amount_new = org_sale_amount_new
+                one.org_hsname_actual_amount = org_hsname_actual_amount
+                one.org_real_sale_amount_new = org_real_sale_amount_new
+                one.real_sale_amount_cny = real_sale_amount_cny
+                one.hsname_actual_amount_cny = hsname_actual_amount_cny
+                one.org_sale_amount_new_discount = org_sale_amount_new_discount
 
-            one.org_real_purchase_amount_new = org_real_purchase_amount_new
-            one.purchase_hsname_actual_cost_total = purchase_hsname_actual_cost_total
-            one.diff_real_purchase_hsname_actual_amount = diff_real_purchase_hsname_actual_amount
+                one.org_real_purchase_amount_new = org_real_purchase_amount_new
+                one.purchase_hsname_actual_cost_total = purchase_hsname_actual_cost_total
+                one.diff_real_purchase_hsname_actual_amount = diff_real_purchase_hsname_actual_amount
 
     @api.depends('line_ids.plan_qty', 'line_ids', 'current_date_rate', 'state', 'fee_inner', 'fee_rmb1', 'fee_rmb2',
                  'fee_outer')
