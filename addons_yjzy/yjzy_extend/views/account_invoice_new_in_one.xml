@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <form string="应收账单" class="o_invoice_form" create="false">
                     <header groups="account.group_account_manager">
-                        <button name="stage_action_pending" type="object" string="进入待处理" attrs="{'invisible':[('state_1','!=','done')]}"/>
+                        <button name="stage_action_pending" type="object" string="进入待处理" attrs="{'invisible':[('state_1','!=','draft')]}"/>
                         <button name="stage_action_back_pending" type="object" string="返回执行中" attrs="{'invisible':[('state_1','!=','invoice_pending')]}"/>
 
                         <button name="action_create_yfhxd" context="{'invoice_attribute':invoice_attribute}"

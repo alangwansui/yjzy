@@ -5,6 +5,7 @@
         <record model="ir.ui.view" id="view_hr_expense_new_form">
             <field name="name">hr.expense.form</field>
             <field name="model">hr.expense</field>
+            <field name="priority" eval="1"/>
             <field name="arch" type="xml">
                 <form string="Expenses" class="o_expense_form" delete="false" edit="false" create="false">
                     <header> <!--invisible="context.get('expense_adding_line')"-->
@@ -1578,14 +1579,14 @@
                                        attrs="{'invisible':[('tb_po_invoice_ids_count','=',0)],'readonly':[('state_1','not in',['account_approval'])]}"
                                        options="{'open_view': True}" context="{'open_expense':1}"/>
                                 <field name="document_number"
-                                       attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"/>
+                                       attrs="{'readonly': [('state','not in',['submit','draft']),('is_editable','=',False)]}"/>
                                 <field name="include_tax" attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="payment_mode" invisible="1" readonly="1"/>
                                 <field name="currency_id" options="{'no_create':true,'no_open':1}"
                                        attrs="{'readonly':[('state','not in',['submit','draft'])]}"/>
                                 <field name="responsible_id" invisible="1"/>
                                 <field name="bank_id" string="对方收款账号*" options="{'can_create':True}"
-                                       attrs="{'readonly': [('state','in',['approve','post','done']),('is_editable','=',False)]}"
+                                       attrs="{'readonly': [('state','not in',['submit','draft']),('is_editable','=',False)]}"
                                        domain="['|',('create_uid','=',uid),('partner_id.supplier','=',True)]"
                                        context="{'form_view_ref':'base.view_partner_bank_form','default_bank_type':'personal'}"
                                        required="1"/>
