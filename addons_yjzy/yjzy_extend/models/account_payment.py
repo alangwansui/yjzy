@@ -554,8 +554,18 @@ class account_payment(models.Model):
                         payment_apply_all_in_one = '130'
                     else:
                         payment_apply_all_in_one = '140'
+                elif one.yshx_ids and not one.fybg_ids:
+                    if one.yshx_ids[0].invoice_attribute_all_in_one == '120':
+                        payment_apply_all_in_one = '110'
+                    elif one.yshx_ids[0].invoice_attribute_all_in_one == '220':
+                        payment_apply_all_in_one = '120'
+                    elif one.yshx_ids[0].invoice_attribute_all_in_one == '320':
+                        payment_apply_all_in_one = '130'
+                    else:
+                        payment_apply_all_in_one = '140'
                 elif one.fybg_ids and not one.yshx_ids:
                     payment_apply_all_in_one = '150'
+
                 else:
                     payment_apply_all_in_one = '160'
             else:
