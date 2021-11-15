@@ -562,7 +562,7 @@ class account_payment(models.Model):
                 payment_apply_all_in_one = '170'
             one.rcfkd_all_in_one = payment_apply_all_in_one
 
-    rcfkd_all_in_one = fields.Selection(rcfkd_all_in_one, u'付款申请属性', compute=compute_rcfkd_all_in_one)
+    rcfkd_all_in_one = fields.Selection(rcfkd_all_in_one, u'付款申请属性', compute=compute_rcfkd_all_in_one, store=True)
 
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one', compute='compute_all_in_one',store=True)
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
