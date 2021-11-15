@@ -7,6 +7,7 @@ from .comm import sfk_type, invoice_attribute_all_in_one
 from odoo.addons import decimal_precision as dp
 from datetime import datetime, timedelta
 from odoo.tools import float_is_zero, float_compare
+from .comm import sfk_type, rcfkd_all_in_one
 
 Option_Add = [
     ('advance', u'预收付'),
@@ -183,14 +184,14 @@ class account_payment(models.Model):
                 print('hexiao_payment_ids_akiny', hexiao_payment_ids)
 
                 advance_balance_total = one.amount - advance_total - advance_total_2
-                print('advance_balance_total_akiny',advance_balance_total)
-                if float_compare(advance_balance_total,0.00,precision_digits=2) == 0 and one.state_1 == '50_posted':
-                # if advance_balance_total == 0 and one.state_1 == '50_posted':
+                print('advance_balance_total_akiny', advance_balance_total)
+                if float_compare(advance_balance_total, 0.00, precision_digits=2) == 0 and one.state_1 == '50_posted':
+                    # if advance_balance_total == 0 and one.state_1 == '50_posted':
                     one.state_1 = '60_done'
                     # one.test_reconcile()
                 print('advance_balance_total_akiny', advance_balance_total)
-                if float_compare(advance_balance_total,0.00,precision_digits=2) != 0 and one.state_1 == '60_done':
-                # if advance_balance_total != 0 and one.state_1 == '60_done':
+                if float_compare(advance_balance_total, 0.00, precision_digits=2) != 0 and one.state_1 == '60_done':
+                    # if advance_balance_total != 0 and one.state_1 == '60_done':
                     one.state_1 = '50_posted'
                     # one.write({'state': 'reconciled'})
                 one.advance_hexiao_total = advance_total_2
@@ -498,7 +499,7 @@ class account_payment(models.Model):
             one.can_approve_amount = can_approve_amount
             # one.amount_payment_org_auto = amount_payment_org_auto
 
-    @api.depends('so_id','so_id.no_sent_amount_new')
+    @api.depends('so_id', 'so_id.no_sent_amount_new')
     def compute_so_no_sent_amount_new(self):
         for one in self:
             so_id = one.so_id
@@ -517,7 +518,6 @@ class account_payment(models.Model):
                                          store=True)
     can_approve_amount = fields.Monetary('可申请金额', currency_field='po_id_currency_id', compute=compute_delivery_amount)
     # amount_payment_org_auto = fields.Monetary('支付总金额',currency_field='po_id_currency_id', compute=compute_delivery_amount)
-
 
     reconcile_type = fields.Selection([
         ('03_advance_in', u'预收生成'),
@@ -540,6 +540,29 @@ class account_payment(models.Model):
         # ('620_reconcile_zjcgtshx', u'增加采购退税核销'),
         # ('60_reconcile_zjcghx',u'主账单应收')
     ], '认领方式')
+
+    @api.depends('yshx_ids', 'fybg_ids', 'yfsqd_ids')
+    def compute_rcfkd_all_in_one(self):
+        for one in self:
+            if one.sfk_type == 'rcfkd':
+                if one.yshx_ids and one.fybg_ids:
+                    if one.yshx_ids[0].invoice_attribute_all_in_one == '120':
+                        payment_apply_all_in_one = '110'
+                    elif one.yshx_ids[0].invoice_attribute_all_in_one == '220':
+                        payment_apply_all_in_one = '120'
+                    elif one.yshx_ids[0].invoice_attribute_all_in_one == '320':
+                        payment_apply_all_in_one = '130'
+                    else:
+                        payment_apply_all_in_one = '140'
+                elif one.fybg_ids and not one.yshx_ids:
+                    payment_apply_all_in_one = '150'
+                else:
+                    payment_apply_all_in_one = '160'
+            else:
+                payment_apply_all_in_one = '170'
+            one.rcfkd_all_in_one = payment_apply_all_in_one
+
+    rcfkd_all_in_one = fields.Selection(rcfkd_all_in_one, u'付款申请属性', compute=compute_rcfkd_all_in_one)
 
     # invoice_attribute_all_in_one = fields.Char('账单属性all_in_one', compute='compute_all_in_one',store=True)
     invoice_attribute_all_in_one = fields.Selection(invoice_attribute_all_in_one, u'账单属性all_in_one',
@@ -762,8 +785,6 @@ class account_payment(models.Model):
                                                related='partner_id.property_payment_term_id')
     sale_payment_term_id = fields.Many2one('account.payment.term', u'销售单付款条款', related='so_id.payment_term_id')
 
-
-
     # one.amount_payment_org_auto = amount_payment_org_auto
     so_no_sent_amount_new = fields.Monetary('未发货销售金额', currency_field='so_id_currency_id',
                                             compute=compute_so_no_sent_amount_new,
@@ -783,7 +804,7 @@ class account_payment(models.Model):
     payment_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'预收认领和预付申请')
 
     payment_hexiao_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'核销申请单',
-                                         domain=[('sfk_type', 'in', ['reconcile_ysrld', 'reconcile_yfsqd'])])# 预收预付的核销
+                                         domain=[('sfk_type', 'in', ['reconcile_ysrld', 'reconcile_yfsqd'])])  # 预收预付的核销
     payment_hexiao_ids_count = fields.Integer('未完成预收认领和预付申请数量', compute=compute_payment_no_done_ids_count)
 
     payment_no_done_ids = fields.One2many('account.payment', 'yjzy_payment_id', u'未完成预收认领和预付申请',
@@ -844,9 +865,11 @@ class account_payment(models.Model):
             if one.po_id:
                 pre_advance_line_ids = self.env['pre.advance'].search([('po_id', '=', one.po_id.id)])
                 pre_advance_line_ids_count = len(pre_advance_line_ids)
-                pre_advance_line_pre_ids = self.env['pre.advance'].search([('po_id', '=', one.po_id.id),('pre_advance_options','!=','before_delivered')])
+                pre_advance_line_pre_ids = self.env['pre.advance'].search(
+                    [('po_id', '=', one.po_id.id), ('pre_advance_options', '!=', 'before_delivered')])
                 pre_advance_line_pre_ids_count = len(pre_advance_line_pre_ids)
-                pre_advance_line_before_delivery_ids = self.env['pre.advance'].search([('po_id', '=', one.po_id.id),('pre_advance_options','=','before_delivered')])
+                pre_advance_line_before_delivery_ids = self.env['pre.advance'].search(
+                    [('po_id', '=', one.po_id.id), ('pre_advance_options', '=', 'before_delivered')])
                 pre_advance_line_before_delivery_ids_count = len(pre_advance_line_before_delivery_ids)
             elif one.so_id:
                 pre_advance_line_ids = self.env['pre.advance'].search([('so_id', '=', one.so_id.id)])
@@ -871,16 +894,16 @@ class account_payment(models.Model):
             one.pre_advance_line_before_delivery_ids = pre_advance_line_before_delivery_ids
             one.pre_advance_line_before_delivery_ids_count = pre_advance_line_before_delivery_ids_count
 
-
     pre_advance_line_ids = fields.Many2many('pre.advance', 'palid', 'apid', 'psoid',
                                             compute=compute_pre_advance_line_ids, store=True)
     pre_advance_line_ids_count = fields.Integer('总预收付明细数量', compute=compute_pre_advance_line_ids, store=True)
     pre_advance_line_pre_ids = fields.Many2many('pre.advance', 'palpid', 'apid', 'psoid',
-                                            compute=compute_pre_advance_line_ids, store=True)
+                                                compute=compute_pre_advance_line_ids, store=True)
     pre_advance_line_pre_ids_count = fields.Integer('预收付明细数量', compute=compute_pre_advance_line_ids, store=True)
     pre_advance_line_before_delivery_ids = fields.Many2many('pre.advance', 'palbid', 'apid', 'psoid',
-                                            compute=compute_pre_advance_line_ids, store=True)
-    pre_advance_line_before_delivery_ids_count = fields.Integer('发货前预收付明细数量', compute=compute_pre_advance_line_ids, store=True)
+                                                            compute=compute_pre_advance_line_ids, store=True)
+    pre_advance_line_before_delivery_ids_count = fields.Integer('发货前预收付明细数量', compute=compute_pre_advance_line_ids,
+                                                                store=True)
 
     is_pre_advance_line = fields.Boolean('是否已经填了预付明细')
     pre_advance_step = fields.Integer('阶段', related='pre_advance_id.pre_advance_step', store=True)
@@ -2879,7 +2902,7 @@ class Pre_Advance(models.Model):
     payment_advance_currency_id = fields.Many2one('res.currency', compute='compute_payment_advance_currency_id')
     real_advance = fields.Monetary('Real Advance', currency_field='payment_advance_currency_id',
                                    compute='compute_real_advance')  #
-    payment_advance_ids = fields.One2many('account.payment', 'pre_advance_id', )#domain=[('state', '=', 'posted')]
+    payment_advance_ids = fields.One2many('account.payment', 'pre_advance_id', )  # domain=[('state', '=', 'posted')]
 
     tb_po_line = fields.One2many('tb.po.line', 'pre_advance_id', domain=[('state', '=', 'posted')])
 

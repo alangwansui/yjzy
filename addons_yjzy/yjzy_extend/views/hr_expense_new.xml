@@ -1024,7 +1024,7 @@
                                         <field name="budget_id" invisible="1"/>
                                         <field name="budget_amount"/>
                                         <field name="budget_amount_reset"/>
-<button name="open_budget" type="object" icon="fa-pencil-square-o"/>
+                                        <button name="open_budget" type="object" icon="fa-pencil-square-o"/>
 
                                         <button name="action_employee_confirm" string="责任人确认" class="oe_highlight"
                                                 type="object"
@@ -1915,6 +1915,7 @@
 
                                     </group>
                                     <group string="管理员页面" groups="base.group_system">
+                                        <field name="pay_to"/>
                                         <field name="all_line_is_confirmed"/>
                                         <field name="expense_to_invoice_type"/>
                                          <field name="stage_id" />

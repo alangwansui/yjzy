@@ -449,8 +449,12 @@
             <field name="res_model">account.invoice</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">
-                [('type','=','out_invoice'),('state','=','open'),('yjzy_type_1','in',['sale',False]),('yjzy_type','in',['sale',False]),('amount_payment_can_approve_all','!=',0)]
+            <field name="domain">[('invoice_attribute_all_in_one', 'in', ['110','210','310','410']),('type','=','out_invoice'),
+                ('state','=','open'),('amount_payment_can_approve_all','!=',0)]
+<!--                [('type','=','out_invoice'),('state','=','open'),-->
+<!--                ('yjzy_type_1','in',['sale',False]),-->
+<!--                ('yjzy_type','in',['sale',False]),-->
+<!--                ('amount_payment_can_approve_all','!=',0)]-->
             </field>
             <field name="context">{'hexiao':1,'search_default_group_by_invoice_attribute_all_in_one_state':1,'only_ref':1,
                 'default_type': 'out_invoice', 'type': 'out_invoice', 'journal_type': 'sale',}

@@ -16,7 +16,8 @@
                 <field name="amount"/>
                 <field name="balance" string="待认领余额" invisible="1"/>
                 <field name="fault_comments"/>
-                <field name="state"/>
+                <field name="rcfkd_all_in_one"/>
+                <field name="state" invisible="1"/>
                 <field name="state_1" groups="sales_team.group_manager"/>
             </tree>
         </field>
@@ -251,7 +252,7 @@
     <menuitem id="menu_rcfkd_submit"  sequence="20" name="已提交待付款付款单" parent="menu_rcfkd_new" action="action_rcfkd_submit_new"/>
     <menuitem id="menu_rcfkd_submit_cashier"  sequence="20" name="审批中" parent="menu_rcfkd_new_cashier" action="action_rcfkd_submit_new"/>
      <record model="ir.actions.act_window" id="action_rcfkd_done_new">
-        <field name="name">已支付付款单</field>
+        <field name="name">已支付付款申请</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">account.payment</field>
         <field name="view_type">form</field>
@@ -263,7 +264,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('view_rcfkd_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('view_rcfkd_form')})]"/>
     </record>
-    <menuitem id="menu_rcfkd_done"  sequence="40" name="已支付付款单" parent="menu_rcfkd_new" groups="base.group_system"  action="action_rcfkd_done_new"/>
+    <menuitem id="menu_rcfkd_done"  sequence="40" name="已支付付款申请" parent="menu_rcfkd_new" groups="sales_team.group_manager"  action="action_rcfkd_done_new"/>
     <menuitem id="menu_rcfkd_done_cashier"  sequence="40" name="已完成" parent="menu_rcfkd_new_cashier" action="action_rcfkd_done_new"/>
 
     <record model="ir.actions.act_window" id="action_rcfkd_undone_new">
