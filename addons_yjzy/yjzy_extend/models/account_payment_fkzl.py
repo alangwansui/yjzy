@@ -29,7 +29,7 @@ class account_payment(models.Model):
     bank_id_kaihuhang = fields.Char(related='bank_id.kaihuhang')
     bank_id_acc_number = fields.Char(related='bank_id.acc_number')
     fkzl_id = fields.Many2one('account.payment', u'付款指令', )  # ondelete="restrict"
-    fkzd_payment_date = fields.Date(u'付款日期', related='fkzl_id.payment_date', store=True)
+    fkzl_payment_date = fields.Date(u'付款日期', related='fkzl_id.payment_date', store=True)
     fksqd_2_ids = fields.One2many('account.payment', 'fkzl_id', u'付款申请单', domain=[('sfk_type', '=', 'rcfkd'), (
     'state_fkzl', 'in', ['05_fksq', '07_post_fkzl', '30_done'])])  # domain=[('sfk_type','=','fksqd')]
     fksqd_2_ids_count = fields.Integer('付款申请单数量', compute=compute_fkzl_count)
