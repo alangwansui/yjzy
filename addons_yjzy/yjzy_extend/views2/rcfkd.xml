@@ -6,19 +6,22 @@
         <field name="model">account.payment</field>
         <field name="priority" eval="999"/>
         <field name="arch" type="xml">
-            <tree string="日常付款单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false">
-                <field name="name"/>
-                <field name="payment_date"/>
-                <field name="partner_id"/>
-                <field name="journal_id"/>
-                <field name="company_id"/>
+            <tree string="日常付款单" decoration-info="state == 'draft'" decoration-muted="state in ['reconciled', 'cancelled']" edit="false" create="false">
+                <field name="name" string="申请单编号"/>
+                <field name="fkzl_id" string="付款指令编号"/>
+                <field name="payment_date" string="付款申请单日期"/>
+                <field name="fkzl_payment_date" string="付款日期"/>
+                <field name="partner_id" groups="base.group_system"/>
+                <field name="pay_to" string="收款人"/>
+                <field name="journal_id" string="付款账户"/>
+                <field name="company_id" groups="base.group_system"/>
                 <field name="currency_id" attrs="{}" invisible="1" required="1"/>
                 <field name="amount"/>
                 <field name="balance" string="待认领余额" invisible="1"/>
                 <field name="fault_comments"/>
                 <field name="rcfkd_all_in_one"/>
                 <field name="state" invisible="1"/>
-                <field name="state_1" groups="sales_team.group_manager"/>
+                <field name="state_1" groups="base.group_system"/>
             </tree>
         </field>
     </record>

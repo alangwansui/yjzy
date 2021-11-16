@@ -292,7 +292,7 @@
                                         <field name="out_qty2" sum="小计" string="报关数量"
                                                attrs="{'readonly':[('purchase_hs_id','=',False)]}"/>
                                         <field name="po_id" string="采购合同"
-                                               attrs="{'required':[('purchase_hs_id','=',False)],'column_invisible': [('parent.hs_fill','!=','sale_purchase')]}"/>
+                                               attrs="{'required':[('purchase_hs_id','=',False)]}"/>
                                         <field name="amount" sum="小计" string="原始出运金额"
                                                attrs="{'readonly':True}"/>
                                         <field name="actual_price" sum="小计" string="实际出运单价" groups="base.group_system"

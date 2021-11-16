@@ -46,13 +46,13 @@
                     <filter string="Sent" domain="[('state','=','sent')]" name='state_sent'/>
                     <filter string="Reconciled" domain="[('state','=','reconciled')]"/>
                     <separator/>
-                    <filter string="Partner" domain="[]" context="{'group_by': 'partner_id'}"/>
-                    <filter string="Journal" domain="[]" context="{'group_by': 'journal_id'}"/>
-                    <filter string="Payment Method" domain="[]" context="{'group_by': 'payment_method_id'}"/>
-                    <filter string="State" domain="[]" context="{'group_by': 'state'}"/>
-                    <filter string="Currency" domain="[]" context="{'group_by': 'currency_id'}" groups="base.group_multi_currency"/>
-                    <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                    <separator/>
+<!--                    <filter string="Partner" domain="[]" context="{'group_by': 'partner_id'}"/>-->
+<!--                    <filter string="Journal" domain="[]" context="{'group_by': 'journal_id'}"/>-->
+<!--                    <filter string="Payment Method" domain="[]" context="{'group_by': 'payment_method_id'}"/>-->
+<!--                    <filter string="State" domain="[]" context="{'group_by': 'state'}"/>-->
+<!--                    <filter string="Currency" domain="[]" context="{'group_by': 'currency_id'}" groups="base.group_multi_currency"/>-->
+<!--                    <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>-->
+<!--                    <separator/>-->
                     <group expand="1" string="Group By">
                         <filter string="状态分组" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="核销分组" name="group_by_state_1_attribute" domain="[]" context="{'group_by':('invoice_attribute_all_in_one','state_1')}"/>
@@ -65,6 +65,8 @@
                         <filter string="付款对象分组" name="group_by_pay_to" domain="[]" context="{'group_by':'pay_to'}"/>
                         <filter string="付款指令状态分组" name="group_by_state_fkzl" domain="[]" context="{'group_by':'state_fkzl'}"/>
                         <filter string="按采购合同分组" name="group_by_po_id" domain="[]" context="{'group_by':'po_id'}"/>
+                        <filter string="按付款指令编号分组" name="group_by_name" domain="[]" context="{'group_by':'fkzl_id'}"/>
+                        <filter string="按属性分组" name="group_by_rcfkd_all_in_one" domain="[]" context="{'group_by':'rcfkd_all_in_one'}"/>
                     </group>
                 </search>
             </field>

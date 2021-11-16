@@ -6,16 +6,15 @@ from odoo.addons.account.models.account_payment import account_payment as Accoun
 from .comm import sfk_type
 
 
-
 class account_payment(models.Model):
     _inherit = 'account.payment'
 
-    rckfd_attribute = fields.Selection([('expense',u'费用'),
+    rckfd_attribute = fields.Selection([('expense', u'费用'),
                                         ('advance_payment', u'预付账款'),
-                                        ('yfzk',u'应付账单'),
-                                        ('other_payment',u'其他应付款'),
-                                        ('expense_po',u'费用转货款'),
-                                        ('other_po',u'增加采购应付')],u'付款属性')
+                                        ('yfzk', u'应付账单'),
+                                        ('other_payment', u'其他应付款'),
+                                        ('expense_po', u'费用转货款'),
+                                        ('other_po', u'增加采购应付')], u'付款属性')
 
     def compute_fkzl_count(self):
         for one in self:
@@ -25,24 +24,24 @@ class account_payment(models.Model):
             one.yshx_fkzl_ids_count = len(one.yshx_fkzl_ids)
             one.yshx_fkzl_line_ids_count = len(one.yshx_fkzl_line_ids)
 
-
-    bank_id_bank = fields.Many2one('res.bank',u'银行名称')
+    bank_id_bank = fields.Many2one('res.bank', u'银行名称')
     bank_id_huming = fields.Char('收款账户名', related='bank_id.huming')
     bank_id_kaihuhang = fields.Char(related='bank_id.kaihuhang')
     bank_id_acc_number = fields.Char(related='bank_id.acc_number')
-
-    fkzl_id = fields.Many2one('account.payment',u'付款指令',)#ondelete="restrict"
-    fksqd_2_ids = fields.One2many('account.payment','fkzl_id',u'付款申请单',domain=[('sfk_type','=','rcfkd'),('state_fkzl','in',['05_fksq','07_post_fkzl','30_done'])])#domain=[('sfk_type','=','fksqd')]
-    fksqd_2_ids_count = fields.Integer('付款申请单数量',compute=compute_fkzl_count)
+    fkzl_id = fields.Many2one('account.payment', u'付款指令', )  # ondelete="restrict"
+    fkzd_payment_date = fields.Date(u'付款日期', related='fkzl_id.payment_date', store=True)
+    fksqd_2_ids = fields.One2many('account.payment', 'fkzl_id', u'付款申请单', domain=[('sfk_type', '=', 'rcfkd'), (
+    'state_fkzl', 'in', ['05_fksq', '07_post_fkzl', '30_done'])])  # domain=[('sfk_type','=','fksqd')]
+    fksqd_2_ids_count = fields.Integer('付款申请单数量', compute=compute_fkzl_count)
 
     fybg_fkzl_ids = fields.One2many('hr.expense.sheet', 'fkzl_id', u'费用报告')
     fybg_fkzl_ids_count = fields.Integer('费用报告数量', compute=compute_fkzl_count)
-    expense_fkzl_ids =  fields.One2many('hr.expense', 'fkzl_id', u'费用明细')
-    yfsqd_fkzl_ids = fields.One2many('account.payment', 'fkzl_id', u'预付申请单',domain=[('sfk_type','=','yfsqd')])
+    expense_fkzl_ids = fields.One2many('hr.expense', 'fkzl_id', u'费用明细')
+    yfsqd_fkzl_ids = fields.One2many('account.payment', 'fkzl_id', u'预付申请单', domain=[('sfk_type', '=', 'yfsqd')])
     yfsqd_fkzl_ids_count = fields.Integer('预付申请单数量', compute=compute_fkzl_count)
     yshx_fkzl_ids = fields.One2many('account.reconcile.order', 'fkzl_id', u'应收付认领单')
     yshx_fkzl_ids_count = fields.Integer('应收付认领单数量', compute=compute_fkzl_count)
-    yshx_fkzl_line_ids = fields.One2many('account.reconcile.order.line.no','fkzl_id',u'应付明细')
+    yshx_fkzl_line_ids = fields.One2many('account.reconcile.order.line.no', 'fkzl_id', u'应付明细')
     yshx_fkzl_line_ids_count = fields.Integer('应收付认领单数量', compute=compute_fkzl_count)
 
     def create_fkzl(self):
@@ -69,8 +68,8 @@ class account_payment(models.Model):
         if not advance_account:
             raise Warning(u'没有找到对应的预处理科目%s' % account_code)
         fkzl_id = fkzl_obj.create({
-            'name':name,
-            'sfk_type':sfk_type,
+            'name': name,
+            'sfk_type': sfk_type,
             'payment_type': 'outbound',
             'partner_id': self[0].partner_id.id,
             'partner_type': 'supplier',
@@ -83,7 +82,7 @@ class account_payment(models.Model):
             'advance_account_id': advance_account.id,
             'bank_id': self[0].bank_id.id,
             'include_tax': self[0].include_tax,
-            'rckfd_attribute':self[0].rckfd_attribute
+            'rckfd_attribute': self[0].rckfd_attribute
         })
 
         for one in self:
@@ -96,13 +95,13 @@ class account_payment(models.Model):
                     x.fkzl_id = fkzl_id
             if one.yfsqd_ids:
                 for x in one.yfsqd_ids:
-                    print('state_1_akiny',x.state_1)
+                    print('state_1_akiny', x.state_1)
                     x.fkzl_id = fkzl_id
                     x.state_1 = '45_fzkl_submit'
             if one.yshx_ids:
                 for x in one.yshx_ids:
                     x.fkzl_id = fkzl_id
-                    print('x_akiny',x)
+                    print('x_akiny', x)
                     x.action_to_fkzl()
                     for yingfurld in x.reconcile_payment_ids:
                         yingfurld.fkzl_id = fkzl_id
@@ -131,12 +130,7 @@ class account_payment(models.Model):
                                 line_no.fkzl_id = False
                     i.state_fkzl = '05_fksq'
 
-
-
-
         return super(account_payment, self).unlink()
-
-
 
         form_view = self.env.ref('yjzy_extend.view_fkzl_form')
         return {
@@ -147,12 +141,11 @@ class account_payment(models.Model):
             'res_id': fkzl_id.id,
             'target': 'current',
             'context': {'default_sfk_type': 'fkzl',
-                        'only_name':1,
-                        'display_name_code':1,
+                        'only_name': 1,
+                        'display_name_code': 1,
 
                         }
         }
-
 
     def open_wizard_fkzl(self):
         if len(self.mapped('partner_id')) > 1:
@@ -197,15 +190,16 @@ class account_payment(models.Model):
                         yshxline_ids.append(line.id)
 
         yshx_ids_1 = [[6, 0, yshx_ids]]
-        print('test_akiy',fybg_ids,expense_ids,yfsqd_ids,yshx_ids)
+        print('test_akiy', fybg_ids, expense_ids, yfsqd_ids, yshx_ids)
         fkzl_obj = self.env['wizard.fkzl']
         if not self[0].journal_id.currency_id:
             raise Warning(u'没有取到付款日记账的货币，请检查设置')
         if not advance_account:
-            raise Warning(u'没有找到对应的预处理科目%s' % account_code)#参考
-        fkzl_id = fkzl_obj.with_context({'default_yshx_ids_new':yshx_ids,'default_yfsqd_ids':yfsqd_ids,'default_rcfkd_ids':rcfkd_ids,
-                                         'default_expense_ids':expense_ids,
-                                         'default_fybg_ids': fybg_ids,'default_yshx_ids_line_no':yshxline_ids}).create({
+            raise Warning(u'没有找到对应的预处理科目%s' % account_code)  # 参考
+        fkzl_id = fkzl_obj.with_context(
+            {'default_yshx_ids_new': yshx_ids, 'default_yfsqd_ids': yfsqd_ids, 'default_rcfkd_ids': rcfkd_ids,
+             'default_expense_ids': expense_ids,
+             'default_fybg_ids': fybg_ids, 'default_yshx_ids_line_no': yshxline_ids}).create({
             # 'name': name,
             'sfk_type': sfk_type,
             'partner_id': self[0].partner_id.id,
@@ -217,8 +211,6 @@ class account_payment(models.Model):
             'bank_id': self[0].bank_id.id,
             'include_tax': self[0].include_tax,
             # 'yshx_ids':yshx_ids
-
-
 
         })
 
@@ -232,25 +224,22 @@ class account_payment(models.Model):
             'target': 'new',
             'context': {
 
-                        }
+            }
         }
 
     def compute_payment_comment(self):
-        if self.sfk_type=='fkzl':
+        if self.sfk_type == 'fkzl':
             payment_comments = ''
             if self.yshx_fkzl_ids:
                 payment_comments = '%s\n收款户名: %s' % (
-                self.yshx_fkzl_ids[0].invoice_attribute_all_in_one, self.bank_id_huming)
+                    self.yshx_fkzl_ids[0].invoice_attribute_all_in_one, self.bank_id_huming)
             if self.fybg_fkzl_ids:
-                payment_comments = '%s\n收款户名: %s' % ('费用申请',self.bank_id_huming)
+                payment_comments = '%s\n收款户名: %s' % ('费用申请', self.bank_id_huming)
             if self.yfsqd_fkzl_ids:
                 payment_comments = '%s\n收款户名: %s' % ('预付申请', self.bank_id_huming)
             self.payment_comments = payment_comments
 
-
-
-
-    #支付完成
+    # 支付完成
     def action_fkzl_approve(self):
         today = fields.date.today()
 
@@ -269,5 +258,3 @@ class account_payment(models.Model):
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
-
-
