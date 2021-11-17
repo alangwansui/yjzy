@@ -583,6 +583,7 @@ class account_reconcile_order(models.Model):
     invoice_date_deadline_new = fields.Date(u'到期日期', related='invoice_id.date_deadline_new')
     invoice_date_invoice = fields.Date('出运日期', related='invoice_id.date_invoice')
     invoice_date_finish = fields.Date('交单日期', related='invoice_id.date_finish')
+    invoice_supplier_delivery_date = fields.Date('工厂发货日期', related='invoice_id.supplier_delivery_date')
     invoice_date_ship = fields.Date('出运船期', related='invoice_id.date_ship')
     invoice_amount_total = fields.Monetary('账单原始金额', currency_field='invoice_currency_id',
                                            related='invoice_id.amount_total_signed')
