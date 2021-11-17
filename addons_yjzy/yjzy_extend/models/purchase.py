@@ -119,28 +119,28 @@ class purchase_order(models.Model):
             one.balance_new = balance
             one.real_advance = real_advance
 
-
-
-
-
     @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id',
                  'order_line.product_qty', 'order_line', 'order_line.sol_id_price_total_undelivered')
     def _compute_no_deliver_amount(self):
         for one in self:
-
             one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
             one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
             one.sale_no_deliver_amount = sum(x.sol_id_price_total_undelivered for x in one.order_line)
 
-    @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id', 'source_so_id.stage_id',
+    @api.depends('order_line.qty_received', 'order_line.price_unit', 'order_line.qty_received', 'source_so_id',
+                 'source_so_id.stage_id',
                  'order_line.product_qty', 'order_line', 'order_line.sol_id.price_total', 'order_line.sol_id',
-                 'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit', 'so_id_state_1')
+                 'order_line.sol_id.product_uom_qty', 'order_line.sol_id.qty_delivered', 'order_line.sol_id.price_unit',
+                 'so_id_state_1')
     def compute_no_deliver_amount(self):
         for one in self:
-            if one.so_id_state_1 and one.so_id_state_1 not in ['draft','cancel','refused','submit','sales_approve','manager_approval']:
-                one.no_deliver_amount_new = sum([x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
+            if one.so_id_state_1 and one.so_id_state_1 not in ['draft', 'cancel', 'refused', 'submit', 'sales_approve',
+                                                               'manager_approval']:
+                one.no_deliver_amount_new = sum(
+                    [x.price_unit * (x.product_qty - x.qty_received) for x in one.order_line])
                 one.deliver_amount_new = sum([x.price_unit * x.qty_received for x in one.order_line])
-                sale_no_deliver_amount = sum((x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
+                sale_no_deliver_amount = sum(
+                    (x.sol_id.product_uom_qty - x.sol_id.qty_delivered) * x.sol_id.price_unit for x
                     in one.order_line)
                 one.sale_no_deliver_amount = sale_no_deliver_amount
             else:
@@ -159,7 +159,8 @@ class purchase_order(models.Model):
             else:
                 one.pre_advance = 0
             pre_advance_line = one.pre_advance_line.filtered(lambda x: x.pre_advance_options != 'before_delivered')
-            pre_advance_before_delivery_line = one.pre_advance_line.filtered(lambda x: x.pre_advance_options == 'before_delivered')
+            pre_advance_before_delivery_line = one.pre_advance_line.filtered(
+                lambda x: x.pre_advance_options == 'before_delivered')
             pre_advance_advance = sum(x.pre_advance for x in pre_advance_line)
             pre_advance_before_delivery = sum(x.pre_advance for x in pre_advance_before_delivery_line)
             one.pre_advance_advance = pre_advance_advance
@@ -239,10 +240,7 @@ class purchase_order(models.Model):
     # akiny_new
 
     hxd_ids = fields.One2many('account.reconcile.order.line', 'po_id', '所有已经批准的核销单',
-                              domain=[('order_id.state_1', 'in', ['done', 'post'])])#预付认领单
-
-
-
+                              domain=[('order_id.state_1', 'in', ['done', 'post'])])  # 预付认领单
 
     amount_org_hxd = fields.Float('核销单的付款金额总和', compute=compute_amount_org_hxd, store=True)
     need_purchase_fandian = fields.Boolean(u'采购返点')
@@ -300,13 +298,12 @@ class purchase_order(models.Model):
     pre_advance = fields.Monetary(u'计划总预付金额', currency_field='currency_id', compute=compute_pre_advance, store=True,
                                   help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
     pre_advance_advance = fields.Monetary(u'计划预付金额', currency_field='currency_id', compute=compute_pre_advance,
-                                  help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
-    pre_advance_before_delivery = fields.Monetary(u'计划发货前金额', currency_field='currency_id', compute=compute_pre_advance,
                                           help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
+    pre_advance_before_delivery = fields.Monetary(u'计划发货前金额', currency_field='currency_id', compute=compute_pre_advance,
+                                                  help=u"根据付款条款计算的可预付金额\n")  # 计划预付金额，根据付款条款计算
 
     pre_advance_line = fields.One2many('pre.advance', 'po_id')
-    pre_advance_line_count = fields.Integer('预收付明细数量',compute='compute_pre_advance_line_count',store=True)
-
+    pre_advance_line_count = fields.Integer('预收付明细数量', compute='compute_pre_advance_line_count', store=True)
 
     # 以下还没有进入文档
     submit_date = fields.Date('提交审批时间')
@@ -333,12 +330,10 @@ class purchase_order(models.Model):
                                               related='partner_id.property_supplier_payment_term_id')
     is_different_payment_term = fields.Boolean('付款条款是否不同')
 
-
-
     # akiny
     so_id_state = fields.Selection('源销售合同状态', related='source_so_id.state')
-    so_id_state_1 = fields.Selection(Sale_Selection,compute='compute_so_id_state_1', string='源销售合同状态',  store=True)
-    so_id_stage = fields.Many2one('sale.order.stage',related='source_so_id.stage_id',store=True)
+    so_id_state_1 = fields.Selection(Sale_Selection, compute='compute_so_id_state_1', string='源销售合同状态', store=True)
+    so_id_stage = fields.Many2one('sale.order.stage', related='source_so_id.stage_id', store=True)
     aml_ids = fields.One2many('account.move.line', 'po_id', u'分录明细', readonly=True)
     so_currentcy_id = fields.Many2one('res.currency', '销售合同币种', related='source_so_id.currency_id')
     so_id_amount_total = fields.Monetary('对应销售金额', currency_field='so_currentcy_id', compute=compute_so_id_amount_total,
@@ -365,13 +360,13 @@ class purchase_order(models.Model):
             for line in self.pre_advance_line:
                 line.unlink()
         for one in payment_term_line:
-            pre_advance_step +=1
+            pre_advance_step += 1
             if one.option == 'advance':
                 pre_advance = pa_obj.create({
                     'type': 'pre_pay_in_advance',
                     'value': one.value,
                     'value_amount': one.value_amount,
-                    'pre_advance_step':pre_advance_step,
+                    'pre_advance_step': pre_advance_step,
                     'pre_advance_options': 'advance',
                     'po_id': self.id,
                 })
@@ -382,7 +377,7 @@ class purchase_order(models.Model):
                     'value': one.value,
                     'value_amount': one.value_amount,
                     'pre_advance_step': pre_advance_step,
-                    'pre_advance_options':'before_delivered',
+                    'pre_advance_options': 'before_delivered',
                     'po_id': self.id,
                 })
                 pre_advance.compute_pre_advance()
@@ -699,7 +694,7 @@ class purchase_order(models.Model):
 
     def unlink(self):
         for one in self:
-            if one.state_1 not in ['cancel','draft','refused'] or one.state not in ['cancel','draft','refused']:
+            if one.state_1 not in ['cancel', 'draft', 'refused'] or one.state not in ['cancel', 'draft', 'refused']:
                 raise UserError(_('In order to delete a purchase order, you must cancel it first.'))
         return super(purchase_order, self).unlink()
 
@@ -793,8 +788,6 @@ class purchase_order_line(models.Model):
             one.sol_id_price_total = sol_id_price_total
             one.sol_id_price_total_undelivered = sol_id_price_total_undelivered
 
-
-    order_contract_code = fields.Char(u'采购合同号',related='order_id.contract_code', store=True)
     s_uom_id = fields.Many2one('product.uom', u'销售打印单位', related='product_id.s_uom_id')
     p_uom_id = fields.Many2one('product.uom', u'采购打印单位', related='product_id.p_uom_id')
 
@@ -805,7 +798,6 @@ class purchase_order_line(models.Model):
     sol_id_price_total_undelivered = fields.Monetary(u'对应销售未发货金额', currency_field='sol_currency_id',
                                                      compute=compute_sol_id_price_total, store=True)
 
-    so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', readonly=True)
     customer_id = fields.Many2one('res.partner', related='sol_id.order_id.partner_id', string='客户', store=True)
     back_tax = fields.Float(u'退税率', digits=dp.get_precision('Back Tax'))
 
@@ -829,6 +821,41 @@ class purchase_order_line(models.Model):
     max_qty_ng = fields.Boolean(u'非整包')
 
     need_print = fields.Boolean('是否打印', default=True)
+    # supplier_id = fields.Many2one('res.partner', related='order_id.partner_id', store=True)
+    so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', store=True, readonly=True)
+    product_customer_ref = fields.Char(u'客户编号', related='product_id.customer_ref', store=True)
+    product_supplier_ref = fields.Char(u'供应商编号', compute='compute_product_supplier_ref', store=True)
+    is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
+    is_ps = fields.Boolean('是否有PS', related='product_id.is_ps', readonly=False)
+    product_so_line_count = fields.Integer(u'产品销售次数', related='product_id.so_line_count')
+    tb_line_count = fields.Integer('发货次数', related='sol_id.tb_line_count')
+    tbl_ids = fields.Many2many('transport.bill.line', compute='compute_tbl_ids', string='出运明细')  # 13已
+    qty_undelivered_new = fields.Float('未发货数量', related='sol_id.qty_undelivered_new', store=True)
+    project_tb_qty_new = fields.Float('已计划发货', related='sol_id.project_tb_qty_new', store=True)
+    can_project_tb_qty_new = fields.Float('可计划发货', related='sol_id.can_project_tb_qty_new', store=True)
+    customer_pi = fields.Char(u'客户PO号', related='order_id.customer_pi', store=True)
+    default_code = fields.Char(u'Default Code', related='product_id.default_code', store=True)
+    product_categ_id = fields.Many2one('product.category', u'类别', related='product_id.categ_id', store=True)
+    order_contract_code = fields.Char(u'采购合同号', related='order_id.contract_code', store=True)
+    approve_date = fields.Date('合规审批日', related='order_id.approve_date', store=True)
+    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'), group_operator=False)
+
+    @api.depends('sol_id', 'sol_id.tbl_ids')
+    def compute_tbl_ids(self):
+        for one in self:
+            one.tbl_ids = one.sol_id.tbl_ids
+
+    @api.depends('product_id', 'partner_id', 'product_id.variant_seller_ids.product_name',
+                 'product_id.variant_seller_ids')
+    def compute_product_supplier_ref(self):
+        for one in self:
+            product_supplierinfo = one.product_id.variant_seller_ids.filtered(
+                lambda x: x.name == one.order_id.partner_id)
+            if len(product_supplierinfo) > 1:
+                product_supplier_ref = product_supplierinfo[0].product_name
+            else:
+                product_supplier_ref = product_supplierinfo.product_name
+            one.product_supplier_ref = product_supplier_ref
 
     def compute_package_info(self):
         for one in self:

@@ -502,10 +502,6 @@
                             icon="fa-pencil-square-o" type="object"
                             attrs="{'invisible':[('reconcile_order_line_count','=',0)]}"/>
 
-
-
-
-
                     <field name="advance_before_delivery_pre" groups="base.group_system"/>
                     <field name="wait_advance_new" groups="base.group_system"/>
                     <field name="amount_payment_can_approve_all_1_new" groups="base.group_system"/>
@@ -3463,6 +3459,25 @@
             <field name="view_ids" eval="[(5, 0, 0),
                               (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_main_tree')}),
                               (0, 0, {'view_mode': 'form', 'view_id': ref('yjzy_extend.view_account_invoice_new_form_in_one')}),
+                              ]"/>
+        </record>
+
+        <record id="action_purchase_invoice_all_for_sales" model="ir.actions.act_window">
+            <field name="name">主应付账单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_account_invoice_new_filter"/>
+            <field name="domain">
+                [('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open')]
+            </field>
+            <field name="context">{'only_ref':1,'default_type': 'in_invoice',
+                'type': 'in_invoice', 'journal_type': 'purchase','yjzy_type':'purchase'}
+            </field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('yjzy_extend.invoice_new_supplier_1_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_invoice_new_form_in_one')}),
                               ]"/>
         </record>
 

@@ -1003,7 +1003,7 @@
                                                                         'account_approval','draft_yshxd','draft_all','account_approval_yshxd'])]}"/>
                             <field name="invoice_date_invoice" string="出运日期" attrs="{'readonly':[('state_1','not in',['draft',
                                                                         'account_approval','draft_yshxd','draft_all','account_approval_yshxd'])]}"/>
-                            <field name="invoice_date_finish" string="交单日期" attrs="{'readonly':[('state_1','not in',['draft',
+                            <field name="invoice_date_finish" string="交单日期" invisible="1" attrs="{'readonly':[('state_1','not in',['draft',
                                                                         'account_approval','draft_yshxd','draft_all','account_approval_yshxd'])]}"/>
                             <field name="invoice_supplier_delivery_date" string="工厂发货日期" attrs="{'readonly':[('state_1','not in',['draft',
                                                                         'account_approval','draft_yshxd','draft_all','account_approval_yshxd'])]}"/>
