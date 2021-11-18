@@ -823,7 +823,7 @@ class purchase_order_line(models.Model):
     need_print = fields.Boolean('是否打印', default=True)
     # supplier_id = fields.Many2one('res.partner', related='order_id.partner_id', store=True)
     so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', store=True, readonly=True)
-    user_id = fields.Many2one('res.partner', related='so_id.partner_id.user_id', store=True)
+    user_id = fields.Many2one('res.users', related='so_id.partner_id.user_id', store=True)
     product_customer_ref = fields.Char(u'客户编号', related='product_id.customer_ref', store=True)
     product_supplier_ref = fields.Char(u'供应商编号', compute='compute_product_supplier_ref', store=True)
     is_gold_sample = fields.Boolean('是否有金样', related='product_id.is_gold_sample', readonly=False)
