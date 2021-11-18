@@ -92,7 +92,7 @@
                     <group expand="0" string="Group By">
                         <filter string="客户" name="group_by_customer_id" context="{'group_by':'customer_id'}"/>
                         <filter string="类别" name="group_by_product_categ_id" context="{'group_by':'product_categ_id'}"/>
-                        <filter string="合规审批月份" name="group_by_approve_year" context="{'group_by':['approve_date:year']}"/>
+                        <filter string="合规审批年份" name="group_by_approve_year" context="{'group_by':['approve_date:year']}"/>
                         <filter string="合规审批月份" name="group_by_approve_year" context="{'group_by':['approve_date:month']}"/>
                         <filter string="客户产品编号" name="group_by_product_customer_ref" context="{'group_by':'product_customer_ref'}"/>
                         <filter string="工厂产品编号" name="group_by_product_supplier_ref" context="{'group_by':'product_supplier_ref'}"/>
@@ -112,7 +112,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
+            <field name="domain">[('sol_id.order_id.partner_id.user_id','=',uid)]</field>
             <field name="search_view_id" ref="sh_purchase_order_line_search_view_1"/>
             <field name="context">{'only_name':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),

@@ -3469,7 +3469,7 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">
-                [('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open')]
+                [('type','=','in_invoice'),('yjzy_type','=','purchase'),('state','=','open'),('state_1', '=', 'done')]
             </field>
             <field name="context">{'only_ref':1,'default_type': 'in_invoice',
                 'type': 'in_invoice', 'journal_type': 'purchase','yjzy_type':'purchase'}
