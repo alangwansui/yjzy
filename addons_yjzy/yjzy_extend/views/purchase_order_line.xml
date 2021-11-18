@@ -106,13 +106,30 @@
         </record>
 
 
-        <record id="sh_action_purchase_order_lines_all" model="ir.actions.act_window">
+        <record id="sh_action_purchase_order_lines_sales" model="ir.actions.act_window">
             <field name="name">Purchase Order Line</field>
             <field name="res_model">purchase.order.line</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('sol_id.order_id.partner_id.user_id','=',uid)]</field>
+            <field name="domain">['|',('sol_id.order_id.partner_id.user_id','=',uid),('assistant_id','=',user.id)]</field>
+            <field name="search_view_id" ref="sh_purchase_order_line_search_view_1"/>
+            <field name="context">{'only_name':1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('sh_purchase_line_tree_view_1')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('sh_purchase_line_form_view_1')})]"/>
+        </record>
+
+        <menuitem id="menu_sh_purchase_line_sales" name="采购明细." action="sh_action_purchase_order_lines_sales"
+                  parent="yjzy_extend.new_purchase_order_root" sequence="99"/>
+
+         <record id="sh_action_purchase_order_lines_all" model="ir.actions.act_window">
+            <field name="name">Purchase Order Line</field>
+            <field name="res_model">purchase.order.line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
             <field name="search_view_id" ref="sh_purchase_order_line_search_view_1"/>
             <field name="context">{'only_name':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
