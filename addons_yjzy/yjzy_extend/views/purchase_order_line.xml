@@ -112,7 +112,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">['|',('sol_id.order_id.partner_id.user_id','=',uid),('assistant_id','=',user.id)]</field>
+            <field name="domain">['|',('user_id','=',uid),('assistant_id','=',uid)]</field>
             <field name="search_view_id" ref="sh_purchase_order_line_search_view_1"/>
             <field name="context">{'only_name':1}</field>
             <field name="view_ids" eval="[(5, 0, 0),
