@@ -536,7 +536,7 @@
                                        attrs="{'readonly':[('state','not in',['draft']),('is_editable','=',False)],'invisible':[('operation_wizard','in',['first','second','third','fourth'])]}"/>
                                 <field name="name" readonly="1" groups="base.group_system" invisible="1"/>
 
-                                <field name="partner_id" string="贸易客户" required="0" options="{'no_open':1}"`
+                                <field name="partner_id" string="贸易客户" required="0" options="{'no_open':1}"
                                        attrs="{'readonly':[('state','!=','draft'),('is_editable','=',False)]}"
                                        domain="[('customer','=',True),('parent_id', '=', False),'|','|','|','|','|','|',('x_studio_field_U7OvH','in',uid),
                                        ('assistant_id','=',uid),('user_id','=',uid),('parent_id.assistant_id','=',uid),
