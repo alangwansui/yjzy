@@ -578,7 +578,7 @@ class res_partner(models.Model):
             if one.name == False:
                 break
             else:
-                if self.search_count([('name', '=', one.name), ('')]) > 1:
+                if self.search_count([('name', '=', one.name)]) > 1:
                     raise Warning('客户简称重复')
 
     @api.constrains('full_name')

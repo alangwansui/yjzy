@@ -41,7 +41,7 @@
             <field name="model">purchase.order.line</field>
             <field name="priority" eval="1"/>
             <field name="arch" type="xml">
-                <tree create="false" delete="false" edit="false">
+                <tree create="false" edit="false">
                     <field name="product_customer_ref"/>
                     <field name="product_supplier_ref"/>
                     <field name="default_code" string="公司产品编号"/>
