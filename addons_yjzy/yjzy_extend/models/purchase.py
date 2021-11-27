@@ -823,6 +823,9 @@ class purchase_order_line(models.Model):
     need_print = fields.Boolean('是否打印', default=True)
     # supplier_id = fields.Many2one('res.partner', related='order_id.partner_id', store=True)
     so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', store=True, readonly=True)
+    so_id_state_1 = fields.Selection(Sale_Selection, compute='compute_so_id_state_1', store=True)
+
+
     user_id = fields.Many2one('res.users', related='so_id.partner_id.user_id', store=True)
     assistant_id = fields.Many2one('res.users', related='so_id.partner_id.assistant_id', store=True)
     product_customer_ref = fields.Char(u'客户编号', related='product_id.customer_ref', store=True)
@@ -841,6 +844,11 @@ class purchase_order_line(models.Model):
     order_contract_code = fields.Char(u'采购合同号', related='order_id.contract_code', store=True)
     approve_date = fields.Date('合规审批日', related='order_id.approve_date', store=True)
     price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'), group_operator=False)
+
+    @api.depends('so_id', 'so_id.stage_id')
+    def compute_so_id_state_1(self):
+        for one in self:
+            one.so_id_state_1 = one.so_id.state_1
 
     @api.depends('sol_id', 'sol_id.tbl_ids')
     def compute_tbl_ids(self):
