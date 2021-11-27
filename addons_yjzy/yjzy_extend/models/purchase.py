@@ -843,7 +843,7 @@ class purchase_order_line(models.Model):
     approve_date = fields.Date('合规审批日', related='order_id.approve_date', store=True)
     price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'), group_operator=False)
 
-    @api.depends('so_id', 'so_id.stage_id')
+    @api.depends('so_id', 'so_id.stage_id', 'so_id.state_1')
     def compute_so_id_state_1(self):
         for one in self:
             one.so_id_state_1 = one.so_id.state_1

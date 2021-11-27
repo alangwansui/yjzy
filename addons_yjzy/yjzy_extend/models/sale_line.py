@@ -5,6 +5,7 @@ from odoo.addons import decimal_precision as dp
 from datetime import datetime
 from odoo.exceptions import Warning
 from .comm import BACK_TAX_RATIO
+from .sale import Sale_Selection
 
 
 class sale_order_line(models.Model):
@@ -80,6 +81,8 @@ class sale_order_line(models.Model):
                                     ('abnormal', u'异常核销'),
                                     ('verifying', u'正常核销'),
                                     ('verification', u'核销完成'), ], u'订单审批状态', related="order_id.state")
+    order_state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='stage_id.state',
+                                     store=True)
     current_date_rate = fields.Float('成本测算汇率', related='order_id.current_date_rate')
     contract_date = fields.Date('客户确认日期', related='order_id.contract_date')
     product_so_line_count = fields.Integer(u'产品销售次数', related='product_id.so_line_count')
@@ -155,7 +158,7 @@ class sale_order_line(models.Model):
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
 
     # 14.0--------------------------
-    @api.depends('tbl_ids', 'tbl_ids.state', 'tbl_ids.plan_qty', 'qty_delivered', 'product_uom_qty')
+    @api.depends('tbl_ids', 'tbl_ids.state', 'tbl_ids.plan_qty', 'qty_delivered', 'product_uom_qty', 'order_state_1')
     def compute_project_tb_qty(self):
         for one in self:
             if one.tbl_ids:
