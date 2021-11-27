@@ -165,13 +165,15 @@ class sale_order_line(models.Model):
                 tbl_ids_undone = one.tbl_ids.filtered(
                     lambda x: x.state in ['draft', 'submit', 'sales_approve', 'manager_approve', 'approve', 'refused'])
                 project_tb_qty = sum(x.plan_qty for x in tbl_ids_undone)
-                project_tb_qty_new = project_tb_qty
-                can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
-                can_project_tb_qty_new = can_project_tb_qty
-                one.project_tb_qty = project_tb_qty
-                one.can_project_tb_qty = can_project_tb_qty
-                one.project_tb_qty_new = project_tb_qty_new
-                one.can_project_tb_qty_new = can_project_tb_qty_new
+            else:
+                project_tb_qty = 0.0
+            project_tb_qty_new = project_tb_qty
+            can_project_tb_qty = one.product_uom_qty - project_tb_qty - one.qty_delivered
+            can_project_tb_qty_new = can_project_tb_qty
+            one.project_tb_qty = project_tb_qty
+            one.can_project_tb_qty = can_project_tb_qty
+            one.project_tb_qty_new = project_tb_qty_new
+            one.can_project_tb_qty_new = can_project_tb_qty_new
 
     @api.depends('purchase_price', 'product_uom_qty')
     def compute_purchase_cost_new(self):
