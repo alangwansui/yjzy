@@ -824,8 +824,6 @@ class purchase_order_line(models.Model):
     # supplier_id = fields.Many2one('res.partner', related='order_id.partner_id', store=True)
     so_id = fields.Many2one('sale.order', related='sol_id.order_id', string=u'销售订单', store=True, readonly=True)
     so_id_state_1 = fields.Selection(Sale_Selection, compute='compute_so_id_state_1', store=True)
-
-
     user_id = fields.Many2one('res.users', related='so_id.partner_id.user_id', store=True)
     assistant_id = fields.Many2one('res.users', related='so_id.partner_id.assistant_id', store=True)
     product_customer_ref = fields.Char(u'客户编号', related='product_id.customer_ref', store=True)
