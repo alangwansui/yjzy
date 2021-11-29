@@ -492,8 +492,10 @@ class account_payment(models.Model):
             po_real_advance = one.po_real_advance
             po_amount = one.po_amount
             # amount_payment_org_auto = po_id.amount_payment_org_auto
-            can_approve_amount = po_amount - po_real_advance
+            advance_balance_total = one.advance_balance_total
+            can_approve_amount = un_delivery_amount - advance_balance_total
             delivery_amount = po_id.deliver_amount_new
+
             one.delivery_amount = delivery_amount
             one.un_delivery_amount = un_delivery_amount
             one.can_approve_amount = can_approve_amount
@@ -516,7 +518,7 @@ class account_payment(models.Model):
                                       store=True)
     un_delivery_amount = fields.Monetary('未出运金额', currency_field='po_id_currency_id', compute=compute_delivery_amount,
                                          store=True)
-    can_approve_amount = fields.Monetary('可申请金额', currency_field='po_id_currency_id', compute=compute_delivery_amount)
+    can_approve_amount = fields.Monetary('可申请极限金额', currency_field='po_id_currency_id', compute=compute_delivery_amount)
     # amount_payment_org_auto = fields.Monetary('支付总金额',currency_field='po_id_currency_id', compute=compute_delivery_amount)
 
     reconcile_type = fields.Selection([
