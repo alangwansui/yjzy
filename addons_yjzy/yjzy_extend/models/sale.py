@@ -1267,6 +1267,7 @@ class sale_order(models.Model):
             one.state = state
     #定稿
     def action_verification(self):
+        self.action_manual_ubnormal_hexiao()
         user = self.env.user
         if not user.has_group('sale.hegui_all') or not user.has_group('sales_team.group_manager'):
             raise Warning('非合规人员不允许核销！')
