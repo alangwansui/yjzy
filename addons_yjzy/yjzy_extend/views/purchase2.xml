@@ -387,7 +387,9 @@
                                         </templates>
                                     </kanban>
                                 </field>
-                                <field name="real_advance_new" string="实际预付金额新"/>
+                                <field name="real_advance_new" string="实际预付金额新" groups="base.group_system"/>
+                                <field name="real_advance_before_delivery_new" string="实际发货前付款金额" groups="base.group_system"/>
+                                <field name="real_advance_all" string="总预付金额"/>
                                 <field name="real_advance" invisible="0" string="实际预付金额"/>
                                 <field name="balance" string="实际预付余额"/>
                                 <field name="can_confirm_by_so" readonly="0" invisible="1"/>

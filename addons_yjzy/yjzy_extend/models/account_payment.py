@@ -788,6 +788,11 @@ class account_payment(models.Model):
     po_pre_advance = fields.Monetary(u'应付预付款', currency_field='po_id_currency_id', related='po_id.pre_advance')
     po_real_advance = fields.Monetary(u'预付金额', currency_field='po_id_currency_id', related='po_id.real_advance')
     po_real_advance_new = fields.Monetary(u'预付金额', currency_field='po_id_currency_id', related='po_id.real_advance_new')
+    po_real_advance_before_delivery_new = fields.Monetary(u'发货前金额', currency_field='po_id_currency_id',
+                                                          related='po_id.real_advance_before_delivery_new')
+    po_real_advance_all = fields.Monetary(u'总预付金额', currency_field='po_id_currency_id',
+                                          related='po_id.real_advance_all')
+
     so_id = fields.Many2one('sale.order', u'销售合同')
     so_id_currency_id = fields.Many2one('res.currency', related='so_id.currency_id')
     amount_total_so = fields.Monetary('合同金额', related='so_id.amount_total', currency_field='so_id_currency_id')

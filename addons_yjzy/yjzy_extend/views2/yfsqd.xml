@@ -405,7 +405,9 @@
                             <field name="purchase_payment_term_id" string="采购单付款条款" readonly="1"
                                    options="{'no_open':1}"/>
                             <field name="po_amount" groups="base.group_system"/>
-                            <field name="po_real_advance_new"/>
+                            <field name="po_real_advance_new" groups="base.group_system"/>
+                            <field name="po_real_advance_before_delivery_new" groups="base.group_system"/>
+                            <field name="po_real_advance_all"/>
                             <field name="po_real_advance" string="已预付金额"/>
                             <field name="po_real_advance_before_delivery_new"/>
 

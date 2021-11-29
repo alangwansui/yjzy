@@ -7,10 +7,6 @@ from odoo.exceptions import Warning, UserError
 from odoo.osv import expression
 from odoo.addons.purchase.models.purchase import PurchaseOrder
 
-
-
-
-
 Stage_Status_Default = 'draft'
 
 Purchase_Selection = [('draft', '草稿'),
@@ -37,8 +33,6 @@ Sale_Selection = [('draft', '草稿'),
                   ('abnormal', u'异常核销'),
                   ('verifying', u'正常核销'),
                   ('verification', u'核销完成'), ]
-
-
 
 
 class purchase_order(models.Model):
@@ -70,7 +64,12 @@ class purchase_order(models.Model):
     real_advance_before_delivery_new = fields.Monetary(u'实际发货前金额', compute='compute_real_advance_before_delivery_new',
                                                        currency_field='yjzy_currency_id',
                                                        )
+    real_advance_all = fields.Monetary(u'总预付金额', compute='compute_real_advance_all')
 
-
+    def compute_real_advance_all(self):
+        for one in self:
+            real_advance_new = one.real_advance_new
+            real_advance_before_delivery_new = one.real_advance_before_delivery_new
+            one.real_advance_all = real_advance_new + real_advance_before_delivery_new
 
 ###############################
