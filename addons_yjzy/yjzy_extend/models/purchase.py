@@ -289,7 +289,7 @@ class purchase_order(models.Model):
     include_tax = fields.Boolean(u'含税', default=True)
     sale_uid = fields.Many2one('res.users', u'业务员', default=lambda self: self.env.user.assistant_id.id)
     sale_assistant_id = fields.Many2one('res.users', u'业务助理', default=lambda self: self.env.user.id)
-    yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单')
+    yjzy_payment_ids = fields.One2many('account.payment', 'po_id', u'预付款单', domain=[('sfk_type', '=', 'yfsqd')])
 
     yjzy_currency_id = fields.Many2one('res.currency', u'预收币种', related='yjzy_payment_ids.currency_id')
     balance_new = fields.Monetary(u'预付余额_新', compute='compute_balance', currency_field='yjzy_currency_id', store=True)

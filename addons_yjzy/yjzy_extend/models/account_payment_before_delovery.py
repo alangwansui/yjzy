@@ -25,7 +25,7 @@ class account_payment(models.Model):
         for one in self:
             tb_po_line_ids = one.tb_id.tb_po_line_ids.filtered(lambda x: x.tb_po_supplier == one.partner_id)
             one.tb_po_line_ids = tb_po_line_ids
-            tb_po_line_draft_ids = tb_po_line_ids.filtered(lambda x: x.state in ['draft','creating'])
+            tb_po_line_draft_ids = tb_po_line_ids.filtered(lambda x: x.state in ['draft', 'creating'])
             if one.tb_id:
                 if len(tb_po_line_draft_ids) == 1:
                     one.tb_po_line_ids.state = 'creating'

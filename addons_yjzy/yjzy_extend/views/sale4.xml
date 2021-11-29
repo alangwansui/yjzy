@@ -746,7 +746,8 @@
                                 <field name="confirmation_date" groups="base.group_system"
                                        attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'cancel']),('is_editable','=',False)]}"/>
                                 <field name="hexiao_type" readonly="1"/>
-                                <field name="hexiao_comment" attrs="{'invisible':[('hexiao_type','!=','abnormal')]}"/>
+                                <field name="hexiao_comment" />
+<!--                                attrs="{'invisible':[('hexiao_type','!=','abnormal')]}"-->
                                 <field name="pricelist_id" groups="product.group_sale_pricelist" invisible="1"
                                        required="1"/>
                                 <field name="id" invisible="1"/>
