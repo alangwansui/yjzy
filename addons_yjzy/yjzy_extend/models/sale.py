@@ -773,7 +773,7 @@ class sale_order(models.Model):
             if one.contract_code == False:
                 break
             else:
-                if self.sudo().search_count([('contract_code', '=', one.contract_code)]) > 1:
+                if self.search_count([('contract_code', '=', one.contract_code)]) > 1:
                     raise Warning('合同编码重复')
 
     # akiny 加入对是否使用今日手填汇率的判断

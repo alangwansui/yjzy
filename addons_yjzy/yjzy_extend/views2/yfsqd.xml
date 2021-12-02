@@ -409,11 +409,7 @@
                             <field name="po_real_advance_before_delivery_new" groups="base.group_system"/>
                             <field name="po_real_advance_all"/>
                             <field name="po_real_advance" string="已预付金额"/>
-
-
-
                             <field name="so_id" invisible="1"/>
-
                             <field name="po_pre_advance"/>
                             <field name="delivery_amount"/>
                             <field name="un_delivery_amount"/>

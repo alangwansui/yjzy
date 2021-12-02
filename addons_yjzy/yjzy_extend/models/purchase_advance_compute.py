@@ -44,9 +44,12 @@ class purchase_order(models.Model):
             yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type != 'before_delivery')
             if one.yjzy_payment_ids:
                 real_advance_new = sum([x.amount for x in yjzy_payment_ids])
+                advance_balance_total = sum([x.advance_balance_total for x in yjzy_payment_ids])
             else:
                 real_advance_new = 0
+                advance_balance_total = 0
             one.real_advance_new = real_advance_new
+            one.advance_balance_total = advance_balance_total
 
     @api.depends('yjzy_payment_ids', 'yjzy_payment_ids.prepayment_type', 'yjzy_payment_ids.amount')
     def compute_real_advance_before_delivery_new(self):
@@ -55,9 +58,12 @@ class purchase_order(models.Model):
             yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type == 'before_delivery')
             if one.yjzy_payment_ids:
                 real_advance_before_delivery_new = sum([x.amount for x in yjzy_payment_ids])
+                advance_balance_before_delivery_total = sum([x.advance_payment_total for x in yjzy_payment_ids])
             else:
                 real_advance_before_delivery_new = 0
+                advance_balance_before_delivery_total = 0
             one.real_advance_before_delivery_new = real_advance_before_delivery_new
+            one.advance_balance_before_delivery_total = advance_balance_before_delivery_total
 
     real_advance_new = fields.Monetary(u'实际预付金额', compute='compute_real_advance_new', currency_field='yjzy_currency_id',
                                        )
@@ -66,10 +72,21 @@ class purchase_order(models.Model):
                                                        )
     real_advance_all = fields.Monetary(u'总预付金额', compute='compute_real_advance_all')
 
+    advance_balance_total_all = fields.Monetary(u'总待认领预付款余额',currency_field='yjzy_currency_id', compute='compute_real_advance_all')
+
+    advance_balance_before_delivery_total = fields.Monetary(u'实际发货前金额', compute='compute_real_advance_before_delivery_new',
+                                                            currency_field='yjzy_currency_id',
+                                                       )
+
+
     def compute_real_advance_all(self):
         for one in self:
             real_advance_new = one.real_advance_new
             real_advance_before_delivery_new = one.real_advance_before_delivery_new
+            advance_balance_before_delivery_total = one.advance_balance_before_delivery_total
+            advance_balance_total_all = one.advance_balance_total_all
             one.real_advance_all = real_advance_new + real_advance_before_delivery_new
+            one.advance_balance_before_delivery_total = advance_balance_before_delivery_total + advance_balance_total_all
+
 
 ###############################
