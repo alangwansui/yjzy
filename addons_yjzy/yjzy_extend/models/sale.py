@@ -428,8 +428,8 @@ class sale_order(models.Model):
 
     # 13已经添加
     contract_code = fields.Char(u'合同编码',copy=False)
-    _sql_constraints = [
-        ('contract_code_uniq', 'unique(contract_code)', u'存在重复的合同编号!')]
+    # _sql_constraints = [
+    #     ('contract_code_uniq', 'unique(contract_code)', u'存在重复的合同编号!')]
     contract_date = fields.Date(u'签订日期')
     link_man_id = fields.Many2one('res.partner', u'联系人')
     sale_assistant_id = fields.Many2one('res.users', u'业务助理')
