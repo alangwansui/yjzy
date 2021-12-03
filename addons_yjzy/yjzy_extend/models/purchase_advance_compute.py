@@ -58,12 +58,12 @@ class purchase_order(models.Model):
             yjzy_payment_ids = one.yjzy_payment_ids.filtered(lambda x: x.prepayment_type == 'before_delivery')
             if one.yjzy_payment_ids:
                 real_advance_before_delivery_new = sum([x.amount for x in yjzy_payment_ids])
-                advance_balance_before_delivery_total = sum([x.advance_payment_total for x in yjzy_payment_ids])
+                # advance_balance_before_delivery_total = sum([x.advance_payment_total for x in yjzy_payment_ids])
             else:
                 real_advance_before_delivery_new = 0
-                advance_balance_before_delivery_total = 0
+                # advance_balance_before_delivery_total = 0
             one.real_advance_before_delivery_new = real_advance_before_delivery_new
-            one.advance_balance_before_delivery_total = advance_balance_before_delivery_total
+            # one.advance_balance_before_delivery_total = advance_balance_before_delivery_total
 
     real_advance_new = fields.Monetary(u'实际预付金额', compute='compute_real_advance_new', currency_field='yjzy_currency_id',
                                        )
