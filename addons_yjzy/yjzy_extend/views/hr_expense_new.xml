@@ -422,6 +422,7 @@
                                                          ('employee_sales_uid','ilike',self),('tb_id','ilike',self),('lead_id','ilike',self),
                                                          ('huming','ilike',self),('acc_number','ilike',self),('description','ilike',self),
                                                          ('name','ilike',self),('categ_id','ilike',self),('second_categ_id','ilike',self),('product_id','ilike',self)]"/>
+                    <field name="lead_id" string="创建日期"/>
                     <field name="create_date" string="创建日期"/>
                     <field name="sheet_name" string="费用说明"/>
                     <field name="payment_date" string="付款日期"/>
@@ -484,6 +485,7 @@
                                 help="大类分组"/>
                         <filter string="费用对象" domain="[]" context="{'group_by': 'employee_sales_uid'}"
                                 help="对象分组"/>
+                        <filter string="项目编号" context="{'group_by': 'lead_id'}"/>
                         <filter string="Company" domain="[]" context="{'group_by': 'company_id'}" invisible='1'
                                 groups="base.group_multi_company"/>
                         <filter string="Product" invisible='1' domain="[]" context="{'group_by': 'product_id'}"/>
@@ -553,7 +555,7 @@
             <field name="name">hr.expense.tree</field>
             <field name="model">hr.expense</field>
             <field name="arch" type="xml">
-                <tree string="费用明细" class="o_expense_tree" create="false" edit="false" delete="false"
+                <tree string="费用明细" class="o_expense_tree o_list_view_scroll" create="false" edit="false" delete="false"
                       decoration-warning="state=='draft'" decoration-danger="state=='cancel'">
                     <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                     <field name="create_date" string="创建日期"/>

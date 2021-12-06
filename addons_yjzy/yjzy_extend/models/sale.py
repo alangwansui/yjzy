@@ -62,7 +62,6 @@ class sale_order(models.Model):
             if not product:
                 raise Warning('找不到产品 %s' % product_code)
 
-
             sale_line = self.env['sale.order.line'].create({
                 'product_id': product.id,
                 'product_uom_qty': qty,

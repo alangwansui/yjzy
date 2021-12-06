@@ -81,7 +81,7 @@ class sale_order_line(models.Model):
                                     ('abnormal', u'异常核销'),
                                     ('verifying', u'正常核销'),
                                     ('verification', u'核销完成'), ], u'订单审批状态', related="order_id.state")
-    order_state_1 = fields.Selection(Sale_Selection, u'审批流程', default='draft', index=True, related='order_id.stage_id.state',
+    order_state_1 = fields.Selection(Sale_Selection, u'审批流程', index=True, related='order_id.stage_id.state',
                                      store=True)
     current_date_rate = fields.Float('成本测算汇率', related='order_id.current_date_rate')
     contract_date = fields.Date('客户确认日期', related='order_id.contract_date')
