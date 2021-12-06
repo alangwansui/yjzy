@@ -64,21 +64,21 @@ class sale_order(models.Model):
                 continue
             if war:
                 raise Warning(war)
-
-            sale_line = self.env['sale.order.line'].create({
-                'product_id': product.id,
-                'product_uom_qty': qty,
-                'price_unit': price,
-                'purchase_price':purchase_price,
-                'order_id': self.id,
-            })
-            sale_line.product_id_change()
-            sale_line.onchange_supplier()
-            sale_line.update({
-                'product_uom_qty': qty,
-                'price_unit': price,
-                'purchase_price':purchase_price,
-            })
+            else:
+                sale_line = self.env['sale.order.line'].create({
+                    'product_id': product.id,
+                    'product_uom_qty': qty,
+                    'price_unit': price,
+                    'purchase_price':purchase_price,
+                    'order_id': self.id,
+                })
+                sale_line.product_id_change()
+                sale_line.onchange_supplier()
+                sale_line.update({
+                    'product_uom_qty': qty,
+                    'price_unit': price,
+                    'purchase_price':purchase_price,
+                })
 
 
 
