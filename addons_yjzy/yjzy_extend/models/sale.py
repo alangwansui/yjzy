@@ -50,17 +50,20 @@ class SaleOrderStage(models.Model):
 class sale_order(models.Model):
     _inherit = 'sale.order'
 
-
     def process_excel_text(self, datas):
         for row in datas:
             product_code = row[0]
             qty = row[1]
             price = row[2]
             purchase_price = row[3]
-
+            war = ''
             product = self.env['product.product'].search([('customer_ref', '=',product_code ),('customer_id','=',self.partner_id.id)])
             if not product:
-                raise Warning('找不到产品 %s' % product_code)
+                war += '%s%s%s' % ('找不到产品', product_code, '\n')
+            else:
+                continue
+            if war:
+                raise Warning(war)
 
             sale_line = self.env['sale.order.line'].create({
                 'product_id': product.id,
