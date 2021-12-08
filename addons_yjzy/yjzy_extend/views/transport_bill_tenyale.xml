@@ -905,7 +905,7 @@
                                 <group>
                                     <field name="sale_invoice_id" invisible="1"/>
                                     <field name="back_tax_invoice_id" invisible="1"/>
-                                    <field name="invoice_in_ids" readonly="1"/>
+<!--                                    <field name="invoice_in_ids" readonly="1"/>-->
                                     <field name="purchase_invoice_ids" readonly="1"/>
                                 </group>
 
@@ -1286,8 +1286,8 @@
                                         <button colspan="2" name="open_purchase_invoice_1" type="object"
                                                 class="oe_stat_button" icon="fa-paperclip"
                                                 string="供应商交单"/>
-                                        <field name="date_purchase_finish_state" string="供应商交单审批"
-                                               attrs="{'readonly':1}"/>
+<!--                                        <field name="date_purchase_finish_state" string="供应商交单审批"-->
+<!--                                               attrs="{'readonly':1}"/>-->
                                     </group>
                                 </group>
                             </page>
@@ -1440,7 +1440,7 @@
                                         <field name="date_customer_finish"/>
                                         <field name="date_customer_finish_state" string="客户交单审批"/>
                                         <field name="purchase_invoice_ids2" widget="many2many_tags"/>
-                                        <field name="date_purchase_finish_state" string="供应商交单审批"/>
+<!--                                        <field name="date_purchase_finish_state" string="供应商交单审批"/>-->
                                     </group>
                                 </group>
                             </page>

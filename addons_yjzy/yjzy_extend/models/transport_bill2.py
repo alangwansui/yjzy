@@ -507,6 +507,8 @@ class transport_bill(models.Model):
 
 
 
+
+
 class tbl_comb(models.Model):
     _name = 'tbl.comb'
     _description = u'发运单明细的bom分解组合'
