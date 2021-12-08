@@ -26,7 +26,7 @@ class transport_bill(models.Model):
         if not self.order_track_ids:
             order_track_transport_track = order_track_obj.create({
                 'type': 'transport_track',
-                'tb_id':self.id,
+                'tb_id': self.id,
                 'partner_id': self.partner_id.id,
             })
             order_track_transport_track.create_plan()

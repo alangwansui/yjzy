@@ -485,7 +485,7 @@
                                 <group>
                                     <field name="sale_invoice_id" invisible="1"/>
                                     <field name="back_tax_invoice_id" invisible="1"/>
-                                    <field name="invoice_in_ids" readonly="1"/>
+<!--                                    <field name="invoice_in_ids" readonly="1"/>-->
                                     <field name="purchase_invoice_ids" readonly="1"/>
                                 </group>
 

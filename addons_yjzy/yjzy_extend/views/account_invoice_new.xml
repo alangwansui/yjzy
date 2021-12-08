@@ -555,6 +555,7 @@
                     <field name="currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="state" invisible="1"/>
+                    <field name="state_1" readonly="1"/>
                     <field name="type" invisible="context.get('type',True)"/>
                     <field name="residual_times" groups="base.group_system"/>
 
@@ -2594,8 +2595,10 @@
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_account_invoice_new_filter"/>
             <field name="domain">
-                [('invoice_attribute','in',['normal']),('type','=','in_invoice'),('state','=','open'),('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
-                ('yjzy_type','=','purchase'),'|',('amount_payment_can_approve_all','!=',0),('yjzy_invoice_amount_payment_can_approve_all','!=',0)]
+                [('invoice_attribute','in',['normal']),('type','=','in_invoice'),('state','=','open'),
+                ('state_1','!=','invoice_pending'), ('is_yjzy_invoice','=',False),'|',('yjzy_type_1','=','purchase'),
+                ('yjzy_type','=','purchase'),'|',('amount_payment_can_approve_all','!=',0),
+                ('yjzy_invoice_amount_payment_can_approve_all','!=',0)]
             </field>
             <field name="context">
                 {'search_default_group_by_partner_id':1,'only_ref':1,'type':'out_invoice','journal_type':

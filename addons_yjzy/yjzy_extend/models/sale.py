@@ -680,6 +680,10 @@ class sale_order(models.Model):
                            # 'state': 'submit',
                            'submit_uid': self.env.user.id,
                            'submit_date': fields.datetime.now()})
+        for one in self.order_line:
+            one.compute_product_other_price()
+            one.compute_product_last_price()
+            one.compute_today_hegui_date()
 
     def action_sales_approve_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '030')])
@@ -698,6 +702,10 @@ class sale_order(models.Model):
                            'state': 'approve',
                            'approve_uid': self.env.user.id,
                            'approve_date': fields.datetime.now()})
+        for one in self.order_line:
+            one.compute_product_other_price()
+            one.compute_product_last_price()
+            one.compute_today_hegui_date()
 
     def action_to_manager_stage(self):
         stage_id = self._stage_find(domain=[('code', '=', '040')])

@@ -54,7 +54,7 @@ class transport_bill(models.Model):
             if (not one.outer_currency_id) or (not one.sale_currency_id) or (not one.third_currency_id):
                 # print(u'币种数据不全，不计算')
                 continue
-            one.invoice_in_ids = one.sale_invoice_id + one.back_tax_invoice_id
+            # one.invoice_in_ids = one.sale_invoice_id + one.back_tax_invoice_id
             moves = one.line_ids.mapped('move_ids')
             one.move_ids = moves
             one.stage1move_ids = moves.filtered(lambda x: x.picking_code == 'incoming')
@@ -63,22 +63,9 @@ class transport_bill(models.Model):
             one.picking_ids = pickings
             one.stage1picking_ids = pickings.filtered(lambda x: x.picking_type_code == 'incoming')
             one.stage2picking_ids = pickings.filtered(lambda x: x.picking_type_code == 'outgoing')
-
-            one.so_ids = one.line_ids.mapped('sol_id').mapped('order_id')
-
-            one.po_ids = one.line_ids.mapped('lot_plan_ids').mapped('lot_id').mapped('po_id')
-            one.purchase_invoice_count = len(one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'))
-            one.sale_invoice_count = one.sale_invoice_id and 1 or 0
-            one.back_tax_invoice_count = one.back_tax_invoice_id and 1 or 0
-
-            one.fhtzd_count = len(one.tb_vendor_ids)
-            one.qg_count = one.qingguan_line_ids and 1 or 0
-            one.bg_count = one.hsname_ids and 1 or 0
-
             # 计算统计金额
             lines = one.line_ids
             if not lines: continue
-
             org_sale_amount, sale_amount = one._get_sale_amount(lines)
             org_real_sale_amount = sum([x.amount for x in one.hsname_ids])
 
@@ -1157,7 +1144,7 @@ class transport_bill(models.Model):
     date_ship_related = fields.Date('出运船日期')
     date_customer_finish_related = fields.Date('客户交单日期')
     date_supplier_finish_related = fields.Date('供应商交单确认日期')
-    invoice_in_ids = fields.Many2many('account.invoice', u'发票汇总', compute=compute_info)
+    # invoice_in_ids = fields.Many2many('account.invoice', u'发票汇总', compute=compute_info)
     mark_ids = fields.Many2many('transport.mark', 'ref_mark_tbill', 'tid', 'mid' '唛头')
     partner_mark_comb_ids = fields.Many2many('mark.comb', related='partner_id.mark_comb_ids')
     mark_comb_id = fields.Many2one('mark.comb', u'唛头组')
@@ -1221,9 +1208,16 @@ class transport_bill(models.Model):
                                  default=lambda self: self.env.user.company_id.id)
     tuopan_weight = fields.Float(u'托盘重量')
     tuopan_volume = fields.Float(u'托盘体积')
-    so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute=compute_info,
+    so_ids = fields.Many2many('sale.order', 'ref_tb_so', 'so_id', 'tb_id', string='销售订单', compute='compute_so_ids',
                               store=False)
-    po_ids = fields.Many2many('purchase.order', string='采购订单', compute=compute_info, store=False)
+    po_ids = fields.Many2many('purchase.order', string='采购订单', compute='compute_so_ids', store=False)
+
+    @api.depends('line_ids')
+    def compute_so_ids(self):
+        for one in self:
+            one.so_ids = one.line_ids.mapped('sol_id').mapped('order_id')
+            one.po_ids = one.line_ids.mapped('lot_plan_ids').mapped('lot_id').mapped('po_id')
+
     cip_type = fields.Selection([('normal', u'正常报关'), ('buy', '第三方报关'), ('none', '不报关')], string=u'报关',
                                 default='normal')
     line_ids = fields.One2many('transport.bill.line', 'bill_id', '明细', readonly=True,
@@ -1328,12 +1322,29 @@ class transport_bill(models.Model):
     zc_invoice_profile_residual_total_new = fields.Monetary(u'增采净剩余金额', compute=compute_invoice_total_xf, store=True)
     zc_purchase_invoice_residual_total_new = fields.Monetary(u'增采应付剩余金额', compute=compute_invoice_total_xf, store=True)
     zc_sale_invoice_residual_total_new = fields.Monetary(u'增采应收剩余金额', compute=compute_invoice_total_xf, store=True)
-
-    sale_invoice_count = fields.Integer(u'销售发票数', compute=compute_info)
-    purchase_invoice_count = fields.Integer(u'采购发票数', compute=compute_info)
-    back_tax_invoice_count = fields.Integer(u'退税发票数', compute=compute_info)
-    tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_id', u'批次明细')
     tb_vendor_ids = fields.One2many('transport.bill.vendor', 'tb_id', u'供应商发运单')
+
+    sale_invoice_count = fields.Integer(u'销售发票数', compute='compute_invoice_count')
+    purchase_invoice_count = fields.Integer(u'采购发票数', compute='compute_invoice_count')
+    back_tax_invoice_count = fields.Integer(u'退税发票数', compute='compute_invoice_count')
+    fhtzd_count = fields.Integer(u'发货通知单数量', compute='compute_invoice_count')
+    qg_count = fields.Integer(u'清关数量', compute='compute_invoice_count')
+    bg_count = fields.Integer(u'报关数量', compute='compute_invoice_count')
+
+    @api.depends('purchase_invoice_ids', 'sale_invoice_id', 'back_tax_invoice_id', 'tb_vendor_ids',
+                 'qingguan_line_ids', 'hsname_ids')
+    def compute_invoice_count(self):
+        for one in self:
+            one.purchase_invoice_count = len(one.purchase_invoice_ids.filtered(lambda x: x.yjzy_type == 'purchase'))
+            one.sale_invoice_count = one.sale_invoice_id and 1 or 0
+            one.back_tax_invoice_count = one.back_tax_invoice_id and 1 or 0
+            one.fhtzd_count = len(one.tb_vendor_ids)
+            one.qg_count = one.qingguan_line_ids and 1 or 0
+            one.bg_count = one.hsname_ids and 1 or 0
+
+    tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_id', u'批次明细')
+
+
     gongsi_id = fields.Many2one('gongsi', '销售主体')
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
     pallet_type = fields.Selection([('ctns', 'CTNS'), ('plts', 'PLTS'), ('PKGS', 'PKGS')], u'包装类型')
@@ -1419,9 +1430,8 @@ class transport_bill(models.Model):
     qingguan_gross_wtight_total = fields.Float(u'清关总毛重', compute=_get_qingguan)
     qingguan_volume_total = fields.Float(u'清关总体积', compute=_get_qingguan)
 
-    qg_count = fields.Integer(u'清关数量', compute=compute_info)
-    bg_count = fields.Integer(u'报关数量', compute=compute_info)
-    fhtzd_count = fields.Integer(u'发货通知单数量', compute=compute_info)
+
+
 
     # 单证信息
 
@@ -1837,7 +1847,7 @@ class transport_bill(models.Model):
     #     for one in self:
     #         if len(one.line_ids) != len(one.line_ids.mapped('sol_id')):
     #             raise Warning('不能创建相同 销售明细 的出运明细行')
-    # 13ok
+    # 13ok 状态更行  org   org1  amount_total   tb_approve_po_amount_total   so_line_akiny today  other_price_akiny  hegui
     @api.model
     def create(self, vals):
         one = super(transport_bill, self).create(vals)

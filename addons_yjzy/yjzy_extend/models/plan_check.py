@@ -554,7 +554,7 @@ class OrderTrack(models.Model):
     date_so_requested_is_out_time = fields.Selection([('10_undue', '未到期'), ('15_10day', '距离交期小于等于10天'),
                                                       ('20_in_time', '到期'), ('30_out_time', '已逾期'),
                                                       ('40_in_out_time', '到期及逾期')], u'客户交期是否逾期',
-                                                     compute=compute_date_so_requested_is_out_time, store=True)
+                                                     compute='compute_date_so_requested_is_out_time', store=True)
 
     time_contract_requested = fields.Integer('客户交期时限', compute=compute_time_contract_requested, store=True)
     finish_percent = fields.Float('完成期限比例', compute=compute_finish_percent)

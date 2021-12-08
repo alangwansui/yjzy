@@ -49,9 +49,7 @@ class sale_order(models.Model):
 class sale_order_line(models.Model):
     _inherit = 'sale.order.line'
 
-    # _rec_name = 'percent'
-
-    @api.depends('hegui_date', 'order_id', 'order_id.state_1')
+    @api.depends('hegui_date')
     def compute_today_hegui_date(self):
         strptime = datetime.strptime
         for one in self:
@@ -62,20 +60,55 @@ class sale_order_line(models.Model):
             print('today_hegui_akiny', today_hegui_date)
             one.today_hegui_date = today_hegui_date
 
-    @api.depends('price_unit', 'purchase_price', 'product_id', 'order_id', 'order_id.state_1')
+    hegui_date = fields.Date('合规审批时间', related='order_id.approve_date', store=True)
+    today_hegui_date = fields.Integer('合规审批距离今天的日期', compute='compute_today_hegui_date', store=True)
+    product_last_price = fields.Float('最近一次销售价格', compute='compute_product_last_price',
+                                      digits=dp.get_precision('Product Price'), store=True)
+
+    product_purchase_last_price = fields.Float('最近一次采购价格', compute='compute_product_last_price',
+                                               digits=dp.get_precision('Product Price'), store=True)
+
+    sale_price_change_percent = fields.Float('变动比率', digits=(2, 2), compute='compute_price_change_percent', store=True)
+    is_change = fields.Boolean('销售变动方向', compute='compute_price_change_percent', store=True)
+    purchase_is_change = fields.Boolean('采购变动方向', compute='compute_price_change_percent', store=True)
+
+    no_change = fields.Boolean('销售有无变动', compute='compute_price_change_percent', store=True)
+    purchase_no_change = fields.Boolean('采购有无变动', compute='compute_price_change_percent', store=True)
+
+    purchase_price_change_percent = fields.Float('变动比率', digits=(2, 2), compute='compute_price_change_percent',
+                                                 store=True)
+
+    sale_price_percent = fields.Float('本次在历史价格区间的位置', compute='compute_price_percent', digits=(2, 2), store=True)
+    purchase_price_percent = fields.Float('本次在历史价格区间的位置', compute='compute_price_percent', digits=(2, 2), store=True)
+
+    average_price = fields.Float('历史平均价', compute='compute_product_other_price',
+                                 digits=dp.get_precision('Product Price'), store=True)
+    highest_price = fields.Float('历史最高价', compute='compute_product_other_price',
+                                 digits=dp.get_precision('Product Price'), store=True)
+    lowest_price = fields.Float('历史最低价', compute='compute_product_other_price',
+                                digits=dp.get_precision('Product Price'), store=True)
+    purchase_average_price = fields.Float('采购历史平均价', compute='compute_product_other_price',
+                                          digits=dp.get_precision('Product Price'), store=True)
+    purchase_highest_price = fields.Float('采购历史最高价', compute='compute_product_other_price',
+                                          digits=dp.get_precision('Product Price'), store=True)
+    purchase_lowest_price = fields.Float('采购历史最低价', compute='compute_product_other_price',
+                                         digits=dp.get_precision('Product Price'), store=True)
+
+    @api.depends('price_unit', 'purchase_price', 'product_id', 'hegui_date')
     def compute_product_last_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
             if one.hegui_date == False:
-                so_line = so_line_obj.search([('id','<',one.id),('hegui_date','!=',False),('product_id', '=', one.product_id.id),
-                                              ('order_partner_id', '=', one.order_partner_id.id)],
-                                             order='hegui_date desc', limit=1)
-            else:
                 so_line = so_line_obj.search(
-                    [('hegui_date', '<=', one.hegui_date),('id','!=',one.id),('product_id', '=', one.product_id.id),
+                    [('id', '<', one.id), ('hegui_date', '!=', False), ('product_id', '=', one.product_id.id),
                      ('order_partner_id', '=', one.order_partner_id.id)],
                     order='hegui_date desc', limit=1)
-            print('so_line_akiny',so_line,so_line.purchase_price)
+            else:
+                so_line = so_line_obj.search(
+                    [('hegui_date', '<=', one.hegui_date), ('id', '!=', one.id), ('product_id', '=', one.product_id.id),
+                     ('order_partner_id', '=', one.order_partner_id.id)],
+                    order='hegui_date desc', limit=1)
+            print('so_line_akiny', so_line, so_line.purchase_price)
             if so_line:
                 product_last_price = so_line.price_unit
                 product_purchase_last_price = so_line.purchase_price
@@ -83,12 +116,96 @@ class sale_order_line(models.Model):
                 product_last_price = 0
                 product_purchase_last_price = 0
 
-
-
             one.product_last_price = product_last_price
             one.product_purchase_last_price = product_purchase_last_price
 
-    @api.depends('price_unit', 'purchase_price', 'order_id', 'order_id.state_1')
+    @api.depends('highest_price', 'lowest_price', 'price_unit', 'purchase_highest_price', 'purchase_lowest_price',
+                 'purchase_price')
+    def compute_price_percent(self):
+        for one in self:
+            highest_price = round(one.highest_price, 5)
+            lowest_price = round(one.lowest_price, 5)
+            price_unit = round(one.price_unit, 5)
+            print('highest_price_akiny', highest_price, lowest_price)
+            if highest_price - lowest_price == 0 and price_unit == highest_price and highest_price != 0 and lowest_price != 0 or (
+                    highest_price == 0 and lowest_price == 0):
+                sale_price_percent = 1 * 100
+            elif highest_price - lowest_price == 0 and price_unit > highest_price:
+                sale_price_percent = price_unit * 100 / highest_price
+            elif highest_price - lowest_price == 0 and price_unit < lowest_price:
+                sale_price_percent = (price_unit - lowest_price) * 100 / highest_price
+            else:
+                if price_unit < lowest_price:
+                    sale_price_percent = lowest_price != 0 and (price_unit - lowest_price) * 100 / lowest_price
+                elif lowest_price <= price_unit <= highest_price:
+                    sale_price_percent = highest_price - lowest_price != 0 and (price_unit - lowest_price) * 100 / (
+                            highest_price - lowest_price)
+                else:
+                    sale_price_percent = highest_price != 0 and price_unit * 100 / highest_price
+            purchase_highest_price = round(one.purchase_highest_price, 5)
+            purchase_lowest_price = round(one.purchase_lowest_price, 5)
+            purchase_price = round(one.purchase_price, 5)
+            print('purchase_highest_price_akiny', purchase_highest_price, purchase_lowest_price)
+            if purchase_highest_price - purchase_lowest_price == 0 and purchase_price == purchase_highest_price and purchase_highest_price != 0 and purchase_lowest_price != 0 or (
+                    purchase_highest_price == 0 and purchase_lowest_price == 0):
+                purchase_price_percent = 1 * 100
+            elif purchase_highest_price - purchase_lowest_price == 0 and purchase_price > purchase_highest_price:
+                purchase_price_percent = purchase_price * 100 / purchase_highest_price
+            elif purchase_highest_price - purchase_lowest_price == 0 and purchase_price < purchase_lowest_price:
+                purchase_price_percent = (purchase_price - purchase_lowest_price) * 100 / purchase_highest_price
+            else:
+                if purchase_price < purchase_lowest_price:
+                    purchase_price_percent = purchase_lowest_price != 0 and (
+                            purchase_price - purchase_lowest_price) * 100 / purchase_lowest_price
+                elif lowest_price <= price_unit <= highest_price:
+                    purchase_price_percent = purchase_highest_price - purchase_lowest_price != 0 and (
+                            purchase_price - purchase_lowest_price) * 100 / (
+                                                     purchase_highest_price - purchase_lowest_price)
+                else:
+                    purchase_price_percent = purchase_highest_price != 0 and purchase_price * 100 / purchase_highest_price
+            one.sale_price_percent = sale_price_percent
+            one.purchase_price_percent = purchase_price_percent
+
+    @api.depends('price_unit', 'purchase_price', 'order_id.state_1', 'product_purchase_last_price',
+                 'product_last_price')
+    def compute_price_change_percent(self):
+        for one in self:
+            price_unit = one.price_unit
+            product_last_price = one.product_last_price
+            purchase_price = one.purchase_price
+            product_purchase_last_price = one.product_purchase_last_price
+            sale_price_change_percent = product_last_price and (
+                    price_unit - product_last_price) * 100 / product_last_price or 0.0
+            purchase_price_change_percent = product_purchase_last_price and (
+                    purchase_price - product_purchase_last_price) * 100 / product_purchase_last_price or 0.0
+            if sale_price_change_percent >= 0:
+                is_change = True
+            else:
+                is_change = False
+
+            if purchase_price_change_percent >= 0:
+                purchase_is_change = True
+            else:
+                purchase_is_change = False
+
+            if sale_price_change_percent == 0:
+                no_change = True
+            else:
+                no_change = False
+
+            if purchase_price_change_percent == 0:
+                purchase_no_change = True
+            else:
+                purchase_no_change = False
+
+            one.sale_price_change_percent = sale_price_change_percent
+            one.purchase_price_change_percent = purchase_price_change_percent
+            one.is_change = is_change
+            one.purchase_is_change = purchase_is_change
+            one.no_change = no_change
+            one.purchase_no_change = purchase_no_change
+
+    @api.depends('price_unit', 'purchase_price', 'product_id', 'order_partner_id')
     def compute_product_other_price(self):
         so_line_obj = self.env['sale.order.line']
         for one in self:
@@ -120,131 +237,6 @@ class sale_order_line(models.Model):
             one.purchase_average_price = purchase_average_price
             one.purchase_highest_price = purchase_highest_price
             one.purchase_lowest_price = purchase_lowest_price
-
-    hegui_date = fields.Date('合规审批时间', related='order_id.approve_date', store=True)
-    today_hegui_date = fields.Integer('合规审批距离今天的日期', compute=compute_today_hegui_date, store=True)
-    product_last_price = fields.Float('最近一次销售价格', compute='compute_product_last_price',
-                                      digits=dp.get_precision('Product Price'), store=True)
-
-    product_purchase_last_price = fields.Float('最近一次采购价格', compute='compute_product_last_price',
-                                               digits=dp.get_precision('Product Price'), store=True)
-
-    @api.depends('price_unit', 'purchase_price', 'order_id.state_1', 'product_purchase_last_price',
-                 'product_last_price')
-    def compute_price_change_percent(self):
-        for one in self:
-            price_unit = one.price_unit
-            product_last_price = one.product_last_price
-
-            purchase_price = one.purchase_price
-            product_purchase_last_price = one.product_purchase_last_price
-
-            sale_price_change_percent = product_last_price and (
-                        price_unit - product_last_price) * 100 / product_last_price or 0.0
-            purchase_price_change_percent = product_purchase_last_price and (
-                        purchase_price - product_purchase_last_price) * 100 / product_purchase_last_price or 0.0
-            if sale_price_change_percent >= 0:
-                is_change = True
-            else:
-                is_change = False
-
-            if purchase_price_change_percent >= 0:
-                purchase_is_change = True
-            else:
-                purchase_is_change = False
-
-            if sale_price_change_percent == 0:
-                no_change = True
-            else:
-                no_change = False
-
-            if purchase_price_change_percent == 0:
-                purchase_no_change = True
-            else:
-                purchase_no_change = False
-
-            one.sale_price_change_percent = sale_price_change_percent
-            one.purchase_price_change_percent = purchase_price_change_percent
-            one.is_change = is_change
-            one.purchase_is_change = purchase_is_change
-            one.no_change = no_change
-            one.purchase_no_change = purchase_no_change
-
-    @api.depends('highest_price', 'lowest_price', 'price_unit', 'purchase_highest_price', 'purchase_lowest_price',
-                 'purchase_price')
-    def compute_price_percent(self):
-        for one in self:
-            highest_price = round(one.highest_price,5)
-            lowest_price = round(one.lowest_price,5)
-            price_unit = round(one.price_unit,5)
-            print('highest_price_akiny', highest_price, lowest_price)
-            if highest_price - lowest_price == 0 and price_unit == highest_price and highest_price != 0 and lowest_price != 0 or (
-                    highest_price == 0 and lowest_price == 0):
-                sale_price_percent = 1 * 100
-            elif highest_price - lowest_price == 0 and price_unit > highest_price:
-                sale_price_percent = price_unit * 100 / highest_price
-            elif highest_price - lowest_price == 0 and price_unit < lowest_price:
-                sale_price_percent = (price_unit - lowest_price) * 100 / highest_price
-            else:
-                if price_unit < lowest_price:
-                    sale_price_percent = lowest_price != 0 and (price_unit - lowest_price) * 100 / lowest_price
-                elif price_unit >= lowest_price and price_unit <= highest_price:
-                    sale_price_percent = highest_price - lowest_price != 0 and (price_unit - lowest_price) * 100 / (
-                                highest_price - lowest_price)
-                else:
-                    # if price_unit > highest_price:
-                    sale_price_percent = highest_price != 0 and price_unit * 100 / highest_price
-
-            purchase_highest_price = round(one.purchase_highest_price,5)
-            purchase_lowest_price = round(one.purchase_lowest_price,5)
-            purchase_price = round(one.purchase_price,5)
-            print('purchase_highest_price_akiny',purchase_highest_price,purchase_lowest_price)
-            if purchase_highest_price - purchase_lowest_price == 0 and purchase_price == purchase_highest_price and purchase_highest_price != 0 and purchase_lowest_price != 0 or (
-                    purchase_highest_price == 0 and purchase_lowest_price == 0):
-                purchase_price_percent = 1 * 100
-            elif purchase_highest_price - purchase_lowest_price == 0 and purchase_price > purchase_highest_price:
-                purchase_price_percent = purchase_price * 100 / purchase_highest_price
-            elif purchase_highest_price - purchase_lowest_price == 0 and purchase_price < purchase_lowest_price:
-                purchase_price_percent = (purchase_price - purchase_lowest_price) * 100 / purchase_highest_price
-            else:
-                if purchase_price < purchase_lowest_price:
-                    purchase_price_percent = purchase_lowest_price != 0 and (
-                                purchase_price - purchase_lowest_price) * 100 / purchase_lowest_price
-                elif price_unit >= lowest_price and price_unit <= highest_price:
-                    purchase_price_percent = purchase_highest_price - purchase_lowest_price != 0 and (
-                            purchase_price - purchase_lowest_price) * 100 / (
-                                                     purchase_highest_price - purchase_lowest_price)
-                else:
-                    purchase_price_percent = purchase_highest_price != 0 and purchase_price * 100 / purchase_highest_price
-
-            one.sale_price_percent = sale_price_percent
-            one.purchase_price_percent = purchase_price_percent
-
-    sale_price_change_percent = fields.Float('变动比率', digits=(2, 2), compute=compute_price_change_percent, store=True)
-    is_change = fields.Boolean('销售变动方向', compute=compute_price_change_percent, store=True)
-    purchase_is_change = fields.Boolean('采购变动方向', compute=compute_price_change_percent, store=True)
-
-    no_change = fields.Boolean('销售有无变动', compute=compute_price_change_percent, store=True)
-    purchase_no_change = fields.Boolean('采购有无变动', compute=compute_price_change_percent, store=True)
-
-    purchase_price_change_percent = fields.Float('变动比率', digits=(2, 2), compute=compute_price_change_percent,
-                                                 store=True)
-
-    sale_price_percent = fields.Float('本次在历史价格区间的位置', compute=compute_price_percent, digits=(2, 2), store=True)
-    purchase_price_percent = fields.Float('本次在历史价格区间的位置', compute=compute_price_percent, digits=(2, 2), store=True)
-
-    average_price = fields.Float('历史平均价', compute='compute_product_other_price',
-                                 digits=dp.get_precision('Product Price'), store=True)
-    highest_price = fields.Float('历史最高价', compute='compute_product_other_price',
-                                 digits=dp.get_precision('Product Price'), store=True)
-    lowest_price = fields.Float('历史最低价', compute='compute_product_other_price',
-                                digits=dp.get_precision('Product Price'), store=True)
-    purchase_average_price = fields.Float('采购历史平均价', compute='compute_product_other_price',
-                                          digits=dp.get_precision('Product Price'), store=True)
-    purchase_highest_price = fields.Float('采购历史最高价', compute='compute_product_other_price',
-                                          digits=dp.get_precision('Product Price'), store=True)
-    purchase_lowest_price = fields.Float('采购历史最低价', compute='compute_product_other_price',
-                                         digits=dp.get_precision('Product Price'), store=True)
 
     def compute_product_last_price_ls(self):
         so_line_obj = self.env['sale.order.line']
