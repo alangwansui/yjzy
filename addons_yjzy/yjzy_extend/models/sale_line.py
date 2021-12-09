@@ -158,7 +158,7 @@ class sale_order_line(models.Model):
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
 
     # 14.0--------------------------
-    @api.depends('tbl_ids', 'tbl_ids.plan_qty', 'qty_delivered', 'product_uom_qty')
+    @api.depends('tbl_ids', 'tbl_ids.plan_qty', 'qty_delivered', 'product_uom_qty','tbl_ids.state')
     def compute_project_tb_qty(self):
         for one in self:
             if one.tbl_ids:
@@ -206,8 +206,8 @@ class sale_order_line(models.Model):
                 lambda x: x.bill_id.state in ['delivered', 'invoiced', 'abnormal', 'verifying', 'done', 'paid']))
 
     qty_undelivered = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered)
-    project_tb_qty = fields.Float('已计划发货', compute='compute_project_tb_qty')
-    can_project_tb_qty = fields.Float('可计划发货', compute='compute_project_tb_qty')
+    project_tb_qty = fields.Float('已计划发货', compute='compute_project_tb_qty',store=True)
+    can_project_tb_qty = fields.Float('可计划发货', compute='compute_project_tb_qty',store=True)
     qty_undelivered_new = fields.Float(string=u'未发货', readonly=True, compute=compute_qty_undelivered, store=True)
     project_tb_qty_new = fields.Float('已计划发货', compute='compute_project_tb_qty', store=True)
     can_project_tb_qty_new = fields.Float('可计划发货', compute='compute_project_tb_qty', store=True)
