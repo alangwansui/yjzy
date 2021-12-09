@@ -3192,7 +3192,7 @@ class transport_bill(models.Model):
                 if so.state == 'approve':
                     # so.action_confirm()
                     so.action_confirm_stage()  # 等待更新
-                    so.order_line_compute_project_tb_qty()
+                    # so.order_line_compute_project_tb_qty()
             stage_preview = self.stage_id
             user = self.env.user
             # group = self.env.user.groups_id
