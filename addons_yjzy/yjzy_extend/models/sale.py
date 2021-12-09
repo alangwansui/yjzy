@@ -664,6 +664,10 @@ class sale_order(models.Model):
             'context': ctx,
         }
 
+    def order_line_compute_project_tb_qty(self):
+        for one in self.order_line:
+            one.compute_project_tb_qty()
+
     def _stage_find(self, domain=None, order='sequence'):
         search_domain = list(domain)
         return self.env['sale.order.stage'].search(search_domain, order=order, limit=1)

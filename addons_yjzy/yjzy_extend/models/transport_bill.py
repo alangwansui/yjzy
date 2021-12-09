@@ -133,6 +133,7 @@ class transport_bill(models.Model):
             one.date_ship_att_count = len(one.date_ship_att)
             one.date_customer_finish_att_count = len(one.date_customer_finish_att)
 
+
             sale_commission_amount = real_sale_amount * one.sale_commission_ratio
 
             vat_diff_amount = 0
@@ -3103,6 +3104,9 @@ class transport_bill(models.Model):
             # else:
             if self.ref and self.partner_id and self.date_project and self.incoterm and self.current_date_rate > 0 and \
                     self.payment_term_id and self.line_ids and self.sale_currency_id:
+                so_id = self.line_ids.mapped('so_id')
+                for so in so_id:
+                    so.order_line_compute_project_tb_qty()
                 self.amount_all()
                 stage_id = self._stage_find(domain=[('code', '=', '002')])
                 return self.write({'stage_id': stage_id.id,
@@ -3144,6 +3148,9 @@ class transport_bill(models.Model):
         if user not in stage_preview.user_ids:
             raise Warning('您没有权限审批')
         else:
+            so_id = self.line_ids.mapped('so_id')
+            for so in so_id:
+                so.order_line_compute_project_tb_qty()
             self.write({'sales_confirm_uid': self.env.user.id,
                         'sales_confirm_date': fields.datetime.now(),
                         # 'state':'sales_approve',
@@ -3164,6 +3171,7 @@ class transport_bill(models.Model):
                     if so.state == 'approve':
                         # so.action_confirm()
                         so.action_confirm_stage()
+
                 self.write({'approve_uid': self.env.user.id,
                             'approve_date': fields.datetime.now(),
                             # 'state':'approve',
@@ -3184,6 +3192,7 @@ class transport_bill(models.Model):
                 if so.state == 'approve':
                     # so.action_confirm()
                     so.action_confirm_stage()  # 等待更新
+                    so.order_line_compute_project_tb_qty()
             stage_preview = self.stage_id
             user = self.env.user
             # group = self.env.user.groups_id

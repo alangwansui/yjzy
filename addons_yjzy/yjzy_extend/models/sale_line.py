@@ -158,7 +158,7 @@ class sale_order_line(models.Model):
     other_currency_id = fields.Many2one('res.currency', u'其他国外费用货币', related='order_id.other_currency_id')
 
     # 14.0--------------------------
-    @api.depends('tbl_ids', 'tbl_ids.state', 'tbl_ids.plan_qty', 'qty_delivered', 'product_uom_qty', 'order_state_1')
+    @api.depends('tbl_ids', 'tbl_ids.plan_qty', 'qty_delivered', 'product_uom_qty')
     def compute_project_tb_qty(self):
         for one in self:
             if one.tbl_ids:
