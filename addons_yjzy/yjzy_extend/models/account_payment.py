@@ -1354,7 +1354,7 @@ class account_payment(models.Model):
                     raise Warning('合同未审批不允许提交!')
                 # if self.po_id and self.po_id.delivery_status != 'undelivered':
                 #     raise Warning('合同已经出运，不允许提交预付申请！')
-                # if self.amount + self.po_real_advance > self.po_amount:
+                # if self.amount + self.po_real_advance > self.po_amount:   # todo
                 #     raise Warning('本次预付金额超过允许金额范围')
                 for one in self.po_id.yjzy_payment_ids:
                     if one.state not in ['posted', 'reconciled'] and one.sfk_type == 'yfsqd' and one.id < self.id:
