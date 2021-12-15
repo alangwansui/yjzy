@@ -437,15 +437,15 @@ class hr_expense_sheet(models.Model):
             self.payment_id.unlink()
             self.other_payment_invoice_id.unlink()
         if self.expense_to_invoice_type == 'to_invoice':
-            self.tb_po_invoice_ids.unlink()
+            for line in self.tb_po_invoice_ids:
+                line.state = '10_draft'
+                line.unlink()
             self.expense_to_invoice_type = 'normal'
         for tb in self:
             tb.message_post_with_view('yjzy_extend.expense_sheet_template_refuse_reason',
                                       values={'reason': reason, 'name': self.name},
                                       subtype_id=self.env.ref(
                                           'mail.mt_note').id)  # 定义了留言消息的模板，其他都可以参考，还可以继续参考费用发送计划以及邮件方式
-
-
 
     def action_draft(self):
         stage_id = self._stage_find(domain=[('code', '=', '010')])
