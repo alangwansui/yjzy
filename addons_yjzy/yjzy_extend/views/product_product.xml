@@ -97,11 +97,11 @@
                     <field name="trademark"/>
                     <field name="customer_ref"/>
                     <field name="customer_ref2"/>
+                    <field name="ps_attachment" string="PS附件" widget="many2many_binary"/>
                     <field name="customer_description"/>
                     <field name="other_description"/>
                     <field name="source_area"/>
                     <field name="source_country_id"/>
-
                     <field name="packag_method"/>
                     <field name="surface_treatment"/>
                 </field>

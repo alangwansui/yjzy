@@ -111,6 +111,7 @@ class Product_Product(models.Model):
 
     is_gold_sample = fields.Boolean('是否有金样')
     is_ps = fields.Boolean('是否有PS')
+    ps_attachment = fields.Many2many('ir.attachment', string='附件')
 
     def action_submit(self):
         if self.customer_id.user_id == self.env.user or self.customer_id.assistant_id == self.env.user:
