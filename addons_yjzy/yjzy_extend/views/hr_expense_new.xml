@@ -2099,7 +2099,7 @@
             <field name="res_model">hr.expense</field>
             <field name="view_mode">tree,form</field>
                 <field name="search_view_id" ref="hr_expense_manager_search"/>
-            <field name="domain">[('state_1','=','done')]</field>
+            <field name="domain">[('unit_amount','>',0),('stage_id','=',6)]</field>
             <field name="context">{}</field>
             <!--field name="target">new</field-->
             <field name="view_ids" eval="[(5, 0, 0),
@@ -2109,7 +2109,7 @@
         </record>
 
         <menuitem id="menu_hr_expense_line_done" name="支付完成费用明细"
-                  parent="hr_expense.menu_hr_expense_root" sequence="30" groups="base.group_system"
+                  parent="hr_expense.menu_hr_expense_root" sequence="30" groups="sales_team.group_manager"
                   action="action_hr_expense_line_done"/>
         <!--          一般用户-->
         <record id="action_hr_expense_sheet_user_todo" model="ir.actions.act_window">
