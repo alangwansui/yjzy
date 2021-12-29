@@ -1219,7 +1219,8 @@
                                         <field name="company_currency_total_amount" sum="小计"/>
                                         <field name="budget_amount"/>
                                         <field name="budget_id"/>
-                                        <field name="state"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="stage_id"/>
                                     </tree>
                                 </field>
                             </page>

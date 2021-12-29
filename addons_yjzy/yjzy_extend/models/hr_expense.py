@@ -82,7 +82,7 @@ class hr_expense(models.Model):
                                 ('done', u'完成'),
                                 ('refused', u'已拒绝'),
                                 ('cancel', u'取消'),
-                                ], u'报告审批状态', related='stage_id.state')
+                                ], u'报告审批状态', related='stage_id.state', store=True)
     include_tax = fields.Boolean(u'含税')
     line_ids = fields.One2many('hr.expense.line', 'expense_id', u'分配明细')
     # user_ids = fields.Many2many('res.users', compute=compute_line_user, string='用户s', store=True)

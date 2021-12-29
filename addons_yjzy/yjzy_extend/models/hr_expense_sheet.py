@@ -177,7 +177,7 @@ class hr_expense_sheet(models.Model):
 
     manager_confirm = fields.Many2one('res.users', u'总经理审批')
     manager_confirm_date = fields.Date('总经理审批日期')
-    state_1 = fields.Selection(Hr_Expense_Selection,u'审批流程',default='draft', index=True,related='stage_id.state',
+    state_1 = fields.Selection(Hr_Expense_Selection,u'审批流程',default='draft', index=True,related='stage_id.state', store=True,
                              track_visibility='onchange') #费用审批流程
     # state_2 = fields.Selection([('10_draft',u'草稿'),
     #                             ('20_submit',u'')])#收入审批流程

@@ -8,7 +8,7 @@ from odoo.exceptions import Warning
 class transport_bill(models.Model):
     _inherit = 'transport.bill'
 
-    @api.depends('hsname_all_ids.purchase_amount2_tax','hsname_all_ids.purchase_amount2_no_tax','hsname_all_ids.purchase_amount_min_forecast','hsname_all_ids.purchase_amount_min_add_rest')
+    @api.depends('hsname_all_ids.purchase_amount2_tax', 'hsname_all_ids.purchase_amount2_no_tax','hsname_all_ids.purchase_amount_min_forecast', 'hsname_all_ids.purchase_amount_min_add_rest')
     def _compute_overall_profit(self):
         for one in self:
             hsname_all_ids = one.hsname_all_ids

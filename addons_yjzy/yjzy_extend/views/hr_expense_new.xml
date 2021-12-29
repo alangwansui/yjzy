@@ -40,7 +40,7 @@
                         <group>
                             <group>
                                 <field name="categ_id" string="大类" options="{'no_open':1}"
-                                       domain="[('parent_id.name','=','费用')]"
+                                       domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                        attrs="{'readonly':[('sheet_state','not in',['draft'])]}"
                                        context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                 <field name="second_categ_id" string="中类" options="{'no_open':1}"
@@ -193,7 +193,8 @@
                         <group>
                             <group>
                                 <field name="categ_id" string="大类" options="{'no_open':1}"
-                                       domain="[('parent_id.name','=','费用')]" readonly="1"
+                                       domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
+                                       readonly="1"
                                        context="{'only_name':1}" required="1"/>
                                 <field name="second_categ_id" string="中类" options="{'no_open':1}"
                                        domain="[('parent_id','=', categ_id)]" readonly="1"
@@ -270,7 +271,7 @@
                         <group>
                             <group>
                                 <field name="categ_id" string="大类" options="{'no_create':True,'no_open':1}"
-                                       domain="[('parent_id.name','=','费用')]"
+                                       domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                        context="{'search_order': 'sequence', 'only_name':1}" required="1"/>
                                 <field name="second_categ_id" string="中类" options="{'no_create':True,'no_open':1}"
                                        domain="[('parent_id','=', categ_id)]"
@@ -827,7 +828,7 @@
                         <group>
                             <group>
 
-                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
+                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                        context="{'search_order': 'sequence', 'only_name':1}"/>
                                 <field name="second_categ_id" invisible="1" string="中类*"
                                        domain="[('parent_id','=', categ_id)]"
@@ -873,7 +874,7 @@
 
                                     <tree decoration-danger="is_refused" editable="bottom">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                               domain="[('parent_id.name','=','费用')]"
+                                               domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                         <field name="second_categ_id" string="中类*"
                                                options="{'no_create':True,'no_open':1}"
@@ -965,7 +966,7 @@
                                        context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                               domain="[('parent_id.name','=','费用')]"
+                                               domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                         <field name="second_categ_id" string="中类*"
                                                options="{'no_create':True,'no_open':1}"
@@ -1173,7 +1174,7 @@
                         <group>
                             <group>
 
-                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
+                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                        context="{'search_order': 'sequence','only_name':1}"/>
                                 <field name="second_categ_id" string="中类*" invisible="1"
                                        domain="[('parent_id','=', categ_id)]"
@@ -1221,7 +1222,7 @@
 
                                     <tree decoration-danger="is_refused" editable="bottom">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                               domain="[('parent_id.name','=','费用')]"
+                                               domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                         <field name="second_categ_id" string="中类*"
                                                options="{'no_create':True,'no_open':1}"
@@ -1312,7 +1313,7 @@
                                        attrs="{'invisible':[('state','in',['draft','cancel'])]}"
                                        context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
                                     <tree decoration-danger="is_refused">
-                                        <field name="categ_id" string="大类*" domain="[('parent_id.name','=','费用')]"
+                                        <field name="categ_id" string="大类*" domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                         <field name="second_categ_id" string="中类*"
                                                domain="[('parent_id','=', categ_id)]"
@@ -1566,7 +1567,7 @@
                         <group col="3">
                             <group>
 
-                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用')]"
+                                <field name="categ_id" string="大类*" invisible="1" domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                        context="{'search_order': 'sequence', 'only_name':1}"/>
                                 <field name="second_categ_id" invisible="1" string="中类*"
                                        domain="[('parent_id','=', categ_id)]"
@@ -1695,7 +1696,7 @@
 
                                     <tree decoration-danger="is_refused" editable="bottom">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                               domain="[('parent_id.name','=','费用')]"
+                                               domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                                attrs="{'readonly':[('parent.state','not in',['draft'])]}"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                         <field name="second_categ_id" string="中类*"
@@ -1802,7 +1803,7 @@
                                        context="{'form_view_ref':'yjzy_extend.view_hr_expense_new_form'}">
                                     <tree decoration-danger="is_refused">
                                         <field name="categ_id" string="大类*" options="{'no_create':True,'no_open':1}"
-                                               domain="[('parent_id.name','=','费用')]"
+                                               domain="[('parent_id.name','=','费用'),('name','!=','其他费用')]"
                                                context="{'search_order': 'sequence','only_name':1}" required="1"/>
                                         <field name="second_categ_id" string="中类*"
                                                options="{'no_create':True,'no_open':1}"
@@ -2091,6 +2092,25 @@
         <menuitem id="menu_hr_expense_sheet_done" name="支付完成"
                   parent="menu_expense_sheet_apply_root" sequence="30"
                   action="action_hr_expense_sheet_done"/>
+
+            <record id="action_hr_expense_line_done" model="ir.actions.act_window">
+            <field name="name">支付完成费用明细</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.expense</field>
+            <field name="view_mode">tree,form</field>
+                <field name="search_view_id" ref="hr_expense_manager_search"/>
+            <field name="domain">[('state_1','=','done')]</field>
+            <field name="context">{}</field>
+            <!--field name="target">new</field-->
+            <field name="view_ids" eval="[(5, 0, 0),
+                              (0, 0, {'view_mode': 'tree', 'view_id': ref('hr_expense_manager_tree')}),
+                              (0, 0, {'view_mode': 'form', 'view_id': ref('view_hr_expense_new_form')}),
+                              ]"/>
+        </record>
+
+        <menuitem id="menu_hr_expense_line_done" name="支付完成费用明细"
+                  parent="hr_expense.menu_hr_expense_root" sequence="30" groups="base.group_system"
+                  action="action_hr_expense_line_done"/>
         <!--          一般用户-->
         <record id="action_hr_expense_sheet_user_todo" model="ir.actions.act_window">
             <field name="name">用户待处理</field>

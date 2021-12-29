@@ -19,7 +19,8 @@ class res_partner(models.Model):
                 [line.get_amount_to_currency(one.advance_currency_id) for line in lines])
             one.amount_purchase_advance = sum([line.get_amount_to_currency(one.currency_id) for line in lines])
 
-    # 以下两个13已添加
+    @api.depends('child_contact_ids', 'child_contact_ids.mobile', 'child_contact_ids.phone', 'child_contact_ids.other_social_accounts',
+                 'child_contact_ids.comment_contact', 'child_contact_ids.country_id', 'child_contact_ids.name')
     def compute_info(self):
         for one in self:
             for x in one.child_contact_ids:
