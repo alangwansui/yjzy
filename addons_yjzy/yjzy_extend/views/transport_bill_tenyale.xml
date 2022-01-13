@@ -692,9 +692,7 @@
                                        widget="date"/>
                                 <field name="description" string="出运备注"
                                        attrs="{'readonly':[('state','not in',['draft','check']),('is_editable','=',False)]}"/>
-                                <field name="user_id" readonly="1" no_create="True" string="责任人"
-                                       options="{'no_open':1}"/>
-                                <field name="sale_assistant_id" readonly="1" invisible="0" options="{'no_open':1}"/>
+
                                 <field name="is_discount" invisible="1"/>
 
                             </group>
@@ -1295,6 +1293,9 @@
                             <page string="统计" groups="base.group_system">
                                 <group col="3">
                                     <group name="sale_currency">
+                                        <field name="user_id" readonly="1" no_create="True" string="责任人"
+                                       options="{'no_open':1}"/>
+                                        <field name="sale_assistant_id" readonly="1" invisible="0" options="{'no_open':1}"/>
                                         <field name="is_done_plan"/>
                                         <field name="is_done_tuopan"/>
                                         <field name="is_done_all_document"/>

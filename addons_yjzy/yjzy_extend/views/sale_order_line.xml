@@ -65,7 +65,6 @@
 					<field name="product_so_line_count" string="下单次数"/>
 					<field name="tb_line_count" string="发货次数"/>
 					<field name="tbl_ids"/>
-
 					<button type="object" name="open_bill_ids" icon="fa-archive"/>
 					<field name="qty_undelivered" groups="base.group_system"/>
 					<field name="qty_undelivered_new"/>
@@ -76,11 +75,9 @@
 					<field name="can_project_tb_qty_new"/>
 					<field name="name" invisible="1"/>
 					<field name="product_uom" invisible="1"/>
-
 					<field name="tax_id" widget="many2many_tags" invisible="1"/>
 					<field name="discount" invisible="1"/>
-
-
+					<field name="product_pi_specification"/>
 				</tree>
 			</field>
 		</record>
@@ -172,7 +169,7 @@
             <field name="domain">[]</field>
 
 			<field name="context">{'only_customer_ref':1,'search_default_group_by_partner':1}</field>
-            <field name="view_id" ref="sh_sol_sale_quotation_line_tree_view_inherit_1"/>
+            <field name="view_id" ref="yjzy_extend.sh_sol_sale_quotation_line_tree_view_inherit_1"/>
 		</record>
 
  	<menuitem id="sh_sol_quotation_line_all" name="所有销售明细" action="sh_action_sale_order_lines_all"
@@ -187,7 +184,7 @@
             <field name="domain">[]</field>
 			<field name="search_view_id" ref="sh_sol_sale_quotation_line_search_view_inherit_1"/>
 			<field name="context">{}</field>
-            <field name="view_id" ref="sh_sol_sale_quotation_line_tree_view_inherit_1"/>
+            <field name="view_id" ref="yjzy_extend.sh_sol_sale_quotation_line_tree_view_inherit_1"/>
 		</record>
 		<menuitem id="product_newesee" name="产品_新菜单"
 		groups="sales_team.group_sale_manager" sequence="99"/>
