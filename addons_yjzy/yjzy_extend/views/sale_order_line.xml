@@ -78,6 +78,7 @@
 					<field name="tax_id" widget="many2many_tags" invisible="1"/>
 					<field name="discount" invisible="1"/>
 					<field name="product_pi_specification"/>
+					<field name="product_pi_description"/>
 				</tree>
 			</field>
 		</record>
