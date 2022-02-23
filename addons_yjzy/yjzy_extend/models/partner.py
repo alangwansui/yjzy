@@ -545,6 +545,10 @@ class res_partner(models.Model):
     # 14.0————————————
     contract_suffix = fields.Char('合同后缀')
 
+    def button_compute_display_name(self):
+        for one in self:
+            one._compute_display_name()
+
     # def write(self, vals):
     #     res = super(res_partner, self).write(vals)
     #
