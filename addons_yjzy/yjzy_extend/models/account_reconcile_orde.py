@@ -438,8 +438,8 @@ class account_reconcile_order(models.Model):
                 x.amount_advance_balance_after for x in account_payment_state_ids)
             one.account_payment_state_ids_amount_3 = sum(x.amount_reconcile for x in account_payment_state_ids)
 
-    @api.depends('partner_id.supplier_amount_advance_payment', 'partner_id',
-                 'partner_id.supplier_amount_residual_advance_payment')
+    @api.depends('partner_id.supplier_advance_payment_ids', 'partner_id','partner_id.supplier_advance_payment_ids.amount',
+                 'partner_id.supplier_advance_payment_ids.advance_balance_total')
     def compute_supplier_amount_residual_advance_payment(self):
         for one in self:
             supplier_advance_payment_ids = one.partner_id.supplier_advance_payment_ids.filtered(
@@ -3845,7 +3845,7 @@ class account_reconcile_order_line(models.Model):
     amount_diff = fields.Monetary(u'销售费用:本币', currency_field='currency_id', compute=compute_info)
     amount_exchange_org = fields.Monetary(u'汇兑差异', currency_field='invoice_currency_id')
     amount_exchange = fields.Monetary(u'汇兑差异:本币', currency_field='currency_id')
-    amount_total_org = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_info)
+    # amount_total_org = fields.Monetary(u'收款合计', currency_field='invoice_currency_id', compute=compute_info)
     amount_total = fields.Monetary(u'收款合计:本币', currency_field='currency_id', compute=compute_info)
     amount_total_org_new = fields.Monetary(u'收款合计', currency_field='invoice_currency_id',
                                            compute=compute_amount_total_org_new, store=True)  # 在这里

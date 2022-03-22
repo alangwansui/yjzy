@@ -34,10 +34,6 @@ class RealInvoice(models.Model):
             self.certification_invoice_ids = res
 
 
-
-
-
-
     name = fields.Char('编号', default=lambda self: self.env['ir.sequence'].next_by_code('real.invoice'))
     partner_id = fields.Many2one('res.partner',u'合作伙伴')
     line_ids = fields.One2many('real.invoice.line','real_invoice_id',u'明细行')

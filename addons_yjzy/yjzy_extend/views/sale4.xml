@@ -22,7 +22,7 @@
             <field name="arch" type="xml">
                 <search string="Search Sales Order">
                     <field name="name" string="模糊搜索"
-                           filter_domain="['|','|','|',('contract_code','ilike',self),('name','ilike',self),('client_order_ref','ilike',self),('partner_id','child_of',self)]"/>
+                           filter_domain="['|','|','|','|','contract_code','ilike',self),('name','ilike',self),('client_order_ref','ilike',self),('customer_pi','ilike',self),('partner_id','child_of',self)]"/>
                     <field name="user_id"/>
                     <field name="pdt_value_id"/>
                     <field name="team_id" string="Sales Channel" invisible="1"/>

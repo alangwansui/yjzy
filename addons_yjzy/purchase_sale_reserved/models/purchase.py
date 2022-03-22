@@ -60,7 +60,6 @@ class purchase_order(models.Model):
         lot_obj = self.env['stock.production.lot']
         for line in self.order_line:
             if not lot_obj.search([('pol_id', '=', line.id)]):
-
                 lot_name = self.name
                 if line.lot_sub_name:
                     lot_name += line.lot_sub_name

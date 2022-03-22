@@ -17,6 +17,7 @@ Hr_Expense_Selection = [('draft',u'草稿'),
                          ('cancel', u'取消'),
                         ]
 
+
 class ExpenseSheetStage(models.Model):
 
     _name = "expense.sheet.stage"
