@@ -380,10 +380,10 @@ class sale_order(models.Model):
 
     hxd_ids = fields.One2many('account.reconcile.order.line', 'so_id', '所有已经批准的核销单',
                               domain=[('order_id.state_1', 'in', ['done', 'post'])])
-    amount_org_hxd = fields.Float('核销单的付款金额总和', compute=compute_amount_org_hxd, store=True)
+    amount_org_hxd = fields.Float('核销单的付款金额总和', compute=compute_amount_org_hxd)
     # 货币设置
     # 1013
-    jituan_id = fields.Many2one('ji.tuan', '集团', compute=compute_jituan, store=True)
+    jituan_id = fields.Many2one('ji.tuan', '集团', compute=compute_jituan)
     # 825
     tb_line_ids = fields.One2many('transport.bill.line', 'so_id', u'出运明细')
     tb_line_count = fields.Integer('发运单计数', compute=_comput_tb_line_count)
