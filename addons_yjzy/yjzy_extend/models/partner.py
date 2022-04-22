@@ -1070,7 +1070,7 @@ class res_partner(models.Model):
     def unlink(self):
         user = self.env.user
         for one in self:
-            if user.has_group('sales_team.group_manager') or (one.is_editable == True and one.type in ['contact','delivery','invoice'] and one.company_type != 'company'):
+            if user.has_group('sales_team.group_manager') or (one.type in ['contact','delivery','invoice'] and one.company_type != 'company'):
                 return super(res_partner, self).unlink()
             else:
                 if one.create_uid != user:
