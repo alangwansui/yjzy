@@ -844,7 +844,7 @@ class tbl_hsname_all(models.Model):
             one.purchase_amount_max_add_forecast = purchase_amount_max_add_forecast
             one.purchase_amount_min_add_forecast = purchase_amount_min_add_forecast
             one.plan_invoice_auto_total = plan_invoice_auto_total
-            # one.purchase_back_tax_amount2_new_new = back_tax_amount_new_new
+            # one.purchase_back_tax _amount2_new_new = back_tax_amount_new_new
             # one.purchase_back_tax_amount2_rest = back_tax_amount_new_new - purchase_back_tax_amount2_actual
 
     # 817

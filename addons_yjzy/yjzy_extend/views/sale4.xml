@@ -565,14 +565,14 @@
                                 <field name="contract_code" string="合同号*" required="1"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"/>
                                 <field name="partner_id" string="客户*" required="0"
-
+                                 domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|','|','|',
+                                       ('x_studio_field_U7OvH','in',uid),('assistant_id','=',uid),('user_id','=',uid),
+                                       ('parent_id.assistant_id','=',uid),('parent_id.sales_assistant_ids','in',uid),
+                                       ('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"
                                        attrs="{'readonly':[('state','not in',['draft','refused']),('is_editable','=',False)]}"
                                        context="{'search_default_customer':1, 'show_address': 0}"
                                        options="{&quot;always_reload&quot;: True, 'no_open': True, 'no_create': True}"/>
-<!--                                 domain="[('customer','=',True),('parent_id', '=', False),('state','=','done'),'|','|','|','|','|','|','|',-->
-<!--                                       ('x_studio_field_U7OvH','in',uid),('assistant_id','=',uid),('user_id','=',uid),-->
-<!--                                       ('parent_id.assistant_id','=',uid),('parent_id.sales_assistant_ids','in',uid),-->
-<!--                                       ('parent_id.user_id','=',uid),('supplier','=',1),('x_studio_field_3ErQR','=',1)]"-->
+
                                 <field name="jituan_id" invisible="1"/>
                                 <field name="partner_invoice_id" context="{'default_type':'invoice'}" required="1"
                                        options="{&quot;always_reload&quot;: True}"/>

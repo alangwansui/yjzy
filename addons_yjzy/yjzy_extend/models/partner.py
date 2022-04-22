@@ -1071,12 +1071,12 @@ class res_partner(models.Model):
         user = self.env.user
         for one in self:
             if user.has_group('sales_team.group_manager') or (
-                    one.create_uid == user and one.state in ('refuse', 'draft')):
+                    one.create_uid == user and one.state in ('refuse', 'draft')) and one.is_editable == True and one.type in ['contact','delivery','invoice'] and one.company_type != 'company':
                 return super(res_partner, self).unlink()
             else:
                 if one.create_uid != user:
                     raise Warning(u'只有创建者才允许删除')
-                if one.state not in ('refuse', 'draft'):
+                if one.state not in ('refuse', 'draft') and one.is_editable == False:
                     raise Warning(u'只有拒绝或者草稿状态才能删除！')
 
     # @api.multi

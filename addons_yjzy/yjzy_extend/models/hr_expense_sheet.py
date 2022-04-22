@@ -313,7 +313,7 @@ class hr_expense_sheet(models.Model):
     #                 one.write({'employee_wkf': False,
     #                             'stage_id': stage_id.id})
 
-    #0925财务审批的时候判断是否已经转为货款
+    # 0925 财务审批的时候判断是否已经转为货款
     def action_account_approve(self):
         if not self.pay_to:
             raise Warning('请在对方收款账户上填写收款人信息！')
@@ -369,6 +369,7 @@ class hr_expense_sheet(models.Model):
                 self.write({'manager_confirm': self.env.user.id,
                             'stage_id': stage_id.id,
                             'manager_confirm_date': fields.datetime.now()})
+
         elif self.expense_to_invoice_type == 'normal' or self.expense_to_invoice_type == 'other_payment':
             self.approve_expense_sheets()
             self.create_rcfkd()
