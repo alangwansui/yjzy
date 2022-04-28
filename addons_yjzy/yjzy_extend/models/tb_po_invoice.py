@@ -1278,10 +1278,9 @@ class tb_po_invoice(models.Model):
                 })
             back_tax_invoice.create_tenyale_name()
 
-
     def make_back_tax_expense(self):
-        if float_compare(self.purchase_amount2_add_this_time_total, self.expense_sheet_amount, precision_digits=2) != 0:
-             raise Warning('货款总金额不等于费用金额，请检查')
+        # if float_compare(self.purchase_amount2_add_this_time_total, self.expense_sheet_amount, precision_digits=2) != 0:
+        #      raise Warning('货款总金额不等于费用金额，请检查')
         partner = self.env.ref('yjzy_extend.partner_back_tax')
 
         # product = self.env.ref('yjzy_extend.product_back_tax')
