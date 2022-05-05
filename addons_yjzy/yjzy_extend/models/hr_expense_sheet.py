@@ -5,7 +5,8 @@ from odoo.exceptions import Warning
 from odoo.tools import float_is_zero, float_compare
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons import decimal_precision as dp
-
+from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 Hr_Expense_Selection = [('draft',u'草稿'),
                          ('employee_approval',u'待责任人确认'),
@@ -382,9 +383,10 @@ class hr_expense_sheet(models.Model):
         stage_id = self._stage_find(domain=[('code', '=', '060')])
         if self.expense_to_invoice_type == 'to_invoice':
             self.write({'stage_id': stage_id.id,
-                        'state':'done',
+                        'state': 'done',
+                        'accounting_date': self.fkzl_id.payment_date
                         })
-            self.with_context(force=1).btn_user_confirm()#上面的状态改变后，会导致明细的状态被变化
+            self.with_context(force=1).btn_user_confirm()  # 上面的状态改变后，会导致明细的状态被变化
         else:
             self.action_sheet_move_create()
             self.write({'stage_id': stage_id.id, })
