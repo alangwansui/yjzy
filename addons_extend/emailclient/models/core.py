@@ -936,7 +936,7 @@ class PoweremailSelectFolder(models.Model):
             folderlist = [('invalid', 'Invalid')]
         return folderlist
 
-    name = fields.Many2one('poweremail.core_accounts', 'Email Account', readonly=True, defualt=lambda self: self.env.context.get('account_id'))
+    name = fields.Many2one('poweremail.core_accounts', 'Email Account', readonly=True, default=lambda self: self.env.context.get('account_id'))
     folder = fields.Selection(_get_folders, string="IMAP Folder")
 
     def sel_folder(self):

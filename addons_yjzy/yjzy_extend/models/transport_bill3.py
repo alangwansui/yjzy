@@ -137,7 +137,7 @@ class transport_bill(models.Model):
             elif sol.need_split_bom:
                 bom = bom_obj._bom_find(product=product)
                 if not bom:
-                    raise Warning(u'产品%s没有找到相关的bom信息' % product.defualt_code)
+                    raise Warning(u'产品%s没有找到相关的bom信息' % product.default_code)
                 lines_done = bom.explode(product, line.qty)[1]
                 for i in lines_done:
                     if not product.lst_price:

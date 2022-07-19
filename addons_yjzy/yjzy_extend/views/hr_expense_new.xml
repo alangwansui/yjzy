@@ -434,7 +434,7 @@
                     <field name="gongsi_id" string="公司主体" options="{'no_create':true,'no_open':1}"/>
                     <field name="analytic_account_id" invisible="1" groups="analytic.group_analytic_accounting"/>
                     <separator/>
-                    <filter string="已支付" domain="[('state','=','done')]"/>
+                    <filter string="已支付" domain="[('sheet_id.state','=','done')]"/>
                     <filter string="已完成审批未支付" domain="[('sheet_id.state','in',['approve'])]"/>
                     <filter string="已提交未完成审批"
                             domain="[('sheet_id.state','in',['submit','approval','employee_approval','account_approval','manager_approval'])]"/>

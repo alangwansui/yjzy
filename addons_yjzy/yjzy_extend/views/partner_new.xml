@@ -149,7 +149,7 @@
             </field>
         </record>
 
-        <record id="view_new_partner_customer_account_tree" model="ir.ui.view">
+        <record id="view_new_partner_   customer_account_tree" model="ir.ui.view">
             <field name="name">res.partner.tree.customer.new</field>
             <field name="model">res.partner</field>
             <field eval="8" name="priority"/>

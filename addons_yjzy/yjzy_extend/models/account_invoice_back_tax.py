@@ -50,7 +50,7 @@ class account_invoice(models.Model):
     adjustment_invoice_amount = fields.Monetary('调节金额',currency_field='currency_id',related='adjustment_invoice_id.amount_total_signed',store=True)
 
 
-    is_adjustment = fields.Boolean(u'是否被调节', defualt=False)
+    is_adjustment = fields.Boolean(u'是否被调节', default=False)
 
     adjustment_invoice_origin_id = fields.Many2one('account.invoice', u'调节账单对应原始账单')
 

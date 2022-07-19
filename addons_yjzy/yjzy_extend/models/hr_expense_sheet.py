@@ -910,10 +910,6 @@ class hr_expense_sheet(models.Model):
         self._cr.execute(this_sql_un_submit)
         self.total_un_submit = self._cr.fetchall()[0][0]
 
-
-
-
-
     def compute_my_total_amount(self):
         user = self.env.user
 

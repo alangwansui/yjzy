@@ -344,7 +344,6 @@ class transport_bill(models.Model):
     def compute_invoice_amount(self):
         for one in self:
             sale_invoice = one.sale_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])
-
             purchase_invoices = one.purchase_invoice_ids.filtered(
                 lambda x: x.yjzy_type == 'purchase' and x.state not in ['draft', 'cancel'])
             back_tax_invoice = one.back_tax_invoice_id.filtered(lambda x: x.state not in ['draft', 'cancel'])

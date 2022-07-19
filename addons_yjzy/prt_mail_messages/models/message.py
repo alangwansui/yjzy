@@ -1137,7 +1137,7 @@ class PRTMailMessage(models.Model):
         default_channel = self.env['mail.channel'].search([('sent_uid', '=', self.env.user.id)], limit=1)
         ctx = {
             'default_res_id': default_channel and default_channel.id or self.res_id,
-            'defualt_model': default_channel and default_channel._name or self.model,
+            'default_model': default_channel and default_channel._name or self.model,
 
             'default_parent_id': False if wizard_mode == 'forward' else self.id,
             'default_partner_ids': default_partners and [x.id for x in default_partners] or False,
