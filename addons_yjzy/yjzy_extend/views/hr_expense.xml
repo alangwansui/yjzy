@@ -135,8 +135,6 @@
                     <filter domain="[('employee_id.active', '=', False)]" string="Former Employees" name="inactive"
                             groups="hr_expense.group_hr_expense_user,hr_expense.group_hr_expense_manager"/>
                 </search>
-
-
             </field>
         </record>
 

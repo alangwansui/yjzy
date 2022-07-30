@@ -106,10 +106,10 @@ class PlanInvoiceAuto(models.Model):
         for one in self:
             one.currency_id = one.invoice_ids and one.invoice_ids[0].currency_id or self.env.user.company_id.currency_id
 
-    @api.depends('hsname_all_ids', 'hsname_all_ids.plan_invoice_auto_total')
+    @api.depends('invoice_ids', 'invoice_ids.amount_total')
     def compute_plan_invoice_auto_amount(self):
         for one in self:
-            one.plan_invoice_auto_amount = sum(x.plan_invoice_auto_total for x in one.hsname_all_ids)
+            one.plan_invoice_auto_amount = sum(x.amount_total for x in one.invoice_ids)
 
     @api.depends('real_invoice_auto_id', 'real_invoice_auto_id.amount_total')
     def compute_real_invoice_auto_amount(self):
