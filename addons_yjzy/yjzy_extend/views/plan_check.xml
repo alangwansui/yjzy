@@ -920,7 +920,6 @@
                     border: 0.5px solid;
                     height: 20px;
                     line-height: 20px;
-
                     }
                 </style>
                 <header>
@@ -930,7 +929,7 @@
                     <button name="open_activity_id_date_out_in" type="object" string="完成出运日"
                             groups="base.group_system"/>
                     <field name="order_track_new_order_state" widget="statusbar" nolabel="1" statusbar_visible=" "/>
-                </header>期
+                </header>
                 <sheet>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablelist"
                            attrs="{'invisible':[('type','!=','new_order_track')]}"
