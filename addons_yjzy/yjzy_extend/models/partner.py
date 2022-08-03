@@ -45,9 +45,9 @@ class res_partner(models.Model):
         company = self.env.user.company_id.id
         for one in self:
             last_sale_orders = one.sudo().sale_order_ids.filtered(
-                lambda x: x.approve_date != False)
+                lambda x: x.approve_date != False).sorted(lambda x: x.approve_date)
             if last_sale_orders:
-                last_order = last_sale_orders[0]
+                last_order = last_sale_orders[-1]
                 one.last_sale_order_approve_date = last_order.approve_date
                 print('--lastdate--', last_order, last_order.approve_date)
             else:
