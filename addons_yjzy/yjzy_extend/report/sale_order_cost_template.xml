@@ -3,9 +3,6 @@
     <template id="report_sale_order_cost_document">
         <t t-call="yjzy_extend.no_header_external_layout">
             <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
-
-
-
             <style>
                 body{
                 font-family:Arial,Helvetica,sans-serif,simsun;

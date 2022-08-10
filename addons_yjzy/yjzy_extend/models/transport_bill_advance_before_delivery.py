@@ -8,6 +8,7 @@ class transport_bill(models.Model):
     _inherit = 'transport.bill'
 
     tb_po_line_ids = fields.One2many('tb.po.line','tb_id','出运采购合并')
+
     #创建出运采购合并，兵器而计算各个采购的出运金额，并且最终体现在pre.adnvance的统计上。
     def create_tb_po_line_ids(self):
         if not self.tb_po_line_ids:

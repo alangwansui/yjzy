@@ -611,7 +611,7 @@
                         </group>
                     </group>
                  <footer>
-                        <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
+                            <button name="action_save_test" type="object" class="oe_highlight" string="保存并关闭"/>
                         <button string="关闭" class="btn-primary" special="cancel"/>
                     </footer>
                 </sheet>

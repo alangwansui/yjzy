@@ -19,6 +19,7 @@ class account_payment(models.Model):
     po_real_advance_before_delivery_new = fields.Monetary(u'实际发货前金额', currency_field='po_id_currency_id',
                                                           related='po_id.real_advance_before_delivery_new')
     tb_po_line_new_ids = fields.One2many('tb.po.line','pre_payment_id','发货前预付')
+
     # 筛选出
     @api.onchange('tb_id')
     def onchange_tb_po_line(self):

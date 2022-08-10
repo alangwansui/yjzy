@@ -1734,8 +1734,8 @@ class account_payment(models.Model):
                 #             x.action_sheet_move_create()
                 #         else:
                 #             x.action_to_invoice_done()
-                if one.fybg_ids:
-                    one.fybg_ids.action_to_invoice_done()
+                # if one.fybg_ids:
+                    # one.fybg_ids.action_to_invoice_done()
 
                 # one.fybg_ids.payment_date_store = fields.datetime.now()
                 # akiny增加 费用明细的付款日期的写入

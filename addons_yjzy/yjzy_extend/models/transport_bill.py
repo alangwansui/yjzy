@@ -3178,6 +3178,7 @@ class transport_bill(models.Model):
                 self.compute_second_state()
                 self.create_hsname_all_ids()
                 self.make_new_order_track_tb()
+                self.create_tb_po_line_ids()
 
         else:
             raise Warning('销售金额和原始销售不相等')
