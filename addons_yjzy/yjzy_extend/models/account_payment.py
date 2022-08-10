@@ -1772,9 +1772,9 @@ class account_payment(models.Model):
                 #             x.action_sheet_move_create()
                 #         else:
                 #             x.action_to_invoice_done()
-                if one.fybg_fkzl_ids:
-                    for fybg in one.fybg_fkzl_ids:
-                        fybg.action_to_invoice_done()
+                # if one.fybg_fkzl_ids:
+                #     for fybg in one.fybg_fkzl_ids:
+                #         fybg.action_to_invoice_done()
                 for fksqd in one.fksqd_2_ids:
                     fksqd.state = 'posted'
                     fksqd.state_1 = '60_done'
