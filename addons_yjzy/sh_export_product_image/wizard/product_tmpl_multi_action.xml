@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<!-- PRODUCT.TEMPLATE  WIZARD AND MULTI ACTIONS -->
+	<record id="sh_export_product_image_product_tmpl_wizard_form" model="ir.ui.view">
+		<field name="name">sh.export.product.image.product.tmpl.wizard.form</field>
+		<field name="model">sh.export.product.image.tmpl</field>
+		<field name="arch" type="xml">
+			<form string="Export Product Images">
+				<group>
+					<group>
+						<field name="file_name"/>						
+						<field name="file"   readonly="1"  filename="zip_file_name"/>
+ 	        			<field name="zip_file_name" invisible="1"/>
+					</group>
+					
+					<field name="product_tmpl_ids"/>
+				</group>
+				
+				<footer>
+					<button name="action_export" string="Export" type="object" class="oe_highlight"/>
+					<button string="Cancel" class="oe_link" special="cancel" />
+				</footer>
+			</form>
+		</field>
+	</record>
+
+    <act_window id="sh_export_product_image_product_tmpl_action"
+                multi="True"
+                key2="client_action_multi"
+                name="Export Images"
+                res_model="sh.export.product.image.tmpl"
+                src_model="product.template"
+                view_mode="form"
+                target="new"
+                view_type="form"
+                groups="sh_export_product_image.sh_export_product_image_group"
+                />           
+
+</odoo>
