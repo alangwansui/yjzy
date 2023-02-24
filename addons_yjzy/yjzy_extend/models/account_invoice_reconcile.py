@@ -10,7 +10,6 @@ _logger = logging.getLogger(__name__)
 
 # 注意：直接单独创建应付申请，和预付认领的时候，默认状态需要注意
 
-
 class account_reconcile_order(models.Model):
     _inherit = 'account.invoice'
 

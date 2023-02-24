@@ -42,8 +42,6 @@ class RealInvoiceAuto(models.Model):
     invoice_type = fields.Selection([('10', '增值税电子普通发票'), ('04', '增值税普通发票'), ('01', '增值税专用发票')], '发票类型')
     invoice_code = fields.Char(u'发票代码')
     invoice_number = fields.Char(u'发票号')
-
-
     untaxed_amount = fields.Monetary(u'不含税金额', currency_field='company_currency_id')
     date_invoice = fields.Date(u'开票日期')
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,

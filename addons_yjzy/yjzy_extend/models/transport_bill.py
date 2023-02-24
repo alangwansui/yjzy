@@ -1343,8 +1343,6 @@ class transport_bill(models.Model):
             one.bg_count = one.hsname_ids and 1 or 0
 
     tbl_lot_ids = fields.One2many('bill.line.lot', 'tb_id', u'批次明细')
-
-
     gongsi_id = fields.Many2one('gongsi', '销售主体')
     purchase_gongsi_id = fields.Many2one('gongsi', '采购主体')
     pallet_type = fields.Selection([('ctns', 'CTNS'), ('plts', 'PLTS'), ('PKGS', 'PKGS')], u'包装类型')

@@ -31,7 +31,6 @@ class crm_lead(models.Model):
                 date_deadline = False
             one.date_deadline = date_deadline
 
-
     code_ref = fields.Char(u'项目编号')
     #相关客户用原生的partner_id，
     supplier_id = fields.Many2one('res.partner',u'相关供应商',domain=[('supplier', '=', True),('parent_id', '=', False)])
